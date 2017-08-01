@@ -512,8 +512,13 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 #ifndef __APPLE__
 	const int twac = m_AntiCheats.CheckInputs(Server()->Tick(), m_LatestInput, 
 		m_LatestPrevInput);
-	if (twac)
+	if (twac) {
 		dbg_msg("ANTI-CHEAT", "Detected! %d", twac);
+		char buf[256] = { 0 };
+		snprintf(buf, sizeof(buf), "%s %d", 
+			ID_NAME(m_pPlayer->GetCID()), twac);
+		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+	}
 #endif
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 }
