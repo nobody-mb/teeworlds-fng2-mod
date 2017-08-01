@@ -25,6 +25,21 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	CCharacter *pHit = GameServer()->m_World.IntersectCharacter(m_Pos, To, 0.f, At, pOwnerChar);
 	if(!pHit)
 		return false;
+		
+	int oid = pOwnerChar->GetPlayer()->GetCID();
+	struct tee_stats *o = GameServer()->t_stats->find_round_entry(Server()->
+		ClientName(oid));
+	struct tee_stats *v = GameServer()->t_stats->find_round_entry(Server()->
+		ClientName(pHit->GetPlayer()->GetCID()));
+
+	if (o && v) {
+		if (m_Bounces)
+			o->bounce_shots++;
+		v->frozen++;
+		v->frozeby = oid;
+		o->freezes++;
+	}
+
 
 	m_From = From;
 	m_Pos = At;

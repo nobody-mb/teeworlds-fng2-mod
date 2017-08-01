@@ -156,12 +156,12 @@ public:
 		int m_Min;
 		int m_Max;
 	} m_Latency;
+	CGameContext *GameServer() const { return m_pGameServer; }
 
 private:
 	CCharacter *m_pCharacter;
 	CGameContext *m_pGameServer;
 
-	CGameContext *GameServer() const { return m_pGameServer; }
 	IServer *Server() const;
 
 	//

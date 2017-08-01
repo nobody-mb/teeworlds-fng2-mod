@@ -47,7 +47,7 @@ CCharacter::CCharacter(CGameWorld *pWorld)
 	m_Health = 0;
 	m_Armor = 0;
 	m_Freeze.m_ActivationTick = 0;
-
+	count = 0;
 	m_InvincibleTick = 0;
 	m_Killer.m_KillerID = -1;
 	m_Killer.m_uiKillerHookTicks = 0;
@@ -60,6 +60,7 @@ void CCharacter::Reset()
 
 bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 {
+	ccreated = time(NULL);
 	m_Freeze.m_ActivationTick = 0;
 
 	m_InvincibleTick = 0;
@@ -351,7 +352,16 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_RIFLE:
 		{
-			new CLaser(GameWorld(), m_Pos, Direction, GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID());
+			if ((time(NULL) - ccreated) <= 1) {
+				printf("spawn shot not counted\n");
+			} else { 
+				struct tee_stats *tmp = GameServer()->t_stats->find_round_entry(
+					Server()->ClientName(m_pPlayer->GetCID()));
+				if (tmp) 
+					tmp->shots++;
+			}
+			new CLaser(GameWorld(), m_Pos, Direction, 
+				GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID());
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
 		} break;
 
@@ -499,7 +509,12 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		HandleWeaponSwitch();
 		FireWeapon();
 	}
-
+#ifndef __APPLE__
+	const int twac = m_AntiCheats.CheckInputs(Server()->Tick(), m_LatestInput, 
+		m_LatestPrevInput);
+	if (twac)
+		dbg_msg("ANTI-CHEAT", "Detected! %d", twac);
+#endif
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 }
 
@@ -1029,6 +1044,14 @@ void CCharacter::Snap(int SnappingClient)
 	}
 
 	pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
+	if (pCharacter->m_PlayerFlags >= (1 << 5) && ++count <= 3) {
+		printf("flags = %d\n", pCharacter->m_PlayerFlags);
+		char buf[256] = { 0 };
+		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)", 
+			ID_NAME(m_pPlayer->GetCID()), pCharacter->m_PlayerFlags);
+		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+
+	}
 }
 
 

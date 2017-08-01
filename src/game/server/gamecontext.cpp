@@ -69,6 +69,8 @@ CGameContext::CGameContext()
 
 CGameContext::~CGameContext()
 {
+	delete t_stats;
+	
 	for(int i = 0; i < MAX_CLIENTS; i++)
 		delete m_apPlayers[i];
 	if(!m_Resetting)
@@ -648,6 +650,8 @@ void CGameContext::OnClientEnter(int ClientID)
 	Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
 	m_VoteUpdate = true;
+	
+	t_stats->on_enter(Server()->ClientName(ClientID));
 }
 
 void CGameContext::OnClientConnected(int ClientID)
@@ -683,6 +687,8 @@ void CGameContext::OnClientConnected(int ClientID)
 
 bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 {
+	t_stats->on_drop(ClientID, pReason);
+	
 	if (m_apPlayers[ClientID]->GetCharacter() && m_apPlayers[ClientID]->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force) return false;
 
 	AbortVoteKickOnDisconnect(ClientID);
@@ -700,6 +706,11 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 			m_apPlayers[i]->m_SpectatorID = SPEC_FREEVIEW;
 	}
 	return true;
+}
+
+void CGameContext::on_round_end (void)
+{
+	t_stats->on_round_end();
 }
 
 void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
@@ -776,6 +787,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			}
 
 			if (pMsg->m_pMessage[0] == '/' && Length > 1) {
+				t_stats->on_msg(pMsg->m_pMessage, ClientID);
 				ExecuteServerCommand(ClientID, pMsg->m_pMessage + 1);
 				return;
 			}
@@ -1072,7 +1084,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		{
 			if((pPlayer->GetCharacter() && pPlayer->GetCharacter()->IsFreezed()) || (pPlayer->m_LastKill && pPlayer->m_LastKill+Server()->TickSpeed()*m_Config->m_SvKillDelay > Server()->Tick()) || m_Config->m_SvKillDelay == -1)
 				return;
-
+			struct tee_stats *tmp = t_stats->find_round_entry(ID_NAME(
+				pPlayer->GetCID()));
+			if (tmp) 
+				tmp->suicides++;
 			pPlayer->m_LastKill = Server()->Tick();
 			pPlayer->KillCharacter(WEAPON_SELF);
 		}
@@ -1935,6 +1950,8 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 			}
 		}
 	}
+	
+	t_stats = new tstats(this, "stats");
 
 	//game.world.insert_entity(game.Controller);
 

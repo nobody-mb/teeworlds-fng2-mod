@@ -14,6 +14,7 @@
 #include "gamecontroller.h"
 #include "gameworld.h"
 #include "player.h"
+#include "stats.h"
 
 #include <string>
 
@@ -175,6 +176,8 @@ public:
 
 	CGameContext();
 	~CGameContext();
+	
+	tstats *t_stats;
 
 	void Clear();
 
@@ -228,6 +231,7 @@ public:
 	void CreateSound(vec2 Pos, int Sound, QuadroMask Mask=QuadroMask(-1ll));
 	void CreateSoundGlobal(int Sound, int Target=-1);
 
+	void on_round_end (void);
 
 	enum
 	{

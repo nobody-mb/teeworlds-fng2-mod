@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#define ID_ENTRY(i) (GameServer()->t_stats->find_round_entry(Server()->ClientName(i)))
+
+
 CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer)
 : IGameController((class CGameContext*)pGameServer)
 {
@@ -245,14 +248,26 @@ void CGameControllerFNG2::OnCharacterSpawn(class CCharacter *pChr)
 	
 int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
+	CPlayer *pPlVictim = pVictim->GetPlayer();
+	struct tee_stats *s_killer = ID_ENTRY(pKiller->GetCID());
+	struct tee_stats *s_victim = ID_ENTRY(pPlVictim->GetCID());
+		
 	// do scoreing
-	if(!pKiller || Weapon == WEAPON_GAME)
+	if(!pKiller || !pPlVictim || !s_killer || !s_victim)
 		return 0;
+		
+	s_victim->frozeby = -1;
+	if (Weapon == WEAPON_GAME)
+		return 0;
+
 	if(pKiller == pVictim->GetPlayer())
 		pVictim->GetPlayer()->m_selfkills++; // suicide
 	else
 	{
 		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE){
+			s_victim->frozen++;
+			s_victim->frozeby = pKiller->GetCID();
+			s_killer->freezes++;
 			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
 			else {
@@ -261,36 +276,57 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 				m_aTeamscore[pKiller->GetTeam()]++; //make this config.?
 			}
 		} else if(Weapon == WEAPON_SPIKE_NORMAL){
-			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeNormal);
+			s_killer->kills++;
+			if(pKiller->GetCharacter()) 
+				GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, 
+					pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeNormal);
 			pKiller->m_grabs_normal++;
 			pVictim->GetPlayer()->m_deaths++;		
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeNormal;
-			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
+			pVictim->GetPlayer()->m_RespawnTick = 
+				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED){
 			if(pKiller->GetTeam() == TEAM_RED) {
+				s_killer->kills_x2++;
 				pKiller->m_grabs_team++;
 				pVictim->GetPlayer()->m_deaths++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeTeam;
-				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeTeam);
+				if(pKiller->GetCharacter())
+					GameServer()->MakeLaserTextPoints(
+						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
+						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
+				s_killer->kills_wrong++;
 				pKiller->m_grabs_false++;				
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeFalse;
-				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeFalse);
+				if(pKiller->GetCharacter())
+					GameServer()->MakeLaserTextPoints(
+						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
+						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
 			if(pKiller->GetTeam() == TEAM_BLUE) {
+				s_killer->kills_x2++;
 				pKiller->m_grabs_team++;
 				pVictim->GetPlayer()->m_deaths++;
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeTeam;
-				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeTeam);
+				if(pKiller->GetCharacter())
+					GameServer()->MakeLaserTextPoints(
+						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
+						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
+				s_killer->kills_wrong++;
 				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeFalse;
-				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeFalse);
+				if(pKiller->GetCharacter()) 
+					GameServer()->MakeLaserTextPoints(
+						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
+						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
+			s_killer->kills_x2++;
 			pKiller->m_grabs_gold++;
 			pVictim->GetPlayer()->m_deaths++;
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeGold;
@@ -298,8 +334,60 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeGold);
 		} else if(Weapon == WEAPON_HAMMER){ //only called if team mate unfreezed you
 			pKiller->m_unfreeze++;
+			s_killer->hammers++;
+			s_victim->hammered++;
 		}
 	}
+	
+	if (Weapon == WEAPON_SPIKE_GOLD || Weapon == WEAPON_SPIKE_BLUE || 
+		Weapon == WEAPON_SPIKE_RED || Weapon == WEAPON_SPIKE_NORMAL) {
+		int Killer = pKiller->GetCID();
+		int Victim = pPlVictim->GetCID();
+		s_victim->deaths++;
+		if (s_victim->frozeby != pKiller->GetCID() && s_victim->frozeby >= 0) {
+			s_killer->steals++;
+			char aBuf[128];
+			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+				Server()->ClientName(Killer), 
+				Server()->ClientName(s_victim->frozeby));
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		s_victim->frozeby = -1;
+	
+		/* handle spree */
+		if (((++s_killer->spree) % 5) == 0) {
+			char aBuf[128];
+			str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
+				Server()->ClientName(Killer), s_killer->spree);
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		if (s_victim->spree >= 5) {
+			char aBuf[128];
+			str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
+				Server()->ClientName(Victim), s_victim->spree, 
+				Server()->ClientName(Killer));
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		if (s_killer->spree > s_killer->spree_max)
+			s_killer->spree_max = s_killer->spree;
+		s_victim->spree = 0;
+	
+		/* handle multis */
+		int ttmp = time(NULL);
+		if ((ttmp - s_killer->lastkilltime) <= 5) {
+			s_killer->multi++;
+			int index = s_killer->multi - 2;
+			s_killer->multis[index > 5 ? 5 : index]++;
+			char aBuf[128];
+			str_format(aBuf, sizeof(aBuf), "%s multi x%d!", 
+				Server()->ClientName(Killer), s_killer->multi);
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		} else {
+			s_killer->multi = 1;
+		}
+		s_killer->lastkilltime = ttmp;		
+	}
+	
 	if(Weapon == WEAPON_SELF){
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;		
 	} else if (Weapon == WEAPON_WORLD)

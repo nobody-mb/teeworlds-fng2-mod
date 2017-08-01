@@ -93,6 +93,13 @@ void CPlayer::Tick()
 			m_Latency.m_Accum = 0;
 			m_Latency.m_AccumMin = 1000;
 			m_Latency.m_AccumMax = 0;
+			struct tee_stats *tmp;
+			if ((tmp = GameServer()->t_stats->find_round_entry(ID_NAME(GetCID()))))
+			if (!(++tmp->ping_tick % 16)) {
+				tmp->ping_tick = 0;
+				tmp->avg_ping = (unsigned short)ADD_AVG(
+					m_Latency.m_Avg, tmp->avg_ping, tmp->num_samples);
+			}
 		}
 	}
 
