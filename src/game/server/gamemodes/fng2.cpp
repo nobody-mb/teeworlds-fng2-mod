@@ -341,6 +341,7 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			pKiller->m_unfreeze++;
 			s_killer->hammers++;
 			s_victim->hammered++;
+			s_victim->frozeby = -1;
 		}
 	}
 	
@@ -380,6 +381,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		time_t ttmp = time(NULL);
 		if ((ttmp - s_killer->lastkilltime) <= 5) {
 			s_killer->multi++;
+			if (s_killer->max_multi < s_killer->multi)
+				s_killer->max_multi = s_killer->multi;
 			int index = s_killer->multi - 2;
 			s_killer->multis[index > 5 ? 5 : index]++;
 			char aBuf[128];

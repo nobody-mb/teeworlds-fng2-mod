@@ -218,45 +218,36 @@ void tstats::print_best (const char *msg, int max,
 void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 {
 	char buf[256];
-	int c, d;
-	time_t diff;
+	int c, d, e;
+	time_t diff = time(NULL) - ct->join_time;
 	
-	/* no ones going to play this long */
-	if (ct->join_time > (60 * 60 * 24 * 365))
-		diff = time(NULL) - ct->join_time;
-	else
-		diff = ct->join_time;
-
 	str_format(buf, sizeof(buf), "stats for %s (requested by %s)", 
 		name, Server()->ClientName(req_by));
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
 	d = ct->deaths ? ct->deaths : 1;
 	c = ct->kills + ct->kills_x2 + ct->kills_wrong;	
-	str_format(buf, sizeof(buf), 
-		"- kills: %d (%d x2, %d wrong) | deaths: %d | ratio: %.03f",
-		c, ct->kills_x2, ct->kills_wrong, ct->deaths, (float)c / (float)d);
+	e = ct->shots ? ct->shots : 1; 
+	str_format(buf, sizeof(buf), "- k/d: %d/%d = %.03f | accuracy: %.03f%%", 
+		c, ct->deaths, (float)c / (float)d, 
+		100.0f * ((float)ct->freezes / (float)e));
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 	
-	str_format(buf, sizeof(buf), "- freezes: %d | frozen: %d | bounce shots: %d", 
-		ct->freezes, ct->frozen, ct->bounce_shots);
+	str_format(buf, sizeof(buf), "- avg ping: %d | shots: %d | wallshots: %d", 
+		ct->avg_ping, ct->shots, ct->bounce_shots);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
-				
-	c = ct->shots ? ct->shots : 1; 
-	d = ct->frozen ? ct->frozen : 1;
-	str_format(buf, sizeof(buf),
-		"- avg ping: %d | shots: %d | accuracy: %.03f%%", ct->avg_ping, ct->shots, 
-		ct->freezes, 100.0f * ((float)ct->freezes / (float)c));
+	
+	str_format(buf, sizeof(buf), "- freeze ratio: %d/%d | hammer ratio: %d/%d", 
+		ct->freezes, ct->frozen, ct->hammers, ct->hammered);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 			
 	str_format(buf, sizeof(buf), 
-		"- hammers: %d | hammered: %d | steals: %d | suicides: %d",
+		"- hammer ratio: %d/%d | steals: %d | suicides: %d",
 		ct->hammers, ct->hammered, ct->steals, ct->suicides);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 				
-	str_format(buf, sizeof(buf), "- time: %d:%.02d | max spree: %d | multis (max %d): %d:",
-		diff / 60, diff % 60, ct->spree_max, ct->max_multi, ct->multis[0] + 
-		ct->multis[1] + ct->multis[2] + ct->multis[3] + ct->multis[4] + ct->multis[5]);
+	str_format(buf, sizeof(buf), "- time: %d:%.02d | max spree: %d | max multi: %d:",
+		diff / 60, diff % 60, ct->spree_max, ct->max_multi);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
 /* ranks! */
@@ -279,31 +270,9 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 	} if (ct->multis[5]) {
 		str_format(buf, sizeof(buf), "- ** god kills: %d", ct->multis[5]);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
-	}
-	
-	/*if (ct->is_bot) {
-		str_format(buf, sizeof(buf), "note: a player with this name has triggered the automatic aimbot detector");
-		SendChat(-1, CGameContext::CHAT_ALL, buf);
-	}*/
+	}	
 }
 
-void tstats::send_stats2 (const char *name, int req_by, struct tee_stats *ct)
-{
-	int c = ct->kills + ct->kills_x2 + ct->kills_wrong;	
-	char buf[256];
-	
-	str_format(buf, sizeof(buf), "- team spike kills: %d (%.02f%%)", ct->kills_x2, 
-		((float)ct->kills_x2 / (float)(c ? c : 1)) * 100);
-	SendChat(-1, CGameContext::CHAT_ALL, buf);
-	
-	str_format(buf, sizeof(buf), "- wrong spike kills: %d (%.02f%%)", ct->kills_wrong,
-		((float)ct->kills_wrong / (float)(c ? c : 1)) * 100);
-	SendChat(-1, CGameContext::CHAT_ALL, buf);
-
-	str_format(buf, sizeof(buf), "- suicides (kill button): %d", ct->suicides);
-	SendChat(-1, CGameContext::CHAT_ALL, buf);
-
-}
 struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 {
 	char path[128];
@@ -382,7 +351,7 @@ double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 		sprintf(buf, "%d ping", fstats.avg_ping);
 		
 	int d = fstats.shots ? fstats.shots : 1;
-	return (double)fstats.freezes / (double)d;
+	return 100 * (double)fstats.freezes / (double)d;
 }
 double tstats::get_bounces (struct tee_stats fstats, char *buf)
 {
@@ -574,7 +543,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			SendChat(-1, CGameContext::CHAT_ALL, "stop spamming");
 		} else {
 			print_best("most steals:", 4, &get_steals, 1);
-			print_best("most bounces:", 4, &get_bounces, 1);
+			print_best("most wallshots:", 4, &get_bounces, 1);
 			print_best("best spree:", 4, &get_max_spree, 1);
 			print_best("most hammers:", 4, &get_hammers, 1);		
 			print_best("most kills:", 4, &get_kills, 1);
@@ -582,7 +551,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		last_reqd = (int)time(NULL);
 	} else if (strncmp(message, "/top", 4) == 0) { 
 		print_best("most steals:", 4, &get_steals, 0);
-		print_best("most bounces:", 4, &get_bounces, 0);
+		print_best("most wallshots:", 4, &get_bounces, 0);
 		print_best("best spree:", 4, &get_max_spree, 0);
 		print_best("best k/d:", 4, &get_kd, 0);		
 		print_best("best accuracy:", 4, &get_accuracy, 0);
