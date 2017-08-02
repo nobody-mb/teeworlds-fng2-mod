@@ -179,11 +179,16 @@ void tstats::print_best (const char *msg, int max,
 {
 	double tmp, best = PLACEHOLDER;
 	char buf[256];
+	char buf1[256];
 	
 	SendChat(-1, CGameContext::CHAT_ALL, msg);
 
 	while (max--) {
 		memset(buf, 0, sizeof(buf));
+		memset(buf1, 0, sizeof(buf1));
+		if (msg) {
+			strcat(buf1, msg);
+		}
 		if (all)
 			tmp = print_best_group(buf, total_stats, total_names, 
 				num_totals, callback, best);
@@ -192,11 +197,26 @@ void tstats::print_best (const char *msg, int max,
 				round_index, callback, best);
 		if ((tmp >= best) || (best < PLACEHOLDER && tmp == 0))
 			break;
-		SendChat(-1, CGameContext::CHAT_ALL, buf);
+		if (msg) {
+			strcat(buf1, buf);
+			msg = NULL;
+			SendChat(-1, CGameContext::CHAT_ALL, buf1);
+		} else {
+			if (strlen(buf1) > 200) {
+				SendChat(-1, CGameContext::CHAT_ALL, buf1);
+				memset(buf1, 0, sizeof(buf1));
+			}
+			strcat(buf1, buf);
+			strcat(buf1, ", ");
+
+		}
 		best = tmp;
 		if (best == 0) 
 			break;
 	}
+	
+	SendChat(-1, CGameContext::CHAT_ALL, buf1);
+
 }
 
 void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)

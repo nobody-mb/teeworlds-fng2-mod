@@ -256,7 +256,6 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 	if(!pKiller || !pPlVictim || !s_killer || !s_victim)
 		return 0;
 		
-	s_victim->frozeby = -1;
 	if (Weapon == WEAPON_GAME)
 		return 0;
 
@@ -304,7 +303,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
-			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
+			pVictim->GetPlayer()->m_RespawnTick = 
+				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
 			if(pKiller->GetTeam() == TEAM_BLUE) {
 				s_killer->kills_x2++;
@@ -324,14 +324,19 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
-			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
+			pVictim->GetPlayer()->m_RespawnTick = 
+				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
 			s_killer->kills_x2++;
 			pKiller->m_grabs_gold++;
 			pVictim->GetPlayer()->m_deaths++;
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeGold;
-			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
-			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeGold);
+			pVictim->GetPlayer()->m_RespawnTick =
+				Server()->Tick()+Server()->TickSpeed()*.5f;
+			if(pKiller->GetCharacter())
+				GameServer()->MakeLaserTextPoints(
+					pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
+					m_Config.m_SvPlayerScoreSpikeGold);
 		} else if(Weapon == WEAPON_HAMMER){ //only called if team mate unfreezed you
 			pKiller->m_unfreeze++;
 			s_killer->hammers++;
@@ -352,7 +357,6 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 				Server()->ClientName(s_victim->frozeby));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
-		s_victim->frozeby = -1;
 	
 		/* handle spree */
 		if (((++s_killer->spree) % 5) == 0) {
@@ -373,7 +377,7 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		s_victim->spree = 0;
 	
 		/* handle multis */
-		int ttmp = time(NULL);
+		time_t ttmp = time(NULL);
 		if ((ttmp - s_killer->lastkilltime) <= 5) {
 			s_killer->multi++;
 			int index = s_killer->multi - 2;
@@ -387,6 +391,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		}
 		s_killer->lastkilltime = ttmp;		
 	}
+	
+	s_victim->frozeby = -1;
 	
 	if(Weapon == WEAPON_SELF){
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;		
