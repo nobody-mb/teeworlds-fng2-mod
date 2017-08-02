@@ -1951,7 +1951,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 		}
 	}
 	
-	t_stats = new tstats(this, "stats");
+	t_stats = new tstats(this, "../stats");
 
 	//game.world.insert_entity(game.Controller);
 
@@ -2119,9 +2119,10 @@ const char *CGameContext::NetVersion() { return GAME_NETVERSION; }
 
 
 void CGameContext::SendRoundStats() {
-	char buff[200];
+/*	char buff[200];
 	float bestKD = 0;
 	int bestKDPlayerID = -1;
+
 	for (int i = 0; i < MAX_CLIENTS; ++i) {
 		CPlayer* p = m_apPlayers[i];
 		if (!p || p->GetTeam() == TEAM_SPECTATORS) continue;
@@ -2173,7 +2174,7 @@ void CGameContext::SendRoundStats() {
 			if (!p || p->GetTeam() == TEAM_SPECTATORS) continue;
 			SendChatTarget(i, buff);
 		}
-	}
+	}*/
 }
 
 
