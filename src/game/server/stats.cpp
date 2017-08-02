@@ -194,16 +194,16 @@ void tstats::print_best (const char *msg, int max,
 		if (msg) {
 			strcat(buf1, msg);
 			strcat(buf1, buf);
+			strcat(buf1, ", ");
 			msg = NULL;
-			SendChat(-1, CGameContext::CHAT_ALL, buf1);
 		} else {
 			if (strlen(buf1) > 100) {
 				SendChat(-1, CGameContext::CHAT_ALL, buf1);
 				memset(buf1, 0, sizeof(buf1));
+				strcat(buf1, " - ");
 			}
 			strcat(buf1, buf);
 			strcat(buf1, ", ");
-
 		}
 		best = tmp;
 		if (best == 0) 
