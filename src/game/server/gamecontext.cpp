@@ -1951,7 +1951,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 		}
 	}
 	
-	t_stats = new tstats(this, "../stats");
+	t_stats = new tstats(this, "stats");
 
 	//game.world.insert_entity(game.Controller);
 
