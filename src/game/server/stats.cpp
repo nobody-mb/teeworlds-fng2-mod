@@ -192,7 +192,7 @@ void tstats::print_best (const char *msg, int max,
 		if ((tmp >= best) || (best < PLACEHOLDER && tmp == 0))
 			break;
 		if (msg) {
-			snprintf(buf1, sizeof(buf1), "%s: %s, ", msg, buf);
+			snprintf(buf1, sizeof(buf1), "%s %s, ", msg, buf);
 			msg = NULL;
 		} else {
 			if (strlen(buf1) > 50) {
