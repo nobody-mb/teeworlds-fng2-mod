@@ -135,7 +135,6 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 	double kd = 0, best = 0;
 	char tmp_buf[256] = { 0 };
 	char call_buf[128] = { 0 };
-	const char *fmtstr;
 	
 	for (i = 0; i < num; i++) {
 		if (!names[i][0])
@@ -166,11 +165,9 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 	tmp_buf[strlen(tmp_buf) - 2] = 0;
 
 	if (callback == get_kd || callback == get_accuracy)
-		fmtstr = "%.02f (%s)";
+		sprintf(dst, "%.02f (%s)", best, ((best != 0) ? tmp_buf : "None"));
 	else
-		fmtstr = "%d (%s)";
-		
-	sprintf(dst, fmtstr, best, ((best != 0) ? tmp_buf : "None"));
+		sprintf(dst, "%d (%s)", (int)best, ((best != 0) ? tmp_buf : "None"));
 	
 	return best;
 }
