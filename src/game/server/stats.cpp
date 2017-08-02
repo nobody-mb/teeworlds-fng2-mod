@@ -179,13 +179,12 @@ void tstats::print_best (const char *msg, int max,
 {
 	double tmp, best = PLACEHOLDER;
 	char buf[256];
-	char buf1[256];
+	char buf1[256] = { 0 };
 	
 	SendChat(-1, CGameContext::CHAT_ALL, msg);
 
 	while (max--) {
 		memset(buf, 0, sizeof(buf));
-		memset(buf1, 0, sizeof(buf1));
 		if (all)
 			tmp = print_best_group(buf, total_stats, total_names, 
 				num_totals, callback, best);
