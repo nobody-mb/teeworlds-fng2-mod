@@ -181,8 +181,6 @@ void tstats::print_best (const char *msg, int max,
 	char buf[256];
 	char buf1[256] = { 0 };
 	
-	SendChat(-1, CGameContext::CHAT_ALL, msg);
-
 	while (max--) {
 		memset(buf, 0, sizeof(buf));
 		if (all)
