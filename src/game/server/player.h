@@ -146,6 +146,10 @@ public:
 		int m_TargetY;
 	} m_LatestActivity;
 
+	
+	bool GetBot(int BotType) { switch (BotType) {case 0: return m_SpinBot; case 1: return m_AimBot; default: return false;} }
+	void SetBot(int BotType) { switch (BotType) {case 0: m_SpinBot = true; break; case 1:m_AimBot = true; break;} }
+	
 	// network latency calculations
 	struct
 	{
@@ -170,6 +174,9 @@ private:
 	int m_Team;
 	
 	void CalcScore();
+	//Anti-Bot
+	bool m_SpinBot;
+	bool m_AimBot;
 };
 
 #endif

@@ -75,6 +75,8 @@ public:
 
 	void SetKiller(int pKillerID, unsigned int pHookTicks);
 	time_t ccreated;
+	float m_last_travel_dist;
+	float m_last_tarposlen;
 private:
 	int count;
 	int NetworkClipped(int SnappingClient, float& Distance);
@@ -152,6 +154,12 @@ private:
 	CCharacterCore m_SendCore; // core that we should send
 	CCharacterCore m_ReckoningCore; // the dead reckoning core
 
+	float m_ABSpinLength;
+	vec2 m_ABSpinPos;
+	int m_ABSpinTime;
+	int m_ABNextBanTick;
+	int m_ABAimAcTime;
+ 	int m_ABAimTime;
 };
 
 #endif

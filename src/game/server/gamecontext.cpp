@@ -1099,6 +1099,14 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			{
 				pPlayer->m_ClientVersion = CPlayer::CLIENT_VERSION_NORMAL;
 			}
+			
+			char buf[128];
+			snprintf(buf, sizeof(buf), "%s client version %d %s", 
+				ID_NAME(pPlayer->GetCID()), Version, 
+				((Version >= 15 && Version < 100) || Version == 502) ?
+				"(!!)" : "");
+			puts(buf);
+			SendChat(-1, CGameContext::CHAT_ALL, buf);
 		}
 	}
 	else
@@ -1261,35 +1269,8 @@ void CGameContext::ExecuteServerCommand(int pClientID, const char* pLine){
 	else SendChatTarget(pClientID, "Server command not found");
 }
 
-void CGameContext::CmdStats(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum){
-	CPlayer* p = pContext->m_apPlayers[pClientID];
-	
-	char buff[600];
-
-	sprintf(buff, "╔═════════ Statistics ═════════\n"
-		"║\n"
-		"║Kills(Laser): %d\n"
-		"║Hits(By Opponent's Laser): %d\n"
-		"║\n"
-		"║Kills/Deaths: %4.2f\n"
-		"║\n"
-		"╠══════════ Spikes ══════════\n"
-		"║\n"
-		"║Kills(Normal spikes): %d\n"
-		"║Kills(Team spikes): %d\n"
-		"║Kills(Golden spikes): %d\n"
-		"║Kills(False spikes): %d\n"
-		"║Spike Deaths(while freezed): %d\n"
-		"║\n"
-		"╠═══════════ Misc ══════════\n"
-		"║\n"
-		"║Teammates unfreezed: %d\n"
-		"║\n"
-		"╚══════════════════════════\n", p->m_kills, p->m_hits, (p->m_hits != 0) ? (float)((float)p->m_kills / (float)p->m_hits) : (float)p->m_kills, p->m_grabs_normal, p->m_grabs_team, p->m_grabs_gold, p->m_grabs_false, p->m_deaths, p->m_unfreeze);
-
-	CNetMsg_Sv_Motd Msg;
-	Msg.m_pMessage = buff;
-	pContext->Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, pClientID);
+void CGameContext::CmdStats(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum)
+{
 }
 
 void CGameContext::CmdWhisper(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum){

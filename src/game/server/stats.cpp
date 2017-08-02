@@ -219,7 +219,12 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 {
 	char buf[256];
 	int c, d, e;
-	time_t diff = time(NULL) - ct->join_time;
+	time_t diff;
+	
+	if (ct->join_time > (60 * 60 * 24))
+		diff = time(NULL) - ct->join_time;
+	else
+		diff = ct->join_time;
 	
 	str_format(buf, sizeof(buf), "stats for %s (requested by %s)", 
 		name, Server()->ClientName(req_by));
@@ -228,8 +233,8 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 	d = ct->deaths ? ct->deaths : 1;
 	c = ct->kills + ct->kills_x2 + ct->kills_wrong;	
 	e = ct->shots ? ct->shots : 1; 
-	str_format(buf, sizeof(buf), "- k/d: %d/%d = %.03f | accuracy: %.03f%%", 
-		c, ct->deaths, (float)c / (float)d, 
+	str_format(buf, sizeof(buf), "- k/d: %d/%d = %.03f | steals: %d | accuracy: %.03f%%", 
+		c, ct->deaths, (float)c / (float)d, ct->steals, 
 		100.0f * ((float)ct->freezes / (float)e));
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 	
@@ -237,15 +242,10 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 		ct->avg_ping, ct->shots, ct->bounce_shots);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 	
-	str_format(buf, sizeof(buf), "- freeze ratio: %d/%d | hammer ratio: %d/%d", 
-		ct->freezes, ct->frozen, ct->hammers, ct->hammered);
+	str_format(buf, sizeof(buf), "- freeze ratio: %d/%d | hammer ratio: %d/%d | suicides: %d", 
+		ct->freezes, ct->frozen, ct->hammers, ct->hammered, ct->suicides);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
-			
-	str_format(buf, sizeof(buf), 
-		"- hammer ratio: %d/%d | steals: %d | suicides: %d",
-		ct->hammers, ct->hammered, ct->steals, ct->suicides);
-	SendChat(-1, CGameContext::CHAT_ALL, buf);
-				
+
 	str_format(buf, sizeof(buf), "- time: %d:%.02d | max spree: %d | max multi: %d:",
 		diff / 60, diff % 60, ct->spree_max, ct->max_multi);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
