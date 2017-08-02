@@ -359,6 +359,9 @@ void CCharacter::FireWeapon()
 					Server()->ClientName(m_pPlayer->GetCID()));
 				if (tmp) 
 					tmp->shots++;
+				else
+					printf("couldnt +1 %s\n", 
+						Server()->ClientName(m_pPlayer->GetCID()));
 			}
 			new CLaser(GameWorld(), m_Pos, Direction, 
 				GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID());

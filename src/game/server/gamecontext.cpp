@@ -2040,6 +2040,7 @@ void CGameContext::OnInit(IKernel *pKernel, IMap* pMap, CConfiguration* pConfigF
 			}
 		}
 	}
+	t_stats = new tstats(this, "stats");
 
 #ifdef CONF_DEBUG
 	if(m_Config->m_DbgDummies)
