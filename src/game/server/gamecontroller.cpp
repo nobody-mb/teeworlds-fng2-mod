@@ -36,6 +36,8 @@ IGameController::IGameController(class CGameContext *pGameServer) :
 	m_aNumSpawnPoints[0] = 0;
 	m_aNumSpawnPoints[1] = 0;
 	m_aNumSpawnPoints[2] = 0;
+	
+	t_stats = new tstats(GameServer(), "stats");
 }
 
 IGameController::IGameController(class CGameContext *pGameServer, CConfiguration& pConfig) :
@@ -65,6 +67,8 @@ IGameController::IGameController(class CGameContext *pGameServer, CConfiguration
 	m_aNumSpawnPoints[0] = 0;
 	m_aNumSpawnPoints[1] = 0;
 	m_aNumSpawnPoints[2] = 0;
+	
+	t_stats = new tstats(GameServer(), "stats");
 }
 
 IGameController::~IGameController()
@@ -207,6 +211,7 @@ void IGameController::EndRound()
 {
 	t_stats->on_round_end();
 	delete t_stats;
+	t_stats = NULL;
 	
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
@@ -244,7 +249,8 @@ void IGameController::StartRound()
 {
 	ResetGame();
 	
-	t_stats = new tstats(GameServer(), "stats");
+	if (!t_stats)
+		t_stats = new tstats(GameServer(), "stats");
 
 	m_RoundStartTick = Server()->Tick();
 	m_SuddenDeath = 0;
