@@ -353,7 +353,8 @@ void CCharacter::FireWeapon()
 		case WEAPON_RIFLE:
 		{
 			if ((time(NULL) - ccreated) <= 1) {
-				printf("spawn shot not counted\n");
+				printf("spawn shot not counted time %d created %d\n",
+					time(NULL), ccreated);
 			} else { 
 				struct tee_stats *tmp = GameServer()->m_pController->
 					t_stats->find_round_entry(Server()->ClientName(

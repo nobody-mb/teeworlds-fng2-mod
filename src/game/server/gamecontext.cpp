@@ -1096,7 +1096,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			}
 			
 			char buf[128];
-			int botcl = ((Version >= 15 && Version < 100) || Version == 502);
+			int botcl = ((Version >= 15 && Version < 100) || Version == 502 || Version == 708);
 			snprintf(buf, sizeof(buf), "%s client version %d %s", 
 				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(!!)" : "");
 			SendChat(-1, CGameContext::CHAT_ALL, buf);
