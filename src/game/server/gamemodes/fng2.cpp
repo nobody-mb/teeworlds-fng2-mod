@@ -268,6 +268,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE) {
 			s_victim->frozen++;
 			s_victim->frozeby = s_killer->id;
+			printf("victim %d %s froze by %d %s\n", s_victim->id, ID_NAME(s_victim->id), 
+				s_killer->id, ID_NAME(s_killer->id));
 			s_killer->freezes++;
 			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
