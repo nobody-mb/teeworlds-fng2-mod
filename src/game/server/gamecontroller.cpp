@@ -210,8 +210,8 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 void IGameController::EndRound()
 {
 	t_stats->on_round_end();
-	delete t_stats;
-	t_stats = new tstats(GameServer(), "stats");
+	//delete t_stats;
+	//t_stats = new tstats(GameServer(), "stats");
 	
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
