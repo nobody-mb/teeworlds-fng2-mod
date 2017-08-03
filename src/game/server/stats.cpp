@@ -481,6 +481,15 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 	strcpy(round_names[i], name);
 	
 	update_stats(&round_stats[i], &st);
+	
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		int idt = game_server->m_apPlayers[i]->GetCID();
+		if (game_server->m_apPlayers[i] && !strncmp(name, ID_NAME(idt), strlen(name))) {
+			printf("%s rs[%d] id %d -> %d\n", ID_NAME(idt), i, round_stats[i].id, idt); 
+			round_stats[i].id = idt;
+			break;
+		}
+	}
 					
 	return &round_stats[i];
 }
