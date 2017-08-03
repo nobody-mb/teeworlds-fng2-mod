@@ -5,6 +5,7 @@
 
 #include <base/vmath.h>
 #include <engine/shared/config.h>
+#include "stats.h"
 
 /*
 	Class: Game Controller
@@ -83,6 +84,8 @@ public:
 
 	void DoWarmup(int Seconds);
 	void TogglePause();
+	
+	tstats *t_stats;
 
 	void StartRound();
 	void EndRound();

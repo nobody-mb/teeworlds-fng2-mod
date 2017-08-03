@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define ID_ENTRY(i) (GameServer()->t_stats->find_round_entry(Server()->ClientName(i)))
+#define ID_ENTRY(i) (GameServer()->m_pController->t_stats->find_round_entry(Server()->ClientName(i)))
 
 
 CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer)
@@ -256,16 +256,18 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 	if(!pKiller || !pPlVictim || !s_killer || !s_victim)
 		return 0;
 		
-	if (Weapon == WEAPON_GAME)
+	if (Weapon == WEAPON_GAME) {
+		s_victim->frozeby = -1;
 		return 0;
+	}
 
-	if(pKiller == pVictim->GetPlayer())
+	if(pKiller == pVictim->GetPlayer()) {
 		pVictim->GetPlayer()->m_selfkills++; // suicide
-	else
-	{
-		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE){
+		s_victim->frozeby = -1;
+	} else {
+		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE) {
 			s_victim->frozen++;
-			s_victim->frozeby = pKiller->GetCID();
+			s_victim->frozeby = s_killer->id;
 			s_killer->freezes++;
 			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
@@ -347,15 +349,14 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 	
 	if (Weapon == WEAPON_SPIKE_GOLD || Weapon == WEAPON_SPIKE_BLUE || 
 		Weapon == WEAPON_SPIKE_RED || Weapon == WEAPON_SPIKE_NORMAL) {
-		int Killer = pKiller->GetCID();
+		const char *kname = Server()->ClientName(s_killer->id);
 		int Victim = pPlVictim->GetCID();
 		s_victim->deaths++;
-		if (s_victim->frozeby != pKiller->GetCID() && s_victim->frozeby >= 0) {
+		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
 			s_killer->steals++;
 			char aBuf[128];
 			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
-				Server()->ClientName(Killer), 
-				Server()->ClientName(s_victim->frozeby));
+				kname, Server()->ClientName(s_victim->frozeby));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 	
@@ -363,14 +364,13 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		if (((++s_killer->spree) % 5) == 0) {
 			char aBuf[128];
 			str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
-				Server()->ClientName(Killer), s_killer->spree);
+				kname, s_killer->spree);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		if (s_victim->spree >= 5) {
 			char aBuf[128];
 			str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
-				Server()->ClientName(Victim), s_victim->spree, 
-				Server()->ClientName(Killer));
+				Server()->ClientName(Victim), s_victim->spree, kname);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		if (s_killer->spree > s_killer->spree_max)
@@ -386,21 +386,23 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			int index = s_killer->multi - 2;
 			s_killer->multis[index > 5 ? 5 : index]++;
 			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s multi x%d!", 
-				Server()->ClientName(Killer), s_killer->multi);
+			str_format(aBuf, sizeof(aBuf), "%s multi x%d!", kname, s_killer->multi);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		} else {
 			s_killer->multi = 1;
 		}
-		s_killer->lastkilltime = ttmp;		
+		s_killer->lastkilltime = ttmp;	
+		s_victim->frozeby = -1;	
+	}
+
+	if (Weapon == WEAPON_SELF) {
+		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
+		s_victim->frozeby = -1;		
+	} else if (Weapon == WEAPON_WORLD) {
+		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
+		s_victim->frozeby = -1;
 	}
 	
-	s_victim->frozeby = -1;
-	
-	if(Weapon == WEAPON_SELF){
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;		
-	} else if (Weapon == WEAPON_WORLD)
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
 	return 0;
 }
 

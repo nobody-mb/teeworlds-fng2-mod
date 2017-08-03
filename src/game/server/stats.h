@@ -4,29 +4,27 @@
 #define stats_h
 
 #include <engine/server.h>
-#include "gamecontroller.h"
-#include "gameworld.h"
-#include "player.h"
+#include <time.h>
+#include "gamecontext.h"
 
 #define STATS_DIR "stats"
-
 
 #define ADD_AVG(vnew,avg,nsamp) (((float)((vnew) + (float)((nsamp) * (avg)))) / (++nsamp))
 
 #ifndef TEE_STATS
 #define TEE_STATS
 struct tee_stats {
-		int spree, spree_max, multi, multis[6];
-		int kills, kills_wrong, kills_x2;
-		int lastkilltime, frozeby, deaths, steals, suicides;
-		int shots, freezes, frozen, hammers, hammered, teamhooks;
-		int num_samples;
-		unsigned short avg_ping;
-		unsigned char ping_tick, is_bot;
-		int bounce_shots, tick_count;
-		time_t join_time;
-		int num_games, max_multi;
-	};
+	int spree, spree_max, multi, multis[6];
+	int kills, kills_wrong, kills_x2;
+	int lastkilltime, frozeby, deaths, steals, suicides;
+	int shots, freezes, frozen, hammers, hammered, id;
+	int num_samples;
+	unsigned short avg_ping;
+	unsigned char ping_tick, is_bot;
+	int bounce_shots, tick_count;
+	time_t join_time;
+	int num_games, max_multi;
+};
 #endif
 
 //#define PLAYER_ENTRY(pPlayer) find_round_entry(Server()->ClientName(pPlayer->GetCID()))
@@ -43,6 +41,7 @@ class tstats
 	double print_best_group (char *dst, struct tee_stats *stats, char **names, 
 		int num, double (*callback)(struct tee_stats, char *), double max);
 	struct tee_stats read_statsfile (const char *name, time_t create);
+	
 	static double get_steals (struct tee_stats, char *);
 	static double get_kd (struct tee_stats, char *);
 	static double get_accuracy (struct tee_stats, char *);
@@ -75,13 +74,11 @@ public:
 	void update_stats (struct tee_stats *dst, struct tee_stats *src);
 	struct tee_stats *add_round_entry (struct tee_stats st, const char *name);
 	struct tee_stats *find_round_entry (const char *name);
-	CPlayer *m_apPlayers[MAX_CLIENTS];
 	void on_round_end (void);
 
 	void on_msg (const char *message, int ClientID);
-	void on_enter (const char *name);
+	void on_enter (int ClientID, const char *name);
 	void on_drop (int ClientID, const char *pReason);
-
 };
 
 #endif

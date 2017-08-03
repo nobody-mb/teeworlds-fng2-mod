@@ -78,10 +78,11 @@ tstats::~tstats()
 	printf("**** freed stats object with %d total\n", num_totals);
 }
 
-void tstats::on_enter (const char *name)
+void tstats::on_enter (int ClientID, const char *name)
 {
 	struct tee_stats ts;
 	memset(&ts, 0, sizeof(ts));
+	ts.id = ClientID;
 	ts.join_time = time(NULL);
 	add_round_entry(ts, name);
 }
@@ -304,9 +305,7 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 			}
 		}
 	} else {
-		if (read(src_fd, &ret, sizeof(ret)) != sizeof(ret)) {
-			fprintf(stderr, "didnt read enough data\n");
-		}
+		read(src_fd, &ret, sizeof(ret));
 	}
 	close(src_fd);
 	
@@ -374,6 +373,7 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	for (int i = 0; i < 6; i++)
 		dst->multis[i] += src->multis[i];
 		
+	dst->id = src->id;
 	dst->kills += src->kills;
 	dst->kills_x2 += src->kills_x2;
 	dst->kills_wrong += src->kills_wrong;
@@ -385,7 +385,6 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	dst->frozen += src->frozen;
 	dst->hammers += src->hammers;
 	dst->hammered += src->hammered;
-	dst->teamhooks += src->teamhooks;
 	dst->bounce_shots += src->bounce_shots;
 	if (src->is_bot)
 		dst->is_bot += 1;
@@ -446,8 +445,9 @@ void tstats::on_round_end (void)
 		totals.join_time = time(NULL);
 		if (!game_server->m_apPlayers[i])
 			continue;
-		add_round_entry(totals, ID_NAME(game_server->m_apPlayers[i]->GetCID()));
-		printf("re-added player %s\n", ID_NAME(game_server->m_apPlayers[i]->GetCID()));
+		totals.id = game_server->m_apPlayers[i]->GetCID();
+		add_round_entry(totals, ID_NAME(totals.id));
+		printf("re-added player %d %s\n", totals.id, ID_NAME(totals.id));
 	}
 }
 

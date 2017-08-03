@@ -69,7 +69,7 @@ CGameContext::CGameContext()
 
 CGameContext::~CGameContext()
 {
-	delete t_stats;
+	//delete t_stats;
 	
 	for(int i = 0; i < MAX_CLIENTS; i++)
 		delete m_apPlayers[i];
@@ -651,7 +651,7 @@ void CGameContext::OnClientEnter(int ClientID)
 
 	m_VoteUpdate = true;
 	
-	t_stats->on_enter(Server()->ClientName(ClientID));
+	m_pController->t_stats->on_enter(ClientID, Server()->ClientName(ClientID));
 }
 
 void CGameContext::OnClientConnected(int ClientID)
@@ -687,7 +687,7 @@ void CGameContext::OnClientConnected(int ClientID)
 
 bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 {
-	t_stats->on_drop(ClientID, pReason);
+	m_pController->t_stats->on_drop(ClientID, pReason);
 	
 	if (m_apPlayers[ClientID]->GetCharacter() && m_apPlayers[ClientID]->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force) return false;
 
@@ -706,11 +706,6 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 			m_apPlayers[i]->m_SpectatorID = SPEC_FREEVIEW;
 	}
 	return true;
-}
-
-void CGameContext::on_round_end (void)
-{
-	t_stats->on_round_end();
 }
 
 void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
@@ -787,7 +782,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			}
 
 			if (pMsg->m_pMessage[0] == '/' && Length > 1) {
-				t_stats->on_msg(pMsg->m_pMessage, ClientID);
+				m_pController->t_stats->on_msg(pMsg->m_pMessage, ClientID);
 				ExecuteServerCommand(ClientID, pMsg->m_pMessage + 1);
 				return;
 			}
@@ -1084,8 +1079,8 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		{
 			if((pPlayer->GetCharacter() && pPlayer->GetCharacter()->IsFreezed()) || (pPlayer->m_LastKill && pPlayer->m_LastKill+Server()->TickSpeed()*m_Config->m_SvKillDelay > Server()->Tick()) || m_Config->m_SvKillDelay == -1)
 				return;
-			struct tee_stats *tmp = t_stats->find_round_entry(ID_NAME(
-				pPlayer->GetCID()));
+			struct tee_stats *tmp = m_pController->t_stats->find_round_entry(
+				ID_NAME(pPlayer->GetCID()));
 			if (tmp) 
 				tmp->suicides++;
 			pPlayer->m_LastKill = Server()->Tick();
@@ -1101,12 +1096,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			}
 			
 			char buf[128];
+			int botcl = ((Version >= 15 && Version < 100) || Version == 502);
 			snprintf(buf, sizeof(buf), "%s client version %d %s", 
-				ID_NAME(pPlayer->GetCID()), Version, 
-				((Version >= 15 && Version < 100) || Version == 502) ?
-				"(!!)" : "");
-			puts(buf);
+				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(!!)" : "");
 			SendChat(-1, CGameContext::CHAT_ALL, buf);
+			if (botcl)
+				Server()->Kick(ClientID, "bot client detected!");
 		}
 	}
 	else
@@ -1932,7 +1927,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 		}
 	}
 	
-	t_stats = new tstats(this, "stats");
+	//t_stats = m_pController->t_stats;
 
 	//game.world.insert_entity(game.Controller);
 
@@ -2021,7 +2016,7 @@ void CGameContext::OnInit(IKernel *pKernel, IMap* pMap, CConfiguration* pConfigF
 			}
 		}
 	}
-	t_stats = new tstats(this, "stats");
+	//t_stats = new tstats(this, "stats");
 
 #ifdef CONF_DEBUG
 	if(m_Config->m_DbgDummies)

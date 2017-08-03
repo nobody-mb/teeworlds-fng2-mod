@@ -14,7 +14,6 @@
 #include "gamecontroller.h"
 #include "gameworld.h"
 #include "player.h"
-#include "stats.h"
 
 #include <string>
 
@@ -176,15 +175,13 @@ public:
 
 	CGameContext();
 	~CGameContext();
-	
-	tstats *t_stats;
 
 	void Clear();
 
 	CEventHandler m_Events;
 	CPlayer *m_apPlayers[MAX_CLIENTS];
 
-	IGameController *m_pController;
+	class IGameController *m_pController;
 	CGameWorld m_World;
 
 	// helper functions

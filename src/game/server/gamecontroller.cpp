@@ -205,9 +205,11 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 
 void IGameController::EndRound()
 {
+	t_stats->on_round_end();
+	delete t_stats;
+	
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
-	GameServer()->on_round_end();
 	GameServer()->m_World.m_Paused = true;
 	m_GameOverTick = Server()->Tick();
 	m_SuddenDeath = 0;
@@ -241,6 +243,8 @@ static bool IsSeparator(char c) { return c == ';' || c == ' ' || c == ',' || c =
 void IGameController::StartRound()
 {
 	ResetGame();
+	
+	t_stats = new tstats(GameServer(), "stats");
 
 	m_RoundStartTick = Server()->Tick();
 	m_SuddenDeath = 0;
