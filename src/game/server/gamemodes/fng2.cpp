@@ -355,8 +355,9 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
 			s_killer->steals++;
 			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
-				kname, Server()->ClientName(s_victim->frozeby));
+			str_format(aBuf, sizeof(aBuf), "%s (%d) stole %s's kill! %d %d", 
+				kname, s_killer->id, Server()->ClientName(s_victim->frozeby), 
+					Victim, s_victim->id);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 	
