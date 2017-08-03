@@ -211,7 +211,7 @@ void IGameController::EndRound()
 {
 	t_stats->on_round_end();
 	delete t_stats;
-	t_stats = NULL;
+	t_stats = new tstats(GameServer(), "stats");
 	
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
