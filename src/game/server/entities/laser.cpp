@@ -35,9 +35,9 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	if (o && v) {
 		if (m_Bounces)
 			o->bounce_shots++;
-		v->frozen++;
+		/*v->frozen++;
 		v->frozeby = oid;
-		o->freezes++;
+		o->freezes++;*/
 	}
 
 
