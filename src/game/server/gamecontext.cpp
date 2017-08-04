@@ -1094,11 +1094,16 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			{
 				pPlayer->m_ClientVersion = CPlayer::CLIENT_VERSION_NORMAL;
 			}
-			
+			struct tee_stats *tmp;
+			tmp = m_pController->t_stats->find_round_entry(ID_NAME(pPlayer->GetCID()));
+			if (tmp)
+				tmp->version = Version;
+			else
+				printf("couldnt find stats\n");
 			char buf[128];
 			int botcl = ((Version >= 15 && Version < 100) || Version == 502 || Version == 708);
 			snprintf(buf, sizeof(buf), "%s client version %d %s", 
-				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(!!)" : "");
+				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
 			SendChat(-1, CGameContext::CHAT_ALL, buf);
 			///if (botcl)
 			//	Server()->Kick(ClientID, "bot client detected!");

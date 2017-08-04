@@ -227,8 +227,8 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 	else
 		diff = ct->join_time;
 	
-	str_format(buf, sizeof(buf), "stats for %s (requested by %s)", 
-		name, Server()->ClientName(req_by));
+	str_format(buf, sizeof(buf), "stats for %s (req. by %s) client version %d", 
+		name, Server()->ClientName(req_by), ct->version);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
 	d = ct->deaths ? ct->deaths : 1;
@@ -309,7 +309,7 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 	}
 	close(src_fd);
 	
-	ret.join_time = 0;
+	//ret.join_time = 0;
 
 	return ret;
 }
