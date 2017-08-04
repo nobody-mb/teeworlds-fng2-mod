@@ -23,13 +23,13 @@ tstats::tstats (CGameContext *game_srv, const char *stats_dir)
 {
 	game_server = game_srv;
 	stat_dir = stats_dir;
-	
 	m_pServer = game_srv->Server();
 	
 	memset(round_stats, 0, sizeof(round_stats));
 	memset(round_names, 0, sizeof(round_names));
 	
 	num_totals = 0;
+	round_index = 0;
 	
 	struct dirent *ds;
 	DIR *dp;
@@ -481,16 +481,19 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 	strcpy(round_names[i], name);
 	
 	update_stats(&round_stats[i], &st);
-	
+	/*
 	for (i = 0; i < MAX_CLIENTS; i++) {
+		if (!game_server->m_apPlayers[i])
+			continue;
 		int idt = game_server->m_apPlayers[i]->GetCID();
-		if (game_server->m_apPlayers[i] && !strncmp(name, ID_NAME(idt), strlen(name))) {
-			printf("%s rs[%d] id %d -> %d\n", ID_NAME(idt), i, round_stats[i].id, idt); 
+		if (!strncmp(name, ID_NAME(idt), strlen(name))) {
+			printf("%s rs[%d] id %d -> %d\n", 
+				ID_NAME(idt), i, round_stats[i].id, idt); 
 			round_stats[i].id = idt;
 			break;
 		}
 	}
-					
+	*/			
 	return &round_stats[i];
 }
 

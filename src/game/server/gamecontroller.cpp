@@ -73,6 +73,7 @@ IGameController::IGameController(class CGameContext *pGameServer, CConfiguration
 
 IGameController::~IGameController()
 {
+	delete t_stats;
 }
 
 float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
