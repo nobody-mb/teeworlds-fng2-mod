@@ -35,7 +35,7 @@ class tstats
 {
 	IServer *m_pServer;
 
-	void send_stats (const char *name, int req_by, struct tee_stats *ct);
+	void send_stats (const char *name, int req_by, struct tee_stats *ct, int is_all);
 	void print_best (const char *msg, int max, 
 		double (*callback)(struct tee_stats, char *), int all);
 	double print_best_group (char *dst, struct tee_stats *stats, char **names, 

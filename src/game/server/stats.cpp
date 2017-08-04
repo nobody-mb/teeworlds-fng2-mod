@@ -216,19 +216,14 @@ void tstats::print_best (const char *msg, int max,
 
 }
 
-void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
+void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int is_all)
 {
 	char buf[256];
 	int c, d, e;
-	time_t diff;
+	time_t diff = !is_all ? (time(NULL) - ct->join_time) : ct->join_time;
 	
-	if (ct->join_time > (60 * 60 * 24))
-		diff = time(NULL) - ct->join_time;
-	else
-		diff = ct->join_time;
-	
-	str_format(buf, sizeof(buf), "stats for %s (req. by %s) client version %d", 
-		name, Server()->ClientName(req_by), ct->version);
+	str_format(buf, sizeof(buf), "%s stats for %s (req. by %s) client version: %d", 
+		is_all ? "total" : "round", name, Server()->ClientName(req_by), ct->version);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
 	d = ct->deaths ? ct->deaths : 1;
@@ -243,7 +238,7 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct)
 		ct->avg_ping, ct->shots, ct->bounce_shots);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 	
-	str_format(buf, sizeof(buf), "- freeze ratio: %d/%d | hammer ratio: %d/%d | suicides: %d", 
+	str_format(buf, sizeof(buf), "- freezes: %d/%d | hammers: %d/%d | suicides: %d", 
 		ct->freezes, ct->frozen, ct->hammers, ct->hammered, ct->suicides);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
@@ -515,12 +510,12 @@ void tstats::on_msg (const char *message, int ClientID)
 				SendChatTarget(ClientID, "invalid player");
 				printf("invalid player %s\n", namebuf);
 			} else {
-				send_stats(namebuf, ClientID, &tmp);
+				send_stats(namebuf, ClientID, &tmp, 1);
 			}
 		} else {
 			struct tee_stats tmp;
 			tmp = read_statsfile(ID_NAME(ClientID), 0);
-			send_stats(ID_NAME(ClientID), ClientID, &tmp);
+			send_stats(ID_NAME(ClientID), ClientID, &tmp, 1);
 		}
 	} else if (strncmp(message, "/stats", 6) == 0) {
 		if (strlen(message) > 7) {
@@ -535,13 +530,13 @@ void tstats::on_msg (const char *message, int ClientID)
 				SendChatTarget(ClientID, "invalid player");
 				printf("invalid player %s\n", namebuf);
 			} else {
-				send_stats(namebuf, ClientID, tmp);
+				send_stats(namebuf, ClientID, tmp, 0);
 			}
 		} else {
 			struct tee_stats *tmp;
 			tmp = find_round_entry(ID_NAME(ClientID));
 			if (tmp)
-				send_stats(ID_NAME(ClientID), ClientID, tmp);
+				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
 	} else if (strncmp(message, "/topkills", 9) == 0) {
 		print_best("most kills:", 12, &get_kills, 1);

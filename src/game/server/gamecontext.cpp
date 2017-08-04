@@ -1259,6 +1259,8 @@ void CGameContext::AddServerCommand(const char* pCmd, const char* pDesc, const c
 
 void CGameContext::ExecuteServerCommand(int pClientID, const char* pLine){
 	if(!pLine || !*pLine) return;
+	/* temporary fix to avoid the following error message from using noby stats commands */
+	if (!strncmp(pLine, "/stats", 6) || !strncmp(pLine, "/top", 4)) return;
 	const char* pCmdEnd = pLine;
 	while(*pCmdEnd && !is_whitespace(*pCmdEnd)) ++pCmdEnd;
 	
