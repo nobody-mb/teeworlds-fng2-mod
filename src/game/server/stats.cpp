@@ -97,6 +97,18 @@ void tstats::SendChatTarget(int To, const char *pText)
 	game_server->SendChatTarget(To, pText);
 }
 
+void tstats::on_namechange (int ClientID, const char *name)
+{
+	int i;
+
+	for (i = 0; i < 512; i++)
+		if (ClientID == round_stats[i].id)
+			strncpy(round_names[i], name, 64);
+			
+	if (i == 512)
+		printf("couldnt find id %d\n", ClientID);
+}
+
 void tstats::on_drop (int ClientID, const char *pReason)
 {
 	struct tee_stats *t;
