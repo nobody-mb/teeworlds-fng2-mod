@@ -357,8 +357,8 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	if (!dst || !src)
 		return;
 		
-	//if (!dst->join_time)
-	//	dst->join_time = time(NULL);
+	if (!dst->join_time)
+		dst->join_time = time(NULL);
 	
 	if (src->spree_max > dst->spree_max)
 		dst->spree_max = src->spree_max;

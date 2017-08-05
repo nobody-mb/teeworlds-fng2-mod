@@ -268,8 +268,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE) {
 			s_victim->frozen++;
 			s_victim->frozeby = s_killer->id;
-			printf("victim %d %s froze by %d %s\n", s_victim->id, ID_NAME(s_victim->id), 
-				s_killer->id, ID_NAME(s_killer->id));
+			//printf("victim %d %s froze by %d %s\n", s_victim->id, ID_NAME(s_victim->id), 
+			//	s_killer->id, ID_NAME(s_killer->id));
 			s_killer->freezes++;
 			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
@@ -357,9 +357,8 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
 			s_killer->steals++;
 			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s (%d) stole %s's kill! %d %d", 
-				kname, s_killer->id, Server()->ClientName(s_victim->frozeby), 
-					Victim, s_victim->id);
+			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+				kname, Server()->ClientName(s_victim->frozeby));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 	
