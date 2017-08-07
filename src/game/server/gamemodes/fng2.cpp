@@ -248,29 +248,53 @@ void CGameControllerFNG2::OnCharacterSpawn(class CCharacter *pChr)
 	
 int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
-	CPlayer *pPlVictim = pVictim->GetPlayer();
-	struct tee_stats *s_killer = ID_ENTRY(pKiller->GetCID());
-	struct tee_stats *s_victim = ID_ENTRY(pPlVictim->GetCID());
+	CPlayer *pPlVictim = NULL;
+	struct tee_stats *s_killer = NULL, *s_victim = NULL;
+
+	if (pVictim)
+		pPlVictim = pVictim->GetPlayer();
+	else	
+		printf("couldnt find victim character\n");
 		
-	// do scoreing
-	if(!pKiller || !pPlVictim || !s_killer || !s_victim)
-		return 0;
-		
+	if (pKiller)
+		s_killer = ID_ENTRY(pKiller->GetCID());
+	else
+		printf("couldnt find killer player entry\n");
+	
+	if (pPlVictim)
+		s_victim = ID_ENTRY(pPlVictim->GetCID());
+	else
+		printf("couldnt find victim player entry\n");
+
 	if (Weapon == WEAPON_GAME) {
-		s_victim->frozeby = -1;
+		if (s_victim)
+			s_victim->frozeby = -1;
+		else
+			printf("couldnt find victim\n");
 		return 0;
 	}
 
 	if(pKiller == pVictim->GetPlayer()) {
 		pVictim->GetPlayer()->m_selfkills++; // suicide
-		s_victim->frozeby = -1;
+		if (s_victim)
+			s_victim->frozeby = -1;
+		else
+			printf("couldnt find victim\n");
 	} else {
 		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE) {
-			s_victim->frozen++;
-			s_victim->frozeby = s_killer->id;
+			if (s_victim) {
+				s_victim->frozen++;
+				s_victim->frozeby = s_killer->id;
+			} else {
+				printf("couldnt find victim\n");
+			}
 			//printf("victim %d %s froze by %d %s\n", s_victim->id, ID_NAME(s_victim->id), 
 			//	s_killer->id, ID_NAME(s_killer->id));
-			s_killer->freezes++;
+			if (s_killer) {
+				s_killer->freezes++;
+			} else {
+				printf("couldnt find killer\n");
+			}
 			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
 			else {
@@ -279,7 +303,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 				m_aTeamscore[pKiller->GetTeam()]++; //make this config.?
 			}
 		} else if(Weapon == WEAPON_SPIKE_NORMAL){
-			s_killer->kills++;
+			if (s_killer) {
+				s_killer->kills++;
+			} else {
+				printf("couldnt find killer\n");
+			}
 			if(pKiller->GetCharacter()) 
 				GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, 
 					pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeNormal);
@@ -290,7 +318,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED){
 			if(pKiller->GetTeam() == TEAM_RED) {
-				s_killer->kills_x2++;
+				if (s_killer) {
+					s_killer->kills_x2++;
+				} else {
+					printf("couldnt find killer\n");
+				}
 				pKiller->m_grabs_team++;
 				pVictim->GetPlayer()->m_deaths++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeTeam;
@@ -299,7 +331,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
-				s_killer->kills_wrong++;
+				if (s_killer) {
+					s_killer->kills_wrong++;
+				} else {
+					printf("couldnt find killer\n");
+				}
 				pKiller->m_grabs_false++;				
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeFalse;
 				if(pKiller->GetCharacter())
@@ -311,7 +347,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
 			if(pKiller->GetTeam() == TEAM_BLUE) {
-				s_killer->kills_x2++;
+				if (s_killer) {
+					s_killer->kills_x2++;
+				} else {
+					printf("couldnt find killer\n");
+				}
 				pKiller->m_grabs_team++;
 				pVictim->GetPlayer()->m_deaths++;
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeTeam;
@@ -320,7 +360,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 						pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
-				s_killer->kills_wrong++;
+				if (s_killer) {
+					s_killer->kills_wrong++;
+				} else {
+					printf("couldnt find killer\n");
+				}
 				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeFalse;
 				if(pKiller->GetCharacter()) 
@@ -331,7 +375,11 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
-			s_killer->kills_x2++;
+			if (s_killer) {
+				s_killer->kills_x2++;
+			} else {
+				printf("couldnt find killer\n");
+			}
 			pKiller->m_grabs_gold++;
 			pVictim->GetPlayer()->m_deaths++;
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeGold;
@@ -343,66 +391,82 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 					m_Config.m_SvPlayerScoreSpikeGold);
 		} else if(Weapon == WEAPON_HAMMER){ //only called if team mate unfreezed you
 			pKiller->m_unfreeze++;
-			s_killer->hammers++;
-			s_victim->hammered++;
-			s_victim->frozeby = -1;
+			if (s_killer && s_victim) {
+				s_killer->hammers++;
+				s_victim->hammered++;
+				s_victim->frozeby = -1;
+			} else {
+				printf("couldnt find killer/victim\n");
+			}
 		}
 	}
 	
 	if (Weapon == WEAPON_SPIKE_GOLD || Weapon == WEAPON_SPIKE_BLUE || 
 		Weapon == WEAPON_SPIKE_RED || Weapon == WEAPON_SPIKE_NORMAL) {
-		const char *kname = Server()->ClientName(s_killer->id);
-		int Victim = pPlVictim->GetCID();
-		s_victim->deaths++;
-		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
-			s_killer->steals++;
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
-				kname, Server()->ClientName(s_victim->frozeby));
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
+		if (s_killer && s_victim) {
+			const char *kname = Server()->ClientName(s_killer->id);
+			int Victim = pPlVictim->GetCID();
+			s_victim->deaths++;
+			if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
+				s_killer->steals++;
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+					kname, Server()->ClientName(s_victim->frozeby));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
 	
-		/* handle spree */
-		if (((++s_killer->spree) % 5) == 0) {
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
-				kname, s_killer->spree);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
-		if (s_victim->spree >= 5) {
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
-				Server()->ClientName(Victim), s_victim->spree, kname);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
-		if (s_killer->spree > s_killer->spree_max)
-			s_killer->spree_max = s_killer->spree;
-		s_victim->spree = 0;
+			/* handle spree */
+			if (((++s_killer->spree) % 5) == 0) {
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
+					kname, s_killer->spree);
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
+			if (s_victim->spree >= 5) {
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
+					Server()->ClientName(Victim), s_victim->spree, kname);
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
+			if (s_killer->spree > s_killer->spree_max)
+				s_killer->spree_max = s_killer->spree;
+			s_victim->spree = 0;
 	
-		/* handle multis */
-		time_t ttmp = time(NULL);
-		if ((ttmp - s_killer->lastkilltime) <= 5) {
-			s_killer->multi++;
-			if (s_killer->max_multi < s_killer->multi)
-				s_killer->max_multi = s_killer->multi;
-			int index = s_killer->multi - 2;
-			s_killer->multis[index > 5 ? 5 : index]++;
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s multi x%d!", kname, s_killer->multi);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			/* handle multis */
+			time_t ttmp = time(NULL);
+			if ((ttmp - s_killer->lastkilltime) <= 5) {
+				s_killer->multi++;
+				if (s_killer->max_multi < s_killer->multi)
+					s_killer->max_multi = s_killer->multi;
+				int index = s_killer->multi - 2;
+				s_killer->multis[index > 5 ? 5 : index]++;
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "%s multi x%d!", kname, s_killer->multi);
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			} else {
+				s_killer->multi = 1;
+			}
+			s_killer->lastkilltime = ttmp;	
+			s_victim->frozeby = -1;	
 		} else {
-			s_killer->multi = 1;
+			printf("couldnt find killer/victim\n");
 		}
-		s_killer->lastkilltime = ttmp;	
-		s_victim->frozeby = -1;	
 	}
 
 	if (Weapon == WEAPON_SELF) {
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
-		s_victim->frozeby = -1;		
+		if (s_victim) {
+			s_victim->frozeby = -1;	
+		} else {
+			printf("couldnt find victim\n");
+		}	
 	} else if (Weapon == WEAPON_WORLD) {
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
-		s_victim->frozeby = -1;
+		if (s_victim) {
+			s_victim->frozeby = -1;
+		} else {
+			printf("couldnt find victim\n");
+		}
 	}
 	
 	return 0;
