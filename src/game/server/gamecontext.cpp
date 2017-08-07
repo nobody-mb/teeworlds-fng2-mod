@@ -1080,10 +1080,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		{
 			if((pPlayer->GetCharacter() && pPlayer->GetCharacter()->IsFreezed()) || (pPlayer->m_LastKill && pPlayer->m_LastKill+Server()->TickSpeed()*m_Config->m_SvKillDelay > Server()->Tick()) || m_Config->m_SvKillDelay == -1)
 				return;
-			struct tee_stats *tmp = m_pController->t_stats->find_round_entry(
-				ID_NAME(pPlayer->GetCID()));
-			if (tmp) 
-				tmp->suicides++;
+			//struct tee_stats *tmp = m_pController->t_stats->find_round_entry(
+			//	ID_NAME(pPlayer->GetCID()));
+			//if (tmp) 
+			//	tmp->suicides++;
 			pPlayer->m_LastKill = Server()->Tick();
 			pPlayer->KillCharacter(WEAPON_SELF);
 		}

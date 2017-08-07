@@ -280,6 +280,10 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			s_victim->frozeby = -1;
 		else
 			printf("couldnt find victim\n");
+		if (s_killer)
+			s_killer->suicides++;
+		else
+			printf("couldnt find killer\n");
 	} else {
 		if (Weapon == WEAPON_RIFLE || Weapon == WEAPON_GRENADE) {
 			if (s_victim) {
