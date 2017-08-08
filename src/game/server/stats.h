@@ -70,6 +70,8 @@ public:
 	IServer *Server() const { return m_pServer; }
 	tstats(CGameContext *game_srv, const char *dir);
 	~tstats();
+	
+	struct tee_stats *current[512];
 
 	void update_stats (struct tee_stats *dst, struct tee_stats *src);
 	struct tee_stats *add_round_entry (struct tee_stats st, const char *name);

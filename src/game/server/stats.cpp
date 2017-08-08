@@ -27,7 +27,7 @@ tstats::tstats (CGameContext *game_srv, const char *stats_dir)
 	
 	memset(round_stats, 0, sizeof(round_stats));
 	memset(round_names, 0, sizeof(round_names));
-	
+	memset(current, 0, sizeof(current));
 	num_totals = 0;
 	round_index = 0;
 	
@@ -113,10 +113,11 @@ void tstats::on_drop (int ClientID, const char *pReason)
 {
 	struct tee_stats *t;
 
-	if ((t = find_round_id(ClientID))) {
+	if ((t = current[ClientID])) {
 		t->spree = 0;	/* thanks SP | Someone :D */
 		t->num_games++;
 		t->id = -1;
+		current[ClientID] = NULL;
 	} else {
 		printf("couldnt drop id %d\n", ClientID);
 	}
@@ -500,6 +501,8 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 	strcpy(round_names[i], name);
 	
 	update_stats(&round_stats[i], &st);
+	
+	current[st.id] = &round_stats[i];
 	/*
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		if (!game_server->m_apPlayers[i])
@@ -558,8 +561,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			}
 		} else {
 			struct tee_stats *tmp;
-			tmp = find_round_id(ClientID);
-			if (tmp)
+			if ((tmp = current[ClientID]))
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
 	} else if (strncmp(message, "/topkills", 9) == 0) {

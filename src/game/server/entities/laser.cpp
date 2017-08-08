@@ -28,7 +28,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	
 	if (m_Bounces) {
 		int oid = pOwnerChar->GetPlayer()->GetCID();
-		struct tee_stats *o = GameServer()->m_pController->t_stats->find_round_id(oid);
+		struct tee_stats *o = GameServer()->m_pController->t_stats->current[oid];
 		if (o)
 			o->bounce_shots++;
 		else

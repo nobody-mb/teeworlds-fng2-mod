@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define ID_ENTRY(i) (GameServer()->m_pController->t_stats->find_round_id(i))
+#define ID_ENTRY(i) (GameServer()->m_pController->t_stats->current[i])
 
 
 CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer)
