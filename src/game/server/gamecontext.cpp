@@ -1096,7 +1096,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				pPlayer->m_ClientVersion = CPlayer::CLIENT_VERSION_NORMAL;
 			}
 			struct tee_stats *tmp;
-			tmp = m_pController->t_stats->find_round_entry(ID_NAME(pPlayer->GetCID()));
+			tmp = m_pController->t_stats->find_round_id(pPlayer->GetCID());
 			if (tmp)
 				tmp->version = Version;
 			else

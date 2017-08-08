@@ -74,6 +74,7 @@ public:
 	void update_stats (struct tee_stats *dst, struct tee_stats *src);
 	struct tee_stats *add_round_entry (struct tee_stats st, const char *name);
 	struct tee_stats *find_round_entry (const char *name);
+	struct tee_stats *find_round_id (int ClientID);
 	void on_round_end (void);
 	void on_namechange (int ClientID, const char *name);
 	void on_msg (const char *message, int ClientID);

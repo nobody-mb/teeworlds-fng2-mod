@@ -113,7 +113,7 @@ void tstats::on_drop (int ClientID, const char *pReason)
 {
 	struct tee_stats *t;
 	
-	if ((t = find_round_entry(ID_NAME(ClientID)))) {
+	if ((t = find_round_id(ClientID))) {
 		t->spree = 0;	/* thanks SP | Someone :D */
 		t->num_games++;
 	}
@@ -458,6 +458,15 @@ void tstats::on_round_end (void)
 	}
 }
 
+struct tee_stats *tstats::find_round_id (int ClientID)
+{
+	int i;
+	for (i = 0; i < 512; i++)
+		if (round_stats[i].id == ClientID)
+			return &round_stats[i];
+	return NULL;
+}
+
 struct tee_stats *tstats::find_round_entry (const char *name)
 {
 	int i;
@@ -546,7 +555,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			}
 		} else {
 			struct tee_stats *tmp;
-			tmp = find_round_entry(ID_NAME(ClientID));
+			tmp = find_round_id(ClientID);
 			if (tmp)
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
