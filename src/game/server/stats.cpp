@@ -112,13 +112,16 @@ void tstats::on_namechange (int ClientID, const char *name)
 void tstats::on_drop (int ClientID, const char *pReason)
 {
 	struct tee_stats *t;
-	
+
 	if ((t = find_round_id(ClientID))) {
 		t->spree = 0;	/* thanks SP | Someone :D */
 		t->num_games++;
+		t->id = -1;
+	} else {
+		printf("couldnt drop id %d\n", ClientID);
 	}
 	
-	if (pReason && *pReason) {
+	if (t && pReason && *pReason) {
 		char entry[256] = { 0 };
 		char aIP[16] = { 0 };
 		int fd, len;

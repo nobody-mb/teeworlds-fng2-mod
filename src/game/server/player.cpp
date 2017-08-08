@@ -94,11 +94,14 @@ void CPlayer::Tick()
 			m_Latency.m_AccumMin = 1000;
 			m_Latency.m_AccumMax = 0;
 			struct tee_stats *tmp;
-			if ((tmp = GameServer()->m_pController->t_stats->find_round_id(GetCID())))
-			if (!(++tmp->ping_tick % 16)) {
-				tmp->ping_tick = 0;
-				tmp->avg_ping = (unsigned short)ADD_AVG(
-					m_Latency.m_Avg, tmp->avg_ping, tmp->num_samples);
+			if ((tmp = GameServer()->m_pController->t_stats->find_round_id(GetCID()))){
+				if (!(++tmp->ping_tick % 16)) {
+					tmp->ping_tick = 0;
+					tmp->avg_ping = (unsigned short)ADD_AVG(m_Latency.m_Avg, 
+						tmp->avg_ping, tmp->num_samples);
+				}
+			} else {
+				printf("ERROR couldnt find id %d\n", GetCID());
 			}
 		}
 	}
