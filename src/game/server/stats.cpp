@@ -296,7 +296,7 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 	snprintf(path, sizeof(path), "%s/%s", stat_dir, name);
 	if ((src_fd = open(path, O_RDWR, 0777)) < 0) {
 		if (create) {
-			fprintf(stderr, "creating file\n");
+			fprintf(stderr, "creating file %d / %d totals\n", num_totals, max_totals);
 			if ((src_fd = open(path, O_WRONLY|O_CREAT, 0777)) < 0) {
 				fprintf(stderr, "error creating file %s\n", path);
 				return ret;
@@ -307,7 +307,7 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 			total_stats[num_totals].join_time = 0;//create;
 			total_names[num_totals] = strdup(name);
 			
-			if (++num_totals >= max_totals) {
+			if (++num_totals >= max_totals - 5) {
 				max_totals += 256;
 				total_stats = (struct tee_stats *)realloc(total_stats,
 					max_totals * sizeof(struct tee_stats));
@@ -462,15 +462,6 @@ void tstats::on_round_end (void)
 	}
 }
 
-struct tee_stats *tstats::find_round_id (int ClientID)
-{
-	int i;
-	for (i = 0; i < 512; i++)
-		if (round_stats[i].id == ClientID)
-			return &round_stats[i];
-	return NULL;
-}
-
 struct tee_stats *tstats::find_round_entry (const char *name)
 {
 	int i;
@@ -496,7 +487,7 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 		return NULL;
 	}
 	
-	printf("adding round entry for %s (%d)\n", name, i);
+	printf("adding round entry for %s (%d) id %d\n", name, i, st.id);
 	
 	strcpy(round_names[i], name);
 	
