@@ -248,19 +248,16 @@ void CGameControllerFNG2::OnCharacterSpawn(class CCharacter *pChr)
 	
 int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
-	CPlayer *pPlVictim = NULL;
-	struct tee_stats *s_killer = NULL, *s_victim = NULL;
-
-	if (pVictim)
-		pPlVictim = pVictim->GetPlayer();
-	else	
-		printf("couldnt find victim character\n");
-		
-	if (pKiller)
-		s_killer = ID_ENTRY(pKiller->GetCID());
-	else
-		printf("couldnt find killer player entry\n");
+	if (!pVictim || !pKiller) {
+		printf("victim = %p killer = %p, returning\n", 
+			pVictim, pKiller);
+		return 0;
+	}
 	
+	struct tee_stats *s_victim = NULL;
+	CPlayer *pPlVictim = pVictim->GetPlayer();
+	struct tee_stats *s_killer = ID_ENTRY(pKiller->GetCID());
+
 	if (pPlVictim)
 		s_victim = ID_ENTRY(pPlVictim->GetCID());
 	else

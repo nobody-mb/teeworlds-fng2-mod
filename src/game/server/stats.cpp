@@ -99,14 +99,13 @@ void tstats::SendChatTarget(int To, const char *pText)
 
 void tstats::on_namechange (int ClientID, const char *name)
 {
-	int i;
+	int diff = (int)(current[ClientID] - current[0]);
+	char *ptr = *(round_names + diff);
+	
+	printf("offset %d client id %d name %s\n", diff, ClientID, ptr);
 
-	for (i = 0; i < 512; i++)
-		if (ClientID == round_stats[i].id)
-			strncpy(round_names[i], name, 64);
-			
-	if (i == 512)
-		printf("couldnt find id %d\n", ClientID);
+	if (ptr >= round_names[0])
+		strncpy(ptr, name, 64);
 }
 
 void tstats::on_drop (int ClientID, const char *pReason)
@@ -118,8 +117,6 @@ void tstats::on_drop (int ClientID, const char *pReason)
 		t->num_games++;
 		t->id = -1;
 		current[ClientID] = NULL;
-	} else {
-		printf("couldnt drop id %d\n", ClientID);
 	}
 	
 	if (t && pReason && *pReason) {
@@ -325,6 +322,10 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 	return ret;
 }
 
+double tstats::get_max_multi (struct tee_stats fstats, char *buf)
+{
+	return (double)fstats.max_multi;
+}
 double tstats::get_max_spree (struct tee_stats fstats, char *buf)
 {
 	return (double)fstats.spree_max;
@@ -412,9 +413,10 @@ void tstats::on_round_end (void)
 	struct tee_stats totals;
 	char path[128];
 	
-	print_best("most steals:", 4, &get_steals, 0);
-	print_best("best spree:", 4, &get_max_spree, 0);
-	print_best("best k/d:", 4, &get_kd, 0);
+	print_best("most steals:", 2, &get_steals, 0);
+	print_best("best spree:", 2, &get_max_spree, 0);
+	print_best("best multi:", 2, &get_max_multi, 0);
+	print_best("best k/d:", 3, &get_kd, 0);
 	print_best("best accuracy:", 4, &get_accuracy, 0);
 	
 	for (i = 0; i < round_index; i++) {
@@ -494,19 +496,7 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 	update_stats(&round_stats[i], &st);
 	
 	current[st.id] = &round_stats[i];
-	/*
-	for (i = 0; i < MAX_CLIENTS; i++) {
-		if (!game_server->m_apPlayers[i])
-			continue;
-		int idt = game_server->m_apPlayers[i]->GetCID();
-		if (!strncmp(name, ID_NAME(idt), strlen(name))) {
-			printf("%s rs[%d] id %d -> %d\n", 
-				ID_NAME(idt), i, round_stats[i].id, idt); 
-			round_stats[i].id = idt;
-			break;
-		}
-	}
-	*/			
+			
 	return &round_stats[i];
 }
 
@@ -568,16 +558,18 @@ void tstats::on_msg (const char *message, int ClientID)
 		} else {
 			print_best("most steals:", 4, &get_steals, 1);
 			print_best("most wallshots:", 4, &get_bounces, 1);
+			print_best("best multi:", 2, &get_max_multi, 1);
 			print_best("best spree:", 4, &get_max_spree, 1);
 			print_best("most hammers:", 4, &get_hammers, 1);		
 			print_best("most kills:", 4, &get_kills, 1);
 		}
 		last_reqd = (int)time(NULL);
 	} else if (strncmp(message, "/top", 4) == 0) { 
-		print_best("most steals:", 4, &get_steals, 0);
-		print_best("most wallshots:", 4, &get_bounces, 0);
-		print_best("best spree:", 4, &get_max_spree, 0);
-		print_best("best k/d:", 4, &get_kd, 0);		
+		print_best("most steals:", 2, &get_steals, 0);
+		print_best("most wallshots:", 3, &get_bounces, 0);
+		print_best("best multi:", 2, &get_max_multi, 0);
+		print_best("best spree:", 2, &get_max_spree, 0);
+		print_best("best k/d:", 3, &get_kd, 0);		
 		print_best("best accuracy:", 4, &get_accuracy, 0);
 	} 
 }

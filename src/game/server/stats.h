@@ -46,6 +46,7 @@ class tstats
 	static double get_kd (struct tee_stats, char *);
 	static double get_accuracy (struct tee_stats, char *);
 	static double get_max_spree (struct tee_stats fstats, char *);
+	static double get_max_multi (struct tee_stats fstats, char *);
 	static double get_kills (struct tee_stats fstats, char *);
 	static double get_hammers (struct tee_stats fstats, char *);
 	static double get_bounces (struct tee_stats fstats, char *);
