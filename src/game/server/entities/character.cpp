@@ -585,7 +585,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
   		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
   	}
 	
-	if (Server()->Tick() > m_ABNextBanTick && m_pPlayer->GetBot(1))
+	if (m_pPlayer && Server()->Tick() > m_ABNextBanTick && m_pPlayer->GetBot(1))
 	{
 		struct tee_stats *tmp = GameServer()->m_pController->t_stats->
 			current[m_pPlayer->GetCID()];
@@ -603,7 +603,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		}
 	}
 	// -------------------------------------------------------------------------------------
-	
+/*	
 #ifndef __APPLE__
 	const int twac = m_AntiCheats.CheckInputs(Server()->Tick(), m_LatestInput, 
 		m_LatestPrevInput);
@@ -615,7 +615,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (twac != 2)
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 	}
-#endif
+#endif*/
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 }
 
