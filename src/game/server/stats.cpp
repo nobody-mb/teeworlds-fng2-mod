@@ -385,6 +385,7 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	for (int i = 0; i < 6; i++)
 		dst->multis[i] += src->multis[i];
 		
+	dst->version = src->version;
 	dst->id = src->id;
 	dst->kills += src->kills;
 	dst->kills_x2 += src->kills_x2;
