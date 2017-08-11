@@ -1107,8 +1107,8 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			snprintf(buf, sizeof(buf), "%s client version %d %s", 
 				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
 			SendChat(-1, CGameContext::CHAT_ALL, buf);
-			///if (botcl)
-			//	Server()->Kick(ClientID, "bot client detected!");
+			if (botcl)
+				Server()->Kick(ClientID, "bot client detected!");
 		}
 	}
 	else
