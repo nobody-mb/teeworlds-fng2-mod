@@ -99,13 +99,14 @@ void tstats::SendChatTarget(int To, const char *pText)
 
 void tstats::on_namechange (int ClientID, const char *name)
 {
-	int diff = (int)((long)current[ClientID] - (long)current[0]);
-	char *ptr = round_names[diff / sizeof(void *)];
-	
-	printf("offset %d client id %d name %s\n", diff, ClientID, ptr);
-
-	if (ptr >= round_names[0])
-		strncpy(ptr, name, 64);
+	for (int i = 0; i < 512; i++) {
+		if (round_stats[i].id == ClientID) {
+			printf("client id %d found at %d name %s\n", ClientID, i,
+				round_names[i]);
+			strncpy(round_names[i], name, 64);
+			break;
+		}
+	}
 }
 
 void tstats::on_drop (int ClientID, const char *pReason)
