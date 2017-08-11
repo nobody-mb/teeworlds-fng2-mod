@@ -1102,7 +1102,8 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			else
 				printf("couldnt find stats\n");
 			char buf[128];
-			int botcl = ((Version >= 15 && Version < 100) || Version == 502 || Version == 708);
+			int botcl = ((Version >= 15 && Version < 100) || Version == 502 || 
+				      Version == 602 || Version == 708);
 			snprintf(buf, sizeof(buf), "%s client version %d %s", 
 				ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
 			SendChat(-1, CGameContext::CHAT_ALL, buf);
