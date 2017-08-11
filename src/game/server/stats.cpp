@@ -99,8 +99,8 @@ void tstats::SendChatTarget(int To, const char *pText)
 
 void tstats::on_namechange (int ClientID, const char *name)
 {
-	int diff = (int)(current[ClientID] - current[0]);
-	char *ptr = *(round_names + diff);
+	int diff = (int)((long)current[ClientID] - (long)current[0]);
+	char *ptr = round_names[diff / sizeof(void *)];
 	
 	printf("offset %d client id %d name %s\n", diff, ClientID, ptr);
 
