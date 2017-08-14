@@ -112,7 +112,7 @@ void CCharacter::Destroy()
 
 void CCharacter::force_weapon (void)
 {
-	m_ActiveWeapon = 999;
+	m_ActiveWeapon = -1;
 }
 
 void CCharacter::SetWeapon(int W)
