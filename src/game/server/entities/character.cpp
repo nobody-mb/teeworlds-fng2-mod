@@ -113,7 +113,7 @@ void CCharacter::Destroy()
 void CCharacter::force_weapon (void)
 {
 	m_ActiveWeapon = -1;
-	m_Alive = 0;
+	///m_Alive = 0;
 	//Destroy();
 	GameServer()->SendEmoticon(m_pPlayer->GetCID(), -1);
 
