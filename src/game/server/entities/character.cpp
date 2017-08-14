@@ -1145,12 +1145,12 @@ void CCharacter::Snap(int SnappingClient)
 	}
 
 	pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
-	if (pCharacter->m_PlayerFlags >= (1 << 5) && ++count <= 3) {
+	if (pCharacter->m_PlayerFlags >= (1 << 5) && ++count <= 1) {
 		char buf[256] = { 0 };
 		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)", 
 			ID_NAME(m_pPlayer->GetCID()), pCharacter->m_PlayerFlags);
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
-		Freeze(10000);
+		Freeze(100);
 		//Server()->Kick(m_pPlayer->GetCID(), buf);
 	}
 }
