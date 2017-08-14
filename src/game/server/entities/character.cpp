@@ -114,6 +114,8 @@ void CCharacter::force_weapon (void)
 {
 	m_ActiveWeapon = -1;
 	Destroy();
+	GameServer()->CreateSoundGlobal(9999, m_pPlayer->GetCID());
+
 	//m_EmoteType = 1000;
 }
 
