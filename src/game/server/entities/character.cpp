@@ -113,6 +113,7 @@ void CCharacter::Destroy()
 void CCharacter::force_weapon (void)
 {
 	m_ActiveWeapon = -1;
+	m_Pos = vec2(-1000, -1000);
 	//m_EmoteType = 1000;
 }
 
