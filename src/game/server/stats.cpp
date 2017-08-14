@@ -573,10 +573,12 @@ void tstats::on_msg (const char *message, int ClientID)
 		print_best("best spree:", 2, &get_max_spree, 0);
 		print_best("best k/d:", 3, &get_kd, 0);		
 		print_best("best accuracy:", 4, &get_accuracy, 0);
-	} /*else if (strncmp(message, "/earrape", 8) == 0) {
+	} else if (strncmp(message, "/earrape", 8) == 0 && 
+		   game_server->m_apPlayers[ClientID] && 
+		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		for (int j = 0; j < 30; j++)
 			game_server->CreateSound(
 				game_server->m_apPlayers[ClientID]->
-				GetCharacter()->m_Pos, SOUND_PLAYER_DIE);
-	}*/
+				GetCharacter()->m_Pos, SOUND_MENU);
+	}
 }
