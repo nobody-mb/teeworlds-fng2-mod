@@ -110,6 +110,11 @@ void CCharacter::Destroy()
 	m_Alive = false;
 }
 
+void CCharacter::force_weapon (void)
+{
+	m_ActiveWeapon = 999;
+}
+
 void CCharacter::SetWeapon(int W)
 {
 	if (!IsFreezed()) {

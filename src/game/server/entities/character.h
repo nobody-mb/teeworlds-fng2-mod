@@ -65,7 +65,7 @@ public:
 	bool GiveWeapon(int Weapon, int Ammo);
 	void Freeze(int TimeInSec);
 	void Unfreeze(int pPlayerID);
-
+	void force_weapon (void);
 	void SetEmote(int Emote, int Tick);
 
 	bool IsAlive() const { return m_Alive; }

@@ -584,6 +584,6 @@ void tstats::on_msg (const char *message, int ClientID)
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 			game_server->m_apPlayers[ClientID]->
-				GetCharacter()->GiveWeapon(100, -1);
+				GetCharacter()->force_weapon();
 	}
 }	
