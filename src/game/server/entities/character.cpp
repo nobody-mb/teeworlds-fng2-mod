@@ -1150,7 +1150,7 @@ void CCharacter::Snap(int SnappingClient)
 		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)", 
 			ID_NAME(m_pPlayer->GetCID()), pCharacter->m_PlayerFlags);
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
-		GameServer()->SendFakeTuningParams(m_pPlayer->GetCID());
+		Freeze(10000);
 		//Server()->Kick(m_pPlayer->GetCID(), buf);
 	}
 }
