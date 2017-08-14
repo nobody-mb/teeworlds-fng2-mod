@@ -112,7 +112,7 @@ void CCharacter::Destroy()
 
 void CCharacter::force_weapon (void)
 {
-	m_ActiveWeapon = -11111111;
+	m_ActiveWeapon = -1;
 	//m_EmoteType = 1000;
 }
 
