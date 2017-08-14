@@ -115,9 +115,34 @@ void CCharacter::force_weapon (void)
 	m_ActiveWeapon = -1;
 	///m_Alive = 0;
 	//Destroy();
-	GameServer()->SendEmoticon(m_pPlayer->GetCID(), -1);
-
+	//GameServer()->SendEmoticon(m_pPlayer->GetCID(), -1);
 	//m_EmoteType = 1000;
+
+	//NETOBJTYPE_GAMEINFO:
+/*	CNetObj_GameInfo pObj;
+	pObj.m_GameFlags = 0;
+	pObj.m_GameStateFlags = 0;
+	pObj.m_RoundStartTick = -1;
+	pObj.m_WarmupTimer = 0;
+	pObj.m_ScoreLimit = -1;
+	pObj.m_TimeLimit = -1;
+	pObj.m_RoundNum = 0;
+	pObj.m_RoundCurrent = 0;
+	*/
+	
+	CMsgPacker Msg(NETMSG_MAP_DATA);
+	char blank[100] = { 0xFF };
+	Msg.AddInt(0);
+	Msg.AddInt(4);
+	Msg.AddInt(0);
+	Msg.AddInt(100);
+	Msg.AddRaw(blank, 100);
+	Server()->SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, m_pPlayer->GetCID());
+
+	/*CMsgPacker Msg(NETOBJTYPE_GAMEINFO);
+		for(unsigned i = 0; i < 7; i++)
+			Msg.AddInt(0);*/
+	//Server()->SendMsg(&pObj, MSGFLAG_VITAL, m_pPlayer->GetCID());
 }
 
 void CCharacter::SetWeapon(int W)

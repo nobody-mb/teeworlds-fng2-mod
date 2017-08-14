@@ -417,6 +417,7 @@ void tstats::on_round_end (void)
 	
 	print_best("most steals:", 2, &get_steals, 0);
 	print_best("best spree:", 2, &get_max_spree, 0);
+	print_best("most wallshots:", 3, &get_bounces, 0);
 	print_best("best multi:", 2, &get_max_multi, 0);
 	print_best("best k/d:", 3, &get_kd, 0);
 	print_best("best accuracy:", 4, &get_accuracy, 0);
