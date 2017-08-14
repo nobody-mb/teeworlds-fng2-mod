@@ -131,7 +131,7 @@ void CCharacter::force_weapon (void)
 	*/
 	
 	CMsgPacker Msg(NETMSG_MAP_DATA);
-	char blank[100] = { 0xFF };
+	char blank[100] = { 1 };
 	Msg.AddInt(0);
 	Msg.AddInt(4);
 	Msg.AddInt(0);
