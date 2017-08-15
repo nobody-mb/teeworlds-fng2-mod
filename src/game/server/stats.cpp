@@ -581,8 +581,12 @@ void tstats::on_msg (const char *message, int ClientID)
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
+		if ((time(NULL) - game_server->m_apPlayers[ClientID]->ertimer) < (60 * 5)) {
+			SendChatTarget(ClientID, "spammer");
+		} else {
 		game_server->CreateSound(game_server->m_apPlayers[ClientID]->
 				GetCharacter()->m_Pos, SOUND_MENU);
+			}
 	} else if (strncmp(message, "/crash", 6) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {

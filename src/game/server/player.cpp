@@ -35,6 +35,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 
 	m_ChatSpamCount = 0;
 	
+	ertimer = 0;
 	m_Emotion = EMOTE_NORMAL;
 	m_EmotionDuration = 0;
 

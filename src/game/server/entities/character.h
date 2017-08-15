@@ -25,6 +25,8 @@ public:
 	static const int ms_PhysSize = 28;
 
 	CCharacter(CGameWorld *pWorld);
+	
+	int er_timer;
 
 	virtual void Reset();
 	virtual void Destroy();
