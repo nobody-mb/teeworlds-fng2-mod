@@ -23,7 +23,7 @@ struct tee_stats {
 	unsigned char ping_tick, is_bot;
 	int bounce_shots, tick_count;
 	time_t join_time;
-	int num_games, max_multi, version;
+	int num_games, max_multi, version, stolen_from;
 };
 #endif
 

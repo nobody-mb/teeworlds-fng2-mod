@@ -410,6 +410,7 @@ int CGameControllerFNG2::OnCharacterDeath(class CCharacter *pVictim, class CPlay
 			s_victim->deaths++;
 			if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
 				s_killer->steals++;
+				ID_ENTRY(s_victim->frozeby)->stolen_from++;
 				char aBuf[128];
 				str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
 					kname, Server()->ClientName(s_victim->frozeby));

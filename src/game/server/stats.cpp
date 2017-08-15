@@ -245,10 +245,13 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 	d = ct->deaths ? ct->deaths : 1;
 	c = ct->kills + ct->kills_x2 + ct->kills_wrong;	
 	e = ct->shots ? ct->shots : 1; 
-	str_format(buf, sizeof(buf), "- k/d: %d/%d = %.03f | steals: %d | accuracy: %.03f%%", 
-		c, ct->deaths, (float)c / (float)d, ct->steals, 
-		100.0f * ((float)ct->freezes / (float)e));
+	str_format(buf, sizeof(buf), "- k/d: %d/%d = %.03f | accuracy: %.03f%%", c, 
+		ct->deaths, (float)c / (float)d, 100 * ((float)ct->freezes / (float)e));
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
+	
+	str_format(buf, sizeof(buf), "- net steals: %d - %d = %d", ct->steals, 
+		ct->stolen_from, ct->steals - ct->stolen_from);
+	SendChat(-1, CGameContext::CHAT_ALL, buf);	
 	
 	str_format(buf, sizeof(buf), "- avg ping: %d | shots: %d | wallshots: %d", 
 		ct->avg_ping, ct->shots, ct->bounce_shots);
@@ -340,7 +343,7 @@ double tstats::get_steals (struct tee_stats fstats, char *buf)
 		sprintf(buf, "%.02f%%", 
 			((double)fstats.steals / (double)k) * 100);
 	*/	
-	return (double)fstats.steals;
+	return (double)(fstats.steals - fstats.stolen_from);
 }
 double tstats::get_kd (struct tee_stats fstats, char *buf)
 {
@@ -418,13 +421,12 @@ void tstats::on_round_end (void)
 	char path[128];
 	
 	print_best("most steals:", 2, &get_steals, 0);
-	print_best("most kills:", 3, &get_kills, 0);
-	print_best("most wallshots:", 3, &get_bounces, 0);
-	print_best("best multi:", 1, &get_max_multi, 0);
 	print_best("best spree:", 1, &get_max_spree, 0);
-	print_best("best k/d:", 3, &get_kd, 0);		
+	print_best("best multi:", 1, &get_max_multi, 0);
+	print_best("best k/d:", 2, &get_kd, 0);	
+	print_best("most wallshots:", 2, &get_bounces, 0);
+	print_best("most kills:", 3, &get_kills, 0);
 	print_best("best accuracy:", 4, &get_accuracy, 0);
-	
 	for (i = 0; i < round_index; i++) {
 		if (!round_names[i][0])
 			continue;
@@ -552,9 +554,15 @@ void tstats::on_msg (const char *message, int ClientID)
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
 	} else if (strncmp(message, "/topkills", 9) == 0) {
-		print_best("most kills:", 12, &get_kills, 1);
-	} else if (strncmp(message, "/topsteals", 9) == 0) {
-		print_best("most steals:", 12, &get_steals, 1);
+		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
+	} else if (strncmp(message, "/topsteals", 10) == 0) {
+		print_best("most steals:", 12, &get_steals, (message[10] == 'a'));
+	} else if (strncmp(message, "/topwalls", 9) == 0) {
+		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
+	} else if (strncmp(message, "/topkd", 6) == 0) {
+		print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
+	} else if (strncmp(message, "/topaccuracy", 12) == 0) {
+		print_best("best accuracy:", 12, &get_accuracy, (message[12] == 'a'));
 	} else if (strncmp(message, "/topall", 7) == 0) {
 		char mg[128] = { 0 };
 		snprintf(mg, sizeof(mg), "all-time stats req by %s", ID_NAME(ClientID));
@@ -572,11 +580,11 @@ void tstats::on_msg (const char *message, int ClientID)
 		last_reqd = (int)time(NULL);
 	} else if (strncmp(message, "/top", 4) == 0) { 
 		print_best("most steals:", 2, &get_steals, 0);
-		print_best("most kills:", 3, &get_kills, 0);
-		print_best("most wallshots:", 3, &get_bounces, 0);
-		print_best("best multi:", 1, &get_max_multi, 0);
 		print_best("best spree:", 1, &get_max_spree, 0);
-		print_best("best k/d:", 3, &get_kd, 0);		
+		print_best("best multi:", 1, &get_max_multi, 0);
+		print_best("best k/d:", 2, &get_kd, 0);	
+		print_best("most wallshots:", 2, &get_bounces, 0);
+		print_best("most kills:", 3, &get_kills, 0);
 		print_best("best accuracy:", 4, &get_accuracy, 0);
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
