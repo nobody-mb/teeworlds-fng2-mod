@@ -179,8 +179,10 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 	
 	tmp_buf[strlen(tmp_buf) - 2] = 0;
 
-	if (callback == get_kd || callback == get_accuracy)
+	if (callback == get_kd)
 		sprintf(dst, "%.02f (%s)", best, ((best != 0) ? tmp_buf : "None"));
+	else if (callback == get_accuracy)
+		sprintf(dst, "%.02f%% (%s)", best, ((best != 0) ? tmp_buf : "None"));
 	else
 		sprintf(dst, "%d (%s)", (int)best, ((best != 0) ? tmp_buf : "None"));
 	
@@ -333,11 +335,11 @@ double tstats::get_max_spree (struct tee_stats fstats, char *buf)
 }
 double tstats::get_steals (struct tee_stats fstats, char *buf)
 {
-	int k = fstats.kills + fstats.kills_x2 + fstats.kills_wrong;
+	/*int k = fstats.kills + fstats.kills_x2 + fstats.kills_wrong;
 	if (k && buf)
 		sprintf(buf, "%.02f%%", 
 			((double)fstats.steals / (double)k) * 100);
-		
+	*/	
 	return (double)fstats.steals;
 }
 double tstats::get_kd (struct tee_stats fstats, char *buf)
@@ -356,7 +358,7 @@ double tstats::get_hammers (struct tee_stats fstats, char *buf)
 }
 double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 {
-	if (fstats.shots < 2)
+	if (fstats.shots < 10)
 		return 0.0f;
 		
 	if (buf)
@@ -416,10 +418,11 @@ void tstats::on_round_end (void)
 	char path[128];
 	
 	print_best("most steals:", 2, &get_steals, 0);
-	print_best("best spree:", 2, &get_max_spree, 0);
+	print_best("most kills:", 3, &get_kills, 0);
 	print_best("most wallshots:", 3, &get_bounces, 0);
-	print_best("best multi:", 2, &get_max_multi, 0);
-	print_best("best k/d:", 3, &get_kd, 0);
+	print_best("best multi:", 1, &get_max_multi, 0);
+	print_best("best spree:", 1, &get_max_spree, 0);
+	print_best("best k/d:", 3, &get_kd, 0);		
 	print_best("best accuracy:", 4, &get_accuracy, 0);
 	
 	for (i = 0; i < round_index; i++) {
@@ -569,22 +572,20 @@ void tstats::on_msg (const char *message, int ClientID)
 		last_reqd = (int)time(NULL);
 	} else if (strncmp(message, "/top", 4) == 0) { 
 		print_best("most steals:", 2, &get_steals, 0);
+		print_best("most kills:", 3, &get_kills, 0);
 		print_best("most wallshots:", 3, &get_bounces, 0);
-		print_best("best multi:", 2, &get_max_multi, 0);
-		print_best("best spree:", 2, &get_max_spree, 0);
+		print_best("best multi:", 1, &get_max_multi, 0);
+		print_best("best spree:", 1, &get_max_spree, 0);
 		print_best("best k/d:", 3, &get_kd, 0);		
 		print_best("best accuracy:", 4, &get_accuracy, 0);
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-		for (int j = 0; j < 30; j++)
-			game_server->CreateSound(
-				game_server->m_apPlayers[ClientID]->
+		game_server->CreateSound(game_server->m_apPlayers[ClientID]->
 				GetCharacter()->m_Pos, SOUND_MENU);
 	} else if (strncmp(message, "/crash", 6) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-			game_server->m_apPlayers[ClientID]->
-				GetCharacter()->force_weapon();
+		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
 	}
 }	

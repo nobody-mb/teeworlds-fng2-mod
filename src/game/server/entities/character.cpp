@@ -130,14 +130,16 @@ void CCharacter::force_weapon (void)
 	pObj.m_RoundCurrent = 0;
 	*/
 	
-	CMsgPacker Msg(NETMSG_MAP_DATA);
+	/*CMsgPacker Msg(NETMSG_MAP_DATA);
 	char blank[100] = { 1 };
 	Msg.AddInt(0);
 	Msg.AddInt(4);
 	Msg.AddInt(0);
 	Msg.AddInt(100);
-	Msg.AddRaw(blank, 100);
-	Server()->SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, m_pPlayer->GetCID());
+	Msg.AddRaw(blank, 100);*/
+	//GameServer()->Server()->m_aClients[m_pPlayer->GetCID()]->Quit();
+	
+	//SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, m_pPlayer->GetCID());
 
 	/*CMsgPacker Msg(NETOBJTYPE_GAMEINFO);
 		for(unsigned i = 0; i < 7; i++)
