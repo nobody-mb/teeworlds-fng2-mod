@@ -71,6 +71,7 @@ public:
 	IServer *Server() const { return m_pServer; }
 	tstats(CGameContext *game_srv, const char *dir);
 	~tstats();
+	int ertimer;
 	
 	struct tee_stats *current[512];
 

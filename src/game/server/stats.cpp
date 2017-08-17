@@ -30,6 +30,7 @@ tstats::tstats (CGameContext *game_srv, const char *stats_dir)
 	memset(current, 0, sizeof(current));
 	num_totals = 0;
 	round_index = 0;
+	ertimer = 0;
 	
 	struct dirent *ds;
 	DIR *dp;
@@ -589,15 +590,15 @@ void tstats::on_msg (const char *message, int ClientID)
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-		if ((time(NULL) - game_server->m_apPlayers[ClientID]->ertimer) 
+		if ((time(NULL) - ertimer) 
 		    < (60 * 5)) {
 			SendChatTarget(ClientID, "spammer");
 		} else {
 			for (int c = 0; c < 30; c++)
 				game_server->CreateSound(game_server->m_apPlayers
 					[ClientID]->GetCharacter()->m_Pos, SOUND_MENU);
+			ertimer = time(NULL);
 		}
-		game_server->m_apPlayers[ClientID]->ertimer = time(NULL);
 	} else if (strncmp(message, "/crash", 6) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {

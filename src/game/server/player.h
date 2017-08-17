@@ -19,7 +19,6 @@ public:
 	~CPlayer();
 
 
-	int ertimer;
 	void Init(int CID);
 
 	void TryRespawn();
