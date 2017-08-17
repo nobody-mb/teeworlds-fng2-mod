@@ -70,6 +70,7 @@ protected:
 
 public:
 	const char *m_pGameType;
+	int time_up (int num);
 
 	CConfiguration* GetConfig() { return &m_Config; }
 	
