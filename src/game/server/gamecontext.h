@@ -14,7 +14,7 @@
 #include "gamecontroller.h"
 #include "gameworld.h"
 #include "player.h"
-
+#include <stdio.h>
 #include <string>
 
 #ifndef QUADRO_MASK
