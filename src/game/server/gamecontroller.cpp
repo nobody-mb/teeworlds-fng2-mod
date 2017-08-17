@@ -815,11 +815,5 @@ int IGameController::ClampTeam(int Team)
 
 int IGameController::time_up (int num)
 {
-	CNetObj_GameInfo *pGameInfoObj = (CNetObj_GameInfo *)Server()->SnapNewItem(NETOBJTYPE_GAMEINFO, 0, sizeof(CNetObj_GameInfo));
-	if(!pGameInfoObj)
-		return -1;
-		//m_UnpauseTimer'
-		//m_RoundStartTick
-	// += Server()->Tick() - num;
-	pGameInfoObj->m_TimeLimit += (num*Server()->TickSpeed())*60;
+	m_UnpauseTimer += (num*Server()->TickSpeed())*60;
 }
