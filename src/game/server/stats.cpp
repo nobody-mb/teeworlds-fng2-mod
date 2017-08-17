@@ -603,6 +603,6 @@ void tstats::on_msg (const char *message, int ClientID)
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
 	} else if (strncmp(message, "/timeup", 7) == 0) {
-			game_server->m_pController->time_up(1);
+			game_server->m_pController->time_up(10);
 	}
 }	
