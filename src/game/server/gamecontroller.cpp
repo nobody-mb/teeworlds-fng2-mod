@@ -821,5 +821,5 @@ int IGameController::time_up (int num)
 		//m_UnpauseTimer'
 		//m_RoundStartTick
 	// += Server()->Tick() - num;
-	pGameInfoObj->TimeLimit += (num*Server()->TickSpeed())*60;
+	pGameInfoObj->m_TimeLimit += (num*Server()->TickSpeed())*60;
 }
