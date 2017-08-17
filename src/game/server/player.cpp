@@ -39,7 +39,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_Emotion = EMOTE_NORMAL;
 	m_EmotionDuration = 0;
 
-	m_ClientVersion = eClientVersion::CLIENT_VERSION_NORMAL;
+	m_ClientVersion = CLIENT_VERSION_NORMAL;
 	
 	memset(m_SnappingClients, -1, sizeof(m_SnappingClients));
 	m_SnappingClients[0].id = ClientID;
