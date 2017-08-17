@@ -816,5 +816,5 @@ int IGameController::ClampTeam(int Team)
 int IGameController::time_up (int num)
 {
 	//m_RoundStartTick += Server()->Tick() - num;
-	m_UnpauseTimer += (num*Server()->TickSpeed())/60;
+	m_UnpauseTimer += (num*Server()->TickSpeed())*60;
 }
