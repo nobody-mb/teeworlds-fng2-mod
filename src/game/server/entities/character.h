@@ -6,7 +6,7 @@
 #include <game/server/entity.h>
 #include <game/generated/server_data.h>
 #include <game/generated/protocol.h>
-#include "../other/twac/include/CCharacterAntiCheats.hpp"
+//#include "../other/twac/include/CCharacterAntiCheats.hpp"
 #include <game/gamecore.h>
 #include <time.h>
 enum
@@ -148,9 +148,9 @@ private:
 
 	// the player core for the physics
 	CCharacterCore m_Core;
-#ifndef __APPLE__
-	twac::CCharacter m_AntiCheats;
-#endif
+//#ifndef __APPLE__
+//	twac::CCharacter m_AntiCheats;
+//#endif
 	// info for dead reckoning
 	int m_ReckoningTick; // tick that we are performing dead reckoning From
 	CCharacterCore m_SendCore; // core that we should send

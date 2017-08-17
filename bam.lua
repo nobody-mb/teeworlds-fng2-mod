@@ -1,5 +1,5 @@
 CheckVersion("0.4")
-Import("other/twac/twac.lua")
+--Import("other/twac/twac.lua")
 Import("configure.lua")
 Import("other/sdl/sdl.lua")
 Import("other/freetype/freetype.lua")
@@ -15,7 +15,7 @@ config:Add(OptLibrary("zlib", "zlib.h", false))
 config:Add(mysql.OptFind("mysql", true))
 config:Add(SDL.OptFind("sdl", true))
 config:Add(FreeType.OptFind("freetype", true))
-config:Add(TWAC.OptFind("TWAntiCheats", true))
+--config:Add(TWAC.OptFind("TWAntiCheats", true))
 config:Finalize("config.lua")
 
 -- data compiler
@@ -140,7 +140,7 @@ function Intermediate_Output(settings, input)
 end
 
 function build(settings)
-	config.TWAntiCheats:Apply(settings)
+	--config.TWAntiCheats:Apply(settings)
 	-- apply compiler settings
 	config.compiler:Apply(settings)
 	
