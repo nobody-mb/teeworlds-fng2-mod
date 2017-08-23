@@ -329,6 +329,11 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 	return ret;
 }
 
+
+double tstats::get_wrong (struct tee_stats fstats, char *buf)
+{
+	return (double)fstats.kills_wrong;
+}
 double tstats::get_max_multi (struct tee_stats fstats, char *buf)
 {
 	return (double)fstats.max_multi;
@@ -406,6 +411,7 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	dst->hammers += src->hammers;
 	dst->hammered += src->hammered;
 	dst->bounce_shots += src->bounce_shots;
+	dst->stolen_from += src->stolen_from;
 	if (src->is_bot)
 		dst->is_bot += 1;
 	dst->join_time += (time(NULL) - src->join_time);
@@ -514,14 +520,13 @@ void tstats::on_msg (const char *message, int ClientID)
 	printf("[cmd msg] %s: %s\n", ID_NAME(ClientID), message);
 	
 	if (strncmp(message, "/statsall", 9) == 0) {
+		struct tee_stats tmp;
 		if (strlen(message) > 10) {
 			char namebuf[64] = { 0 };
 			strcpy(namebuf, message + 10);
 			char *ptr = namebuf + strlen(namebuf) - 1;
 			if (*ptr == ' ')
-				*ptr = 0;
-			struct tee_stats tmp;
-			
+				*ptr = 0;			
 			tmp = read_statsfile(namebuf, 0);
 			if (!tmp.shots) {										
 				SendChatTarget(ClientID, "invalid player");
@@ -530,30 +535,29 @@ void tstats::on_msg (const char *message, int ClientID)
 				send_stats(namebuf, ClientID, &tmp, 1);
 			}
 		} else {
-			struct tee_stats tmp;
 			tmp = read_statsfile(ID_NAME(ClientID), 0);
 			send_stats(ID_NAME(ClientID), ClientID, &tmp, 1);
 		}
 	} else if (strncmp(message, "/stats", 6) == 0) {
+		struct tee_stats *tmp;
 		if (strlen(message) > 7) {
 			char namebuf[64] = { 0 };
 			strcpy(namebuf, message + 7);
 			char *ptr = namebuf + strlen(namebuf) - 1;
 			if (*ptr == ' ')
 				*ptr = 0;
-			struct tee_stats *tmp;
-			tmp = find_round_entry(namebuf);
-			if (!tmp) {
+			if (!(tmp = find_round_entry(namebuf))) {
 				SendChatTarget(ClientID, "invalid player");
 				printf("invalid player %s\n", namebuf);
 			} else {
 				send_stats(namebuf, ClientID, tmp, 0);
 			}
 		} else {
-			struct tee_stats *tmp;
 			if ((tmp = current[ClientID]))
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
+	} else if (strncmp(message, "/topwrong", 9) == 0) {
+		print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
 	} else if (strncmp(message, "/topkills", 9) == 0) {
 		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
 	} else if (strncmp(message, "/topsteals", 10) == 0) {
@@ -590,8 +594,7 @@ void tstats::on_msg (const char *message, int ClientID)
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-		if ((time(NULL) - ertimer) 
-		    < (60 * 5)) {
+		if ((time(NULL) - ertimer) < (60 * 10)) {
 			SendChatTarget(ClientID, "spammer");
 		} else {
 			for (int c = 0; c < 30; c++)
@@ -599,11 +602,11 @@ void tstats::on_msg (const char *message, int ClientID)
 					[ClientID]->GetCharacter()->m_Pos, SOUND_MENU);
 			ertimer = time(NULL);
 		}
-	} else if (strncmp(message, "/crash", 6) == 0 && 
-		   game_server->m_apPlayers[ClientID] && 
-		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
-	} else if (strncmp(message, "/timeup", 7) == 0) {
-			game_server->m_pController->time_up(10);
-	}
+	} //else if (strncmp(message, "/crash", 6) == 0 && 
+	//	   game_server->m_apPlayers[ClientID] && 
+	//	   game_server->m_apPlayers[ClientID]->GetCharacter()) {
+	//	game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
+	//} //else if (strncmp(message, "/timeup", 7) == 0) {
+	//		game_server->m_pController->time_up(10);
+	//}
 }	

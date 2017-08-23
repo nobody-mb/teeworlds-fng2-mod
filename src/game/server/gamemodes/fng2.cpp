@@ -377,6 +377,17 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 		int Victim = pPlVictim->GetCID();
 		s_victim->deaths++;
 		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
+/* cause of crashing was the line: `ID_ENTRY(s_victim->frozeby)->stolen_from++` 
+   which would end up trying to dereference a structure starting at NULL when the associated stats data for the player with ID s_victim->frozeby had already been deleted (ie while player is leaving), easy fix with debugger: ```
+(gdb) info registers
+   rax            0x0      [...]
+   rip            0x43745c 0x43745c <CGameControllerFNG2::OnCharacterDeath[...]+1148>		
+(gdb) disas 0x43745c	
+   0x0000000000437444 <+1124>:  mov    0x3c20(%rax),%rax
+   0x000000000043744b <+1131>:  mov    0x6f0(%rax),%rax
+   0x0000000000437452 <+1138>:  mov    0x12048(%rax,%rdx,8),%rax
+   0x000000000043745a <+1146>:  xor    %edx,%edx
+=> 0x000000000043745c <+1148>:  addl   $0x1,0x84(%rax)```*/
 			struct tee_stats *s_owner = ID_ENTRY(s_victim->frozeby);
 			if (s_owner) {
 				s_killer->steals++;

@@ -42,6 +42,7 @@ class tstats
 		int num, double (*callback)(struct tee_stats, char *), double max);
 	struct tee_stats read_statsfile (const char *name, time_t create);
 	
+	static double get_wrong (struct tee_stats, char *);
 	static double get_steals (struct tee_stats, char *);
 	static double get_kd (struct tee_stats, char *);
 	static double get_accuracy (struct tee_stats, char *);
