@@ -329,7 +329,10 @@ struct tee_stats tstats::read_statsfile (const char *name, time_t create)
 	return ret;
 }
 
-
+double tstats::get_ping (struct tee_stats fstats, char *buf)
+{
+	return (double)fstats.avg_ping;
+}
 double tstats::get_wrong (struct tee_stats fstats, char *buf)
 {
 	return (double)fstats.kills_wrong;
@@ -556,6 +559,8 @@ void tstats::on_msg (const char *message, int ClientID)
 			if ((tmp = current[ClientID]))
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
+	} else if (strncmp(message, "/topping", 8) == 0) {
+		print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));
 	} else if (strncmp(message, "/topwrong", 9) == 0) {
 		print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
 	} else if (strncmp(message, "/topkills", 9) == 0) {
