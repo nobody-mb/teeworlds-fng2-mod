@@ -377,12 +377,17 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 		int Victim = pPlVictim->GetCID();
 		s_victim->deaths++;
 		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
-			s_killer->steals++;
-			ID_ENTRY(s_victim->frozeby)->stolen_from++;
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
-				kname, Server()->ClientName(s_victim->frozeby));
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			struct tee_stats *s_owner = ID_ENTRY(s_victim->frozeby);
+			if (s_owner) {
+				s_killer->steals++;
+				s_owner->stolen_from++;
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+					kname, Server()->ClientName(s_victim->frozeby));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			} else {
+				printf("no owner found with id %d\n", s_victim->frozeby);
+			}
 		}
 
 		/* handle spree */
