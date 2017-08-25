@@ -603,8 +603,9 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
  	if ((m_ABSpinTime == 10) && !m_pPlayer->GetBot(0))
 	{
 		m_pPlayer->SetBot(0);
-		str_format(aBuf, sizeof(aBuf), "%s is spinning (%.2f)", 
-			Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
+		str_format(aBuf, sizeof(aBuf), "%s is spinning (%d)", 
+			Server()->ClientName(m_pPlayer->GetCID()), 
+			(int)(m_ABSpinLength + 0.5));
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	}
 	if ((m_ABAimAcTime == 5) && !m_pPlayer->GetBot(1))

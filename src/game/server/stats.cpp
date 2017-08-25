@@ -430,7 +430,7 @@ void tstats::on_round_end (void)
 	struct tee_stats totals;
 	char path[128];
 	
-	print_best("most steals:", 2, &get_steals, 0);
+	print_best("most net steals:", 2, &get_steals, 0);
 	print_best("best spree:", 1, &get_max_spree, 0);
 	print_best("best multi:", 1, &get_max_multi, 0);
 	print_best("best k/d:", 2, &get_kd, 0);	
@@ -566,7 +566,7 @@ void tstats::on_msg (const char *message, int ClientID)
 	} else if (strncmp(message, "/topkills", 9) == 0) {
 		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
 	} else if (strncmp(message, "/topsteals", 10) == 0) {
-		print_best("most steals:", 12, &get_steals, (message[10] == 'a'));
+		print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
 	} else if (strncmp(message, "/topwalls", 9) == 0) {
 		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
 	} else if (strncmp(message, "/topkd", 6) == 0) {
@@ -589,7 +589,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		}
 		last_reqd = (int)time(NULL);
 	} else if (strncmp(message, "/top", 4) == 0) { 
-		print_best("most steals:", 2, &get_steals, 0);
+		print_best("most net steals:", 2, &get_steals, 0);
 		print_best("best spree:", 1, &get_max_spree, 0);
 		print_best("best multi:", 1, &get_max_multi, 0);
 		print_best("best k/d:", 2, &get_kd, 0);	
