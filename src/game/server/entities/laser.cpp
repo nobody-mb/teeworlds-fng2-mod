@@ -26,7 +26,10 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	if(!pHit || !pOwnerChar)
 		return false;
 	
-	if (m_Bounces) {
+	CPlayer *ppHit = pHit->GetPlayer();
+	
+	if (ppHit && m_Bounces && !GameServer()->m_pController->
+			IsFriendlyFire(m_Owner, ppHit->GetCID())) {
 		int oid = pOwnerChar->GetPlayer()->GetCID();
 		struct tee_stats *o = GameServer()->m_pController->t_stats->current[oid];
 		if (o)
