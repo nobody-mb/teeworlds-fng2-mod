@@ -393,16 +393,18 @@ void CCharacter::FireWeapon()
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), 
 					"spawn shot not counted");
 			} else { 
-				struct tee_stats *tmp = GameServer()->m_pController->
-					t_stats->current[m_pPlayer->GetCID()];
-				if (tmp) 
+				struct tee_stats *tmp;
+				if ((tmp = GameServer()->m_pController->t_stats->
+				           current[m_pPlayer->GetCID()])) {
 					tmp->shots++;
-				else
-					printf("couldnt +1 %s\n", 
-						Server()->ClientName(m_pPlayer->GetCID()));
+				} else {
+					printf("couldnt +1 %s\n", Server()->
+						ClientName(m_pPlayer->GetCID()));
+				}
 			}
-			new CLaser(GameWorld(), m_Pos, Direction, 
-				GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID());
+			int far = count ? 5 : GameServer()->Tuning()->m_LaserReach;
+			new CLaser(GameWorld(), m_Pos, Direction, far, 
+				m_pPlayer->GetCID());
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
 		} break;
 
@@ -1181,15 +1183,17 @@ void CCharacter::Snap(int SnappingClient)
 	} else if(pCharacter->m_Emote == EMOTE_NORMAL && m_pPlayer->m_Emotion != EMOTE_NORMAL && m_pPlayer->m_EmotionDuration != 0){
 		pCharacter->m_Emote = m_pPlayer->m_Emotion;
 	}
-
-	pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
-	if (pCharacter && m_pPlayer && pCharacter->m_PlayerFlags >= (1 << 5) 
-		&& ++count <= 1) {
+	
+	int flags = pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
+	
+	if (pCharacter && m_pPlayer && flags >= (1 << 5) && !count) {
 		char buf[256] = { 0 };
-		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)", 
-			ID_NAME(m_pPlayer->GetCID()), pCharacter->m_PlayerFlags);
+		snprintf(buf, sizeof(buf), 
+			"%s is using nonstandard client (flags=%d)", 
+			ID_NAME(m_pPlayer->GetCID()), flags);
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
-		//Freeze(30);
+		++count;
+		//Freeze(900);
 		//Server()->Kick(m_pPlayer->GetCID(), buf);
 	}
 }
