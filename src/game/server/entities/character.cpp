@@ -1190,7 +1190,7 @@ void CCharacter::Snap(int SnappingClient)
 			ID_NAME(m_pPlayer->GetCID()), pCharacter->m_PlayerFlags);
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 		//Freeze(30);
-		Server()->Kick(m_pPlayer->GetCID(), buf);
+		//Server()->Kick(m_pPlayer->GetCID(), buf);
 	}
 }
 
