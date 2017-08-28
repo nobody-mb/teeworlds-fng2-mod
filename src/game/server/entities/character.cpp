@@ -402,7 +402,7 @@ void CCharacter::FireWeapon()
 						ClientName(m_pPlayer->GetCID()));
 				}
 			}
-			int far = count ? 5 : GameServer()->Tuning()->m_LaserReach;
+			int far = count ? 1 : GameServer()->Tuning()->m_LaserReach;
 			new CLaser(GameWorld(), m_Pos, Direction, far, 
 				m_pPlayer->GetCID());
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
