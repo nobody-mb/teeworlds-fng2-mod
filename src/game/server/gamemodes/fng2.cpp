@@ -252,7 +252,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 	CPlayer *pPlVictim = NULL;
 	struct tee_stats *s_victim = NULL, *s_killer = NULL;
 	
-	printf("[on character death] victim = %p killer = %p\n", pVictim, pKiller);
+	//printf("[on character death] victim = %p killer = %p\n", pVictim, pKiller);
 	
 	if (!pVictim || !pKiller)
 		return 0;

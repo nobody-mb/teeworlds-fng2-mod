@@ -599,7 +599,7 @@ void tstats::on_msg (const char *message, int ClientID)
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
-		if ((time(NULL) - ertimer) < (60 * 10)) {
+		if ((time(NULL) - ertimer) < (60 * 100)) {
 			SendChatTarget(ClientID, "spammer");
 		} else {
 			for (int c = 0; c < 30; c++)

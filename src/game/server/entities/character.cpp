@@ -390,8 +390,10 @@ void CCharacter::FireWeapon()
 		case WEAPON_RIFLE:
 		{
 			if ((time(NULL) == ccreated)) {
-				GameServer()->SendChatTarget(m_pPlayer->GetCID(), 
-					"spawn shot not counted");
+				printf("[%s]: spawn shot not counted %d\n",
+					__func__, m_pPlayer->GetCID());
+				//GameServer()->SendChatTarget(m_pPlayer->GetCID(), 
+				//	"spawn shot not counted");
 			} else { 
 				struct tee_stats *tmp;
 				if ((tmp = GameServer()->m_pController->t_stats->
