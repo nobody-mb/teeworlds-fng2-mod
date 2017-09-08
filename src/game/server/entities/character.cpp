@@ -582,7 +582,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 			m_ABSpinPos = TarPos;
 		}
 	} else {
-		if (TarPosLength > 634 && !m_pPlayer->GetBot(1)) {
+		if (TarPosLength > 640 && !m_pPlayer->GetBot(1)) {
 			m_pPlayer->SetBot(1);
 			str_format(aBuf, sizeof(aBuf), 
 				"%s is AimBot(Invaild Mouse Pos len %f dist %f)", 
