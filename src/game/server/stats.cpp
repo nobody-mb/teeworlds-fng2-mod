@@ -402,7 +402,7 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	for (int i = 0; i < 6; i++)
 		dst->multis[i] += src->multis[i];
 		
-	printf("[%s]: kills = %d += %d\n", __func__, src->kills, dst->kills);
+	printf("[%s]: kills = %d += %d\n", __func__, dst->kills, src->kills);
 		
 	dst->version = src->version;
 	dst->id = src->id;
@@ -452,7 +452,8 @@ void tstats::on_round_end (void)
 			    !memcmp(round_names[i], total_names[j], len))
 				break;
 		}
-		printf("search for %s found at %d\n", round_names[i], j);
+		printf("search for %s found at %d (%s)\n", round_names[i], 
+			j, round_names[j]);
 		if (j == num_totals)
 			total_stats[j] = read_statsfile(round_names[i], time(NULL));
 
