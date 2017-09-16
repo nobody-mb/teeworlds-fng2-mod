@@ -386,8 +386,10 @@ double tstats::get_bounces (struct tee_stats fstats, char *buf)
 
 void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 {
-	if (!dst || !src)
+	if (!dst || !src) {
+		printf("[%s]: dst = %p, src = %p\n", __func__, dst, src);
 		return;
+	}
 		
 	if (!dst->join_time)
 		dst->join_time = time(NULL);
@@ -399,6 +401,8 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	
 	for (int i = 0; i < 6; i++)
 		dst->multis[i] += src->multis[i];
+		
+	printf("[%s]: kills = %d += %d\n", __func__, src->kills, dst->kills);
 		
 	dst->version = src->version;
 	dst->id = src->id;
@@ -426,7 +430,7 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 
 void tstats::on_round_end (void)
 {
-	int i, j, src_fd;
+	int i, j, src_fd, len;
 	struct tee_stats totals;
 	char path[128];
 	
@@ -438,12 +442,14 @@ void tstats::on_round_end (void)
 	print_best("most kills:", 3, &get_kills, 0);
 	print_best("best accuracy:", 4, &get_accuracy, 0);
 	for (i = 0; i < round_index; i++) {
-		if (!round_names[i][0])
+		if (!round_names[i][0]) {
+			printf("[%s]: no entry found at %d\n", __func__, i);
 			continue;
-		memset(&totals, 0, sizeof(totals));
+		}
+		len = (int)strlen(round_names[i]);
 		for (j = 0; j < num_totals; j++) {
-			if (!strncmp(round_names[i], total_names[j], 
-			    strlen(round_names[i])))
+			if ((strlen(total_names[j]) == len) && 
+			    !memcmp(round_names[i], total_names[j], len))
 				break;
 		}
 		printf("search for %s found at %d\n", round_names[i], j);
