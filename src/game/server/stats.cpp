@@ -453,7 +453,7 @@ void tstats::on_round_end (void)
 				break;
 		}
 		printf("search for %s found at %d (%s)\n", round_names[i], 
-			j, round_names[j]);
+			j, total_names[j]);
 		if (j == num_totals)
 			total_stats[j] = read_statsfile(round_names[i], time(NULL));
 
