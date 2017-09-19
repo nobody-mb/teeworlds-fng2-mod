@@ -893,6 +893,8 @@ void CServer::UpdateClientRconCommands()
 	}
 }
 
+#include <stdio.h>
+
 void CServer::ProcessClientPacket(CNetChunk *pPacket)
 {
 	int ClientID = pPacket->m_ClientID;
@@ -934,6 +936,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && m_aClients[ClientID].m_State == CClient::STATE_AUTH)
 			{
 				const char *pVersion = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+				printf("client connected w version %s (server %s)\n", pVersion, GameServer()->NetVersion());
 				if(str_comp(pVersion, GameServer()->NetVersion()) != 0)
 				{
 					// wrong version
