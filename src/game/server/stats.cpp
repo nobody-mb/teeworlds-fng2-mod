@@ -566,43 +566,47 @@ void tstats::on_msg (const char *message, int ClientID)
 			if ((tmp = current[ClientID]))
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
-	} else if (strncmp(message, "/topping", 8) == 0) {
-		print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));
-	} else if (strncmp(message, "/topwrong", 9) == 0) {
-		print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
-	} else if (strncmp(message, "/topkills", 9) == 0) {
-		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
-	} else if (strncmp(message, "/topsteals", 10) == 0) {
-		print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
-	} else if (strncmp(message, "/topwalls", 9) == 0) {
-		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
-	} else if (strncmp(message, "/topkd", 6) == 0) {
-		print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
-	} else if (strncmp(message, "/topaccuracy", 12) == 0) {
-		print_best("best accuracy:", 12, &get_accuracy, (message[12] == 'a'));
-	} else if (strncmp(message, "/topall", 7) == 0) {
-		char mg[128] = { 0 };
-		snprintf(mg, sizeof(mg), "all-time stats req by %s", ID_NAME(ClientID));
-		SendChat(-1, CGameContext::CHAT_ALL, mg);
-		if (((int)time(NULL) - last_reqd) < 5) {
-			SendChat(-1, CGameContext::CHAT_ALL, "stop spamming");
-		} else {
-			print_best("most steals:", 4, &get_steals, 1);
-			print_best("most wallshots:", 4, &get_bounces, 1);
-			print_best("best multi:", 2, &get_max_multi, 1);
-			print_best("best spree:", 4, &get_max_spree, 1);
-			print_best("most hammers:", 4, &get_hammers, 1);		
-			print_best("most kills:", 4, &get_kills, 1);
-		}
-		last_reqd = (int)time(NULL);
+
 	} else if (strncmp(message, "/top", 4) == 0) { 
-		print_best("most net steals:", 2, &get_steals, 0);
-		print_best("best spree:", 1, &get_max_spree, 0);
-		print_best("best multi:", 1, &get_max_multi, 0);
-		print_best("best k/d:", 2, &get_kd, 0);	
-		print_best("most wallshots:", 2, &get_bounces, 0);
-		print_best("most kills:", 3, &get_kills, 0);
-		print_best("best accuracy:", 4, &get_accuracy, 0);
+		if (((int)time(NULL) - last_reqd) < 10) {
+			//SendChat(-1, CGameContext::CHAT_ALL, "stop spamming");
+		} else {
+			if (strncmp(message, "/topping", 8) == 0) {
+				print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));
+			} else if (strncmp(message, "/topwrong", 9) == 0) {
+				print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
+			} else if (strncmp(message, "/topkills", 9) == 0) {
+				print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
+			} else if (strncmp(message, "/topsteals", 10) == 0) {
+				print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
+			} else if (strncmp(message, "/topwalls", 9) == 0) {
+				print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
+			} else if (strncmp(message, "/topkd", 6) == 0) {
+				print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
+			} else if (strncmp(message, "/topaccuracy", 12) == 0) {
+				print_best("best accuracy:", 12, &get_accuracy, (message[12] == 'a'));
+			} else if (strncmp(message, "/topall", 7) == 0) {
+				char mg[128] = { 0 };
+				snprintf(mg, sizeof(mg), "all-time stats req by %s",
+						 ID_NAME(ClientID));
+				SendChat(-1, CGameContext::CHAT_ALL, mg);
+				print_best("most steals:", 4, &get_steals, 1);
+				print_best("most wallshots:", 4, &get_bounces, 1);
+				print_best("best multi:", 2, &get_max_multi, 1);
+				print_best("best spree:", 4, &get_max_spree, 1);
+				print_best("most hammers:", 4, &get_hammers, 1);		
+				print_best("most kills:", 4, &get_kills, 1);
+			} else {
+				print_best("most net steals:", 2, &get_steals, 0);
+				print_best("best spree:", 1, &get_max_spree, 0);
+				print_best("best multi:", 1, &get_max_multi, 0);
+				print_best("best k/d:", 2, &get_kd, 0);	
+				print_best("most wallshots:", 2, &get_bounces, 0);
+				print_best("most kills:", 3, &get_kills, 0);
+				print_best("best accuracy:", 4, &get_accuracy, 0);
+			}
+			last_reqd = (int)time(NULL);
+		}
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
