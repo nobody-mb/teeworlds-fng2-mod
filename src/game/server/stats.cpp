@@ -567,8 +567,9 @@ void tstats::on_msg (const char *message, int ClientID)
 				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
 		}
 
-	} else if (strncmp(message, "/top", 4) == 0) { 
+	} else if (strncmp(message, "/top", 3) == 0) { 
 		if (((int)time(NULL) - last_reqd) < 10) {
+			printf("%d trying to spam\n", ClientID);
 			//SendChat(-1, CGameContext::CHAT_ALL, "stop spamming");
 		} else {
 			if (strncmp(message, "/topping", 8) == 0) {
