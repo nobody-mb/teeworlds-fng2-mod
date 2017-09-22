@@ -74,7 +74,8 @@ void CPlayer::Tick()
 	CalcScore();
 	if (GetCharacter() && GetCharacter()->count == 1) {
 		Server()->Kick(GetCID(), "bot client detected!");
-		GetCharacter()->count = 2;
+		return;
+		//GetCharacter()->count = 2;
 	}
 
 	Server()->SetClientScore(m_ClientID, m_Score);
