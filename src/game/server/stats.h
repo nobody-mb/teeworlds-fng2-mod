@@ -59,6 +59,7 @@ class tstats
 	int max_totals;
 	
 	int last_reqd;
+	int last_reqds;
 	
 	struct tee_stats round_stats[512];
 	char *round_names[512];

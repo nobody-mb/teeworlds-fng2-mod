@@ -530,48 +530,63 @@ void tstats::on_msg (const char *message, int ClientID)
 	printf("[cmd msg] %s: %s\n", ID_NAME(ClientID), message);
 	
 	if (strncmp(message, "/statsall", 9) == 0) {
-		struct tee_stats tmp;
-		if (strlen(message) > 10) {
-			char namebuf[64] = { 0 };
-			strcpy(namebuf, message + 10);
-			char *ptr = namebuf + strlen(namebuf) - 1;
-			if (*ptr == ' ')
-				*ptr = 0;			
-			tmp = read_statsfile(namebuf, 0);
-			if (!tmp.shots) {										
-				SendChatTarget(ClientID, "invalid player");
-				printf("invalid player %s\n", namebuf);
-			} else {
-				send_stats(namebuf, ClientID, &tmp, 1);
-			}
+		int tl = (int)time(NULL) - last_reqds;
+		if (tl < 5) { 
+			char buf[64] = { 0 };
+			snprintf(buf, sizeof(buf), "please wait %d seconds", 5 - tl);
+			SendChatTarget(ClientID, buf);
 		} else {
-			tmp = read_statsfile(ID_NAME(ClientID), 0);
-			send_stats(ID_NAME(ClientID), ClientID, &tmp, 1);
+			struct tee_stats tmp;
+			if (strlen(message) > 10) {
+				char namebuf[64] = { 0 };
+				strcpy(namebuf, message + 10);
+				char *ptr = namebuf + strlen(namebuf) - 1;
+				if (*ptr == ' ')
+					*ptr = 0;			
+				tmp = read_statsfile(namebuf, 0);
+				if (!tmp.shots) {										
+					SendChatTarget(ClientID, "invalid player");
+					printf("invalid player %s\n", namebuf);
+				} else {
+					send_stats(namebuf, ClientID, &tmp, 1);
+				}
+			} else {
+				tmp = read_statsfile(ID_NAME(ClientID), 0);
+				send_stats(ID_NAME(ClientID), ClientID, &tmp, 1);
+			}
+			last_reqds = (int)time(NULL);
 		}
 	} else if (strncmp(message, "/stats", 6) == 0) {
-		struct tee_stats *tmp;
-		if (strlen(message) > 7) {
-			char namebuf[64] = { 0 };
-			strcpy(namebuf, message + 7);
-			char *ptr = namebuf + strlen(namebuf) - 1;
-			if (*ptr == ' ')
-				*ptr = 0;
-			if (!(tmp = find_round_entry(namebuf))) {
-				SendChatTarget(ClientID, "invalid player");
-				printf("invalid player %s\n", namebuf);
-			} else {
-				send_stats(namebuf, ClientID, tmp, 0);
-			}
+		int tl = (int)time(NULL) - last_reqds;
+		if (tl < 5) { 
+			char buf[64] = { 0 };
+			snprintf(buf, sizeof(buf), "please wait %d seconds", 5 - tl);
+			SendChatTarget(ClientID, buf);
 		} else {
-			if ((tmp = current[ClientID]))
-				send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
+			struct tee_stats *tmp;
+			if (strlen(message) > 7) {
+				char namebuf[64] = { 0 };
+				strcpy(namebuf, message + 7);
+				char *ptr = namebuf + strlen(namebuf) - 1;
+				if (*ptr == ' ')
+					*ptr = 0;
+				if (!(tmp = find_round_entry(namebuf))) {
+					SendChatTarget(ClientID, "invalid player");
+					printf("invalid player %s\n", namebuf);
+				} else {
+					send_stats(namebuf, ClientID, tmp, 0);
+				}
+			} else {
+				if ((tmp = current[ClientID]))
+					send_stats(ID_NAME(ClientID), ClientID, tmp, 0);
+			}
+			last_reqds = (int)time(NULL);
 		}
-
 	} else if (strncmp(message, "/top", 3) == 0) { 
 		int tl = (int)time(NULL) - last_reqd;
 		if (tl < 10) {
 			char buf[64] = { 0 };
-			snprintf(buf, sizeof(buf), "please wait %d seconds", tl);
+			snprintf(buf, sizeof(buf), "please wait %d seconds", 10 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
 			if (strncmp(message, "/topping", 8) == 0) {
