@@ -527,8 +527,14 @@ void CGameContext::OnTick()
 	{
 		if(m_apPlayers[i])
 		{
-			m_apPlayers[i]->Tick();
-			m_apPlayers[i]->PostTick();
+			if (m_apPlayers[i]->GetCharacter() &&
+			    m_apPlayers[i]->GetCharacter()->count == 1) {
+				Server()->Kick(m_apPlayers[i]->GetCID(), 
+					       "bot client detected!");
+			} else {
+				m_apPlayers[i]->Tick();
+				m_apPlayers[i]->PostTick();
+			}
 		}
 	}
 
