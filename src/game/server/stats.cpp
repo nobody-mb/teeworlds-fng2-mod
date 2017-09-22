@@ -568,9 +568,11 @@ void tstats::on_msg (const char *message, int ClientID)
 		}
 
 	} else if (strncmp(message, "/top", 3) == 0) { 
-		if (((int)time(NULL) - last_reqd) < 10) {
-			printf("%d trying to spam\n", ClientID);
-			//SendChat(-1, CGameContext::CHAT_ALL, "stop spamming");
+		int tl = (int)time(NULL) - last_reqd;
+		if (tl < 10) {
+			char buf[64] = { 0 };
+			snprintf(buf, sizeof(buf), "please wait %d seconds", tl);
+			SendChatTarget(ClientID, buf);
 		} else {
 			if (strncmp(message, "/topping", 8) == 0) {
 				print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));

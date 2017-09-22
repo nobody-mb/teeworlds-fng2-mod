@@ -1264,8 +1264,7 @@ void CGameContext::AddServerCommand(const char* pCmd, const char* pDesc, const c
 
 void CGameContext::ExecuteServerCommand(int pClientID, const char* pLine){
 	if(!pLine || !*pLine) return;
-	/* temporary fix to avoid the following error message from using noby stats commands */
-	if (!memcmp(pLine, "/stats", 5) || !memcmp(pLine, "/top", 3)) return;
+
 	const char* pCmdEnd = pLine;
 	while(*pCmdEnd && !is_whitespace(*pCmdEnd)) ++pCmdEnd;
 	
@@ -1273,7 +1272,7 @@ void CGameContext::ExecuteServerCommand(int pClientID, const char* pLine){
 	
 	sServerCommand* pCmd = FindCommand(pLine);
 	if(pCmd) pCmd->ExecuteCommand(this, pClientID, pArgs);
-	else SendChatTarget(pClientID, "Server command not found");
+	//else SendChatTarget(pClientID, "Server command not found");
 }
 
 void CGameContext::CmdStats(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum)
