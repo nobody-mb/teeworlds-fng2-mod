@@ -72,6 +72,10 @@ void CPlayer::Tick()
 
 	//calculate the current score based on all fng stats
 	CalcScore();
+	if (GetCharacter()->count == 1) {
+		Server()->Kick(GetCID(), "bot client detected!");
+		GetCharacter()->count = 2;
+	}
 
 	Server()->SetClientScore(m_ClientID, m_Score);
 

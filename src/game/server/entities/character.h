@@ -79,8 +79,9 @@ public:
 	time_t ccreated;
 	float m_last_travel_dist;
 	float m_last_tarposlen;
-private:
 	int count;
+private:
+	//int count;
 	int NetworkClipped(int SnappingClient, float& Distance);
 	int NetworkClipped(int SnappingClient, float& Distance, vec2 CheckPos);
 

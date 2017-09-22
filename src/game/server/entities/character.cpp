@@ -1195,8 +1195,7 @@ void CCharacter::Snap(int SnappingClient)
 		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)",
 			ID_NAME(cid), flags);
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
-		++count;
-		Server()->Kick(m_pPlayer->GetCID(), "bot client detected!");
+		count = 1;
 	}
 }
 
