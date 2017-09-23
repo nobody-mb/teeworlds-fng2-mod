@@ -479,13 +479,20 @@ void tstats::on_round_end (void)
 	printf("round ended !\n");
 	
 	for (i = 0; i < MAX_CLIENTS; i++) {
-		memset(&totals, 0, sizeof(totals));
-		totals.join_time = time(NULL);
+		int version, id;
 		if (!game_server->m_apPlayers[i])
 			continue;
-		totals.id = game_server->m_apPlayers[i]->GetCID();
-		add_round_entry(totals, ID_NAME(totals.id));
-		printf("re-added player %d %s\n", totals.id, ID_NAME(totals.id));
+		id = game_server->m_apPlayers[i]->GetCID();
+		
+		memset(&totals, 0, sizeof(totals));
+		totals = read_statsfile(ID_NAME(id), 0);
+		version = totals.version;
+		memset(&totals, 0, sizeof(totals));
+		totals.join_time = time(NULL);
+		totals.id = id;
+		totals.version = version;
+		add_round_entry(totals, ID_NAME(id));
+		printf("re-added player %d %s v %d\n", id, ID_NAME(id), version);
 	}
 }
 
