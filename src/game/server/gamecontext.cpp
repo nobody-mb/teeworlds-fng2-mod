@@ -25,7 +25,6 @@
 
 struct CMute CGameContext::m_aMutes[MAX_MUTES];
 
-
 enum
 {
 	RESET,
@@ -48,10 +47,12 @@ void CGameContext::Construct(int Resetting)
 	m_LockTeams = 0;
 	m_FirstServerCommand = 0;
 
-	if(Resetting==NO_RESET)
+	if(Resetting==NO_RESET) 
+	{
 		m_pVoteOptionHeap = new CHeap();
 		for(int z = 0; z < MAX_MUTES; ++z)
 			m_aMutes[z].m_IP[0] = 0;
+	}
 }
 
 CGameContext::CGameContext(int Resetting)
@@ -621,13 +622,13 @@ void CGameContext::OnTick()
 			}
 		}
 	}
-		if(Server()->Tick() % (g_Config.m_SvAnnouncementInterval * Server()->TickSpeed()) == 0)
+	
+	if(Server()->Tick() % (g_Config.m_SvAnnouncementInterval * Server()->TickSpeed()) == 0)
 	{
 		const char *Line = Server()->GetAnnouncementLine(g_Config.m_SvAnnouncementFileName);
 		if(Line)
 			SendChat(-1, CGameContext::CHAT_ALL, Line);
 	}
-
 
 #ifdef CONF_DEBUG
 	if(m_Config->m_DbgDummies)
@@ -782,6 +783,23 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			// drop empty and autocreated spam messages (more than 16 characters per second)
 			if(Length == 0 || (m_Config->m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed()*((15+Length)/16) > Server()->Tick()))
 				return;
+
+		char aIP[16];
+		int MuteTicks = 0;
+
+		Server()->GetClientAddr(ClientID, aIP, sizeof aIP);
+
+		for(int z = 0; z < MAX_MUTES && MuteTicks <= 0; ++z) //find a mute, remove it, if expired.
+			if (m_aMutes[z].m_IP[0] && str_comp(aIP, m_aMutes[z].m_IP) == 0 && (MuteTicks = m_aMutes[z].m_Expire - Server()->Tick()) <= 0)
+					m_aMutes[z].m_IP[0] = 0;
+
+		if (MuteTicks > 0)
+		{
+			char aBuf[128];
+			str_format(aBuf, sizeof aBuf, "You are not permitted to talk for the next %d seconds.", MuteTicks / Server()->TickSpeed());
+			SendChatTarget(ClientID, aBuf);
+			return;
+		}	
 
 			//fair spam protection(no mute system needed)
 			if (pPlayer->m_LastChat + Server()->TickSpeed()*((15 + Length) / 16 + 1) > Server()->Tick()) {
@@ -1855,7 +1873,6 @@ void CGameContext::ConVote(IConsole::IResult *pResult, void *pUserData)
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
 }
 
-
 void CGameContext::ConMute(IConsole::IResult *pResult, void *pUserData)
 {
 	((CGameContext *)pUserData)->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "Use either 'muteid <client_id> <seconds>' or 'muteip <ip> <seconds>'");
@@ -1915,7 +1932,6 @@ void CGameContext::ConMutes(IConsole::IResult *pResult, void *pUserData)
 			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
 		}
 }
-
 
 void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
