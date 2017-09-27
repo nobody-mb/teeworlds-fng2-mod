@@ -271,6 +271,9 @@ public:
 	virtual void SnapFreeID(int ID);
 	virtual void *SnapNewItem(int Type, int ID, int Size);
 	void SnapSetStaticsize(int ItemType, int Size);
+	
+	const char *GetAnnouncementLine(char const *FileName);
+	unsigned m_AnnouncementLastLine;	
 };
 
 #endif

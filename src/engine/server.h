@@ -116,7 +116,8 @@ public:
 	virtual bool CheckForConnectingPlayers(int GameID) = 0;
 	
 	virtual struct sGame* GetGame(int GameID) = 0;
-
+	
+	virtual const char *GetAnnouncementLine(char const *FileName) = 0;
 };
 
 class IGameServer : public IInterface

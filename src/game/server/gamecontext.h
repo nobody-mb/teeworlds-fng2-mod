@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <string>
 
+#define MAX_MUTES 32
+
 #ifndef QUADRO_MASK
 #define QUADRO_MASK
 struct QuadroMask {
@@ -120,6 +122,11 @@ struct sServerCommand{
 			All players (CPlayer::snap)
 
 */
+
+struct CMute {
+	char m_IP[16];// TODO ipv6
+	int m_Expire;
+};
 class CGameContext : public IGameServer
 {
 	IServer *m_pServer;
@@ -147,6 +154,11 @@ class CGameContext : public IGameServer
 	static void ConForceVote(IConsole::IResult *pResult, void *pUserData);
 	static void ConClearVotes(IConsole::IResult *pResult, void *pUserData);
 	static void ConVote(IConsole::IResult *pResult, void *pUserData);
+	static void ConMute(IConsole::IResult *pResult, void *pUserData);
+	static void ConMuteID(IConsole::IResult *pResult, void *pUserData);
+	static void ConMuteIP(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnmute(IConsole::IResult *pResult, void *pUserData);
+	static void ConMutes(IConsole::IResult *pResult, void *pUserData);
 	static void ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 
 	CGameContext(int Resetting);
@@ -154,6 +166,9 @@ class CGameContext : public IGameServer
 	void Construct(int Resetting);
 
 	bool m_Resetting;
+	static struct CMute m_aMutes[MAX_MUTES];
+	void Mute(const char *pIP, int Secs, const char *pDisplayName);
+
 	
 	sServerCommand* FindCommand(const char* pCmd);
 	void AddServerCommandSorted(sServerCommand* pCmd);
