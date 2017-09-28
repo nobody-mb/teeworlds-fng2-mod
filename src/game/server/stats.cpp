@@ -9,7 +9,7 @@
 #include "stats.h"
 #include <string.h>
 #include <stdio.h>
-
+#include <sys/time.h>
 #include "player.h"
 #include <stdlib.h>
 #include <string.h>
@@ -237,7 +237,6 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 {
 	char buf[256];
 	int c, d, e;
-	time_t diff = !is_all ? (time(NULL) - ct->join_time) : 0;
 	
 	str_format(buf, sizeof(buf), "%s stats for %s (req. by %s) client version: %d", 
 		is_all ? "total" : "round", name, Server()->ClientName(req_by), ct->version);
@@ -262,9 +261,32 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 		ct->freezes, ct->frozen, ct->hammers, ct->hammered, ct->suicides);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
-	str_format(buf, sizeof(buf), "- time: %d:%.02d | max spree: %d | max multi: %d:",
-		diff / 60, diff % 60, ct->spree_max, ct->max_multi);
-	SendChat(-1, CGameContext::CHAT_ALL, buf);
+	if (!is_all) {
+		time_t diff = (time(NULL) - ct->join_time);
+		str_format(buf, sizeof(buf), 
+			"- time: %d:%.02d | max spree: %d | max multi: %d:",
+			diff / 60, diff % 60, ct->spree_max, ct->max_multi);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+	} else {
+		str_format(buf, sizeof(buf), 
+			"- wrong-shrine kills: %d | max spree: %d | max multi: %d:",
+			ct->kills_wrong, ct->spree_max, ct->max_multi);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+		
+		struct stat attrib;
+		char date[16], path[64];
+		snprintf(path, sizeof(path), "%s/%s", STATS_DIR, name);
+   	 	if (stat(path, &attrib)) {
+   	 		printf("error stat %s\n", path);
+   	 		strncpy(date, "---", sizeof(date));
+   	 	} else {
+   	 		strftime(date, sizeof(date), "%F", 
+   	 			localtime(&(attrib.st_mtime)));
+   	 	}
+   	 	str_format(buf, sizeof(buf), "- games joined: %d | last seen: %s", 
+   	 		ct->num_games, date);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+	}
 
 /* ranks! */
 
