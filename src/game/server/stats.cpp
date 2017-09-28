@@ -283,8 +283,7 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
    	 		strftime(date, sizeof(date), "%F %r", 
    	 			localtime(&(attrib.st_mtime)));
    	 	}
-   	 	str_format(buf, sizeof(buf), "- last seen: %s", 
-   	 		ct->num_games, date);
+   	 	str_format(buf, sizeof(buf), "- last seen: %s", date);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
 	}
 
