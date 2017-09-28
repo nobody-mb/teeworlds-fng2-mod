@@ -6,6 +6,8 @@
 #include <engine/server.h>
 #include <time.h>
 #include "gamecontext.h"
+#include <fcntl.h>
+#include <unistd.h>
 
 #define STATS_DIR "stats"
 
