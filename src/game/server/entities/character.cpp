@@ -596,11 +596,13 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
-  		/*str_format(aBuf, sizeof(aBuf), "dist %s to %s = %f, tpl = %f, td = %f\n", 
+  		str_format(aBuf, sizeof(aBuf), "dist %s to %s = %f, tpl = %f, td = %f\n", 
   			ID_NAME(m_pPlayer->GetCID()), 
  			ID_NAME(aEnts[i]->m_pPlayer->GetCID()), 
  			CheckAimDis,TarPosLength, TravelDis);
- 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);*/
+ 		if (CheckAimDis < 5)
+ 			printf("%s", aBuf);
+ 		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)
  			m_ABAimAcTime ++;
  		else

@@ -274,16 +274,16 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
 		
 		struct stat attrib;
-		char date[16], path[64];
+		char date[64], path[64];
 		snprintf(path, sizeof(path), "%s/%s", STATS_DIR, name);
    	 	if (stat(path, &attrib)) {
    	 		printf("error stat %s\n", path);
    	 		strncpy(date, "---", sizeof(date));
    	 	} else {
-   	 		strftime(date, sizeof(date), "%F", 
+   	 		strftime(date, sizeof(date), "%F %r", 
    	 			localtime(&(attrib.st_mtime)));
    	 	}
-   	 	str_format(buf, sizeof(buf), "- games joined: %d | last seen: %s", 
+   	 	str_format(buf, sizeof(buf), "- last seen: %s", 
    	 		ct->num_games, date);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
 	}
