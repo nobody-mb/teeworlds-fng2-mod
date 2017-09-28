@@ -237,7 +237,7 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 {
 	char buf[256];
 	int c, d, e;
-	time_t diff = !is_all ? (time(NULL) - ct->join_time) : ct->join_time;
+	time_t diff = !is_all ? (time(NULL) - ct->join_time) : 0;
 	
 	str_format(buf, sizeof(buf), "%s stats for %s (req. by %s) client version: %d", 
 		is_all ? "total" : "round", name, Server()->ClientName(req_by), ct->version);
@@ -364,10 +364,6 @@ double tstats::get_kills (struct tee_stats fstats, char *buf)
 {
 	return (double)(fstats.kills + fstats.kills_x2 + fstats.kills_wrong);
 }
-double tstats::get_hammers (struct tee_stats fstats, char *buf)
-{
-	return (double)fstats.hammers;
-}
 double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 {
 	if (fstats.shots < 10)
@@ -382,6 +378,14 @@ double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 double tstats::get_bounces (struct tee_stats fstats, char *buf)
 {
 	return (double)fstats.bounce_shots;
+}
+double tstats::get_hammers (struct tee_stats fstats, char *buf)
+{
+	return (double)fstats.hammers;
+}
+double tstats::get_suicides (struct tee_stats fstats, char *buf)
+{
+	return (double)fstats.suicides;
 }
 
 void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
@@ -609,7 +613,14 @@ void tstats::on_msg (const char *message, int ClientID)
 			} else if (strncmp(message, "/topkd", 6) == 0) {
 				print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
 			} else if (strncmp(message, "/topaccuracy", 12) == 0) {
-				print_best("best accuracy:", 12, &get_accuracy, (message[12] == 'a'));
+				print_best("best accuracy:", 12, &get_accuracy, 
+					(message[12] == 'a'));
+			} else if (strncmp(message, "/tophammers", 11) == 0) {
+				print_best("most hammers:", 11, &get_hammers, 
+					(message[11] == 'a'));
+			} else if (strncmp(message, "/topsuicides", 12) == 0) {
+				print_best("most suicides:", 12, &get_suicides, 
+					(message[12] == 'a'));
 			} else if (strncmp(message, "/topall", 7) == 0) {
 				char mg[128] = { 0 };
 				snprintf(mg, sizeof(mg), "all-time stats req by %s",

@@ -52,7 +52,8 @@ class tstats
 	static double get_kills (struct tee_stats fstats, char *);
 	static double get_hammers (struct tee_stats fstats, char *);
 	static double get_bounces (struct tee_stats fstats, char *);
-
+	static double get_suicides (struct tee_stats fstats, char *);
+	
 	struct tee_stats *total_stats;
 	char **total_names;
 	int num_totals;
