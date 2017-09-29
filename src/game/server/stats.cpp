@@ -42,6 +42,8 @@ tstats::tstats (CGameContext *game_srv, const char *stats_dir)
 	} else {
 		printf("error reading stats\n");
 	}
+	last_reqd = (int)time(NULL);
+	last_reqds = (int)time(NULL);
 	
 	max_totals = num_totals + 256;
 	num_totals = 0;
