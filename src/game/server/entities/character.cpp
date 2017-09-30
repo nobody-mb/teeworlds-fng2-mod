@@ -601,9 +601,9 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
   		//	ID_NAME(m_pPlayer->GetCID()), 
  		//	ID_NAME(aEnts[i]->m_pPlayer->GetCID()), 
  		//	CheckAimDis,TarPosLength, TravelDis);
- 		if (m_aim_dist > CheckAimDis) {
+ 		if (CheckAimDis < 50) {
  			m_aim_dist = CheckAimDis;
- 			//printf("%s", aBuf);
+ 			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
  		}
  		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)
