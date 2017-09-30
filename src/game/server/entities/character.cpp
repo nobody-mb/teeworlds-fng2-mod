@@ -591,7 +591,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 	}
-	m_aim_dist = 99999;
+	//m_aim_dist = 99999;
 	for (int i = 0; i < Num; ++i)
 	{
 		if (aEnts[i] == this)
