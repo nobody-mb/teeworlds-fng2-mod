@@ -591,25 +591,19 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 	}
+	m_aim_dist = 99999;
 	for (int i = 0; i < Num; ++i)
 	{
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
-  		str_format(aBuf, sizeof(aBuf), "dist %s to %s = %f, tpl = %f, td = %f\n", 
-  			ID_NAME(m_pPlayer->GetCID()), 
- 			ID_NAME(aEnts[i]->m_pPlayer->GetCID()), 
- 			CheckAimDis,TarPosLength, TravelDis);
- 		if (CheckAimDis < 5) {
- 			printf("%s", aBuf);
- 			int fd;
-			if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
-				perror("open");
-			else
-				if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-					perror("write");
-			
-			close(fd);
+  		//str_format(aBuf, sizeof(aBuf), "dist %s to %s = %f, tpl = %f, td = %f\n", 
+  		//	ID_NAME(m_pPlayer->GetCID()), 
+ 		//	ID_NAME(aEnts[i]->m_pPlayer->GetCID()), 
+ 		//	CheckAimDis,TarPosLength, TravelDis);
+ 		if (m_aim_dist > CheckAimDis) {
+ 			m_aim_dist = CheckAimDis;
+ 			//printf("%s", aBuf);
  		}
  		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)

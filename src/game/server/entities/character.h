@@ -79,6 +79,7 @@ public:
 	time_t ccreated;
 	float m_last_travel_dist;
 	float m_last_tarposlen;
+	float m_aim_dist;
 	int count;
 private:
 	//int count;
