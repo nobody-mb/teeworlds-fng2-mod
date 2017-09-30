@@ -398,9 +398,9 @@ void CCharacter::FireWeapon()
  					continue;
  				char aBuf[128] = { 0 };
  				float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
-  				str_format(aBuf, sizeof(aBuf), "%s¶%f",
+  				str_format(aBuf, sizeof(aBuf), "%s¶%f\n",
   					ID_NAME(m_pPlayer->GetCID()), CheckAimDis);
-  				printf("%s\n", aBuf);
+  				printf("%s", aBuf);
   				int fd;
 				if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 					perror("open");
