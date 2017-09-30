@@ -389,6 +389,27 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_RIFLE:
 		{
+			vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
+			CCharacter *aEnts[MAX_CLIENTS];
+ 			int Num = GameServer()->m_World.FindEntities(m_Pos + TarPos, 10,
+ 			     (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+ 			for (int i = 0; i < Num; ++i) {
+				if (aEnts[i] == this)
+ 					continue;
+ 				char aBuf[128] = { 0 };
+ 				float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
+  				str_format(aBuf, sizeof(aBuf), "%s¶%f",
+  					ID_NAME(m_pPlayer->GetCID()), CheckAimDis);
+  				printf("%s\n", aBuf);
+  				int fd;
+				if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+					perror("open");
+				else
+					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+						perror("write");		
+				close(fd);
+  			}
+
 			if ((time(NULL) == ccreated)) {
 				printf("[%s]: spawn shot not counted %d\n",
 					__func__, m_pPlayer->GetCID());
