@@ -25,7 +25,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	CCharacter *pHit = GameServer()->m_World.IntersectCharacter(m_Pos, To, 0.f, At, pOwnerChar);
 	if(!pHit || !pOwnerChar || !pOwnerChar->GetPlayer())
 		return false;
-	float dist = distance(To, pOwnerChar->m_Pos);
+	float dist = distance(To, pHit->m_Pos);
 		
 	char aBuf[128] = { 0 };
 	str_format(aBuf, sizeof(aBuf), "dist %s = %f\n", 
