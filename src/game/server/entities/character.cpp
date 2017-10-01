@@ -398,8 +398,9 @@ void CCharacter::FireWeapon()
  					continue;
  				char aBuf[128] = { 0 };
  				float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
-  				str_format(aBuf, sizeof(aBuf), "%s¶%f\n",
-  					ID_NAME(m_pPlayer->GetCID()), CheckAimDis);
+ 				float teedis = distance(m_Pos, aEnts[i]->m_Pos);
+  				str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶¶shot\n",
+  					ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis);
   				printf("%s", aBuf);
   				int fd;
 				if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
@@ -618,11 +619,19 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
-  		//str_format(aBuf, sizeof(aBuf), "dist %s to %s = %f, tpl = %f, td = %f\n", 
-  		//	ID_NAME(m_pPlayer->GetCID()), 
- 		//	ID_NAME(aEnts[i]->m_pPlayer->GetCID()), 
- 		//	CheckAimDis,TarPosLength, TravelDis);
  		if (CheckAimDis < 50) {
+ 			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
+			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
+				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, TravelDis);
+			printf("%s", aBuf);
+			int fd;
+			if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+				perror("open");
+			else
+				if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+					perror("write");		
+			close(fd);
+
  			m_aim_dist = CheckAimDis;
  			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
  		}
