@@ -572,7 +572,8 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	
 	float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
-	printf("mouse traveled %f in %d ticks (%f)\n", disc, num_bt, disc / num_bt);
+	//printf("mouse traveled %f in %d ticks (%f)\n", disc, num_bt, disc / num_bt);
+	disc /= num_bt;
 	num_bt = 0;
 
 	// it is not allowed to aim in the center
@@ -625,10 +626,10 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 		/*if (CheckAimDis < 50) {
+ 		if (CheckAimDis < 20) {
  			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
 			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
-				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, TravelDis);
+				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, disc);
 			printf("%s", aBuf);
 			int fd;
 			if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
@@ -640,7 +641,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 
  			m_aim_dist = CheckAimDis;
  			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
- 		}*/
+ 		}
  		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)
  			m_ABAimAcTime ++;
