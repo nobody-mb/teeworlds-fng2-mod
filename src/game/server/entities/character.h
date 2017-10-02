@@ -81,6 +81,8 @@ public:
 	float m_last_tarposlen;
 	float m_aim_dist;
 	int count;
+	
+	int num_bt;
 private:
 	//int count;
 	int NetworkClipped(int SnappingClient, float& Distance);

@@ -75,6 +75,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
+	num_bt = 0;
 
 	m_Core.Reset();
 	m_Core.Init(&GameServer()->m_World.m_Core, GameServer()->Collision());
@@ -568,6 +569,11 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 {
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 	mem_copy(&m_LatestInput, pNewInput, sizeof(m_LatestInput));
+	
+	float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
+			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
+	printf("mouse traveled %f in %d ticks (%f)\n", disc, num_bt, disc / num_bt);
+	num_bt = 0;
 
 	// it is not allowed to aim in the center
 	if(m_LatestInput.m_TargetX == 0 && m_LatestInput.m_TargetY == 0)
@@ -619,7 +625,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 		if (CheckAimDis < 50) {
+ 		/*if (CheckAimDis < 50) {
  			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
 			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
 				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, TravelDis);
@@ -634,7 +640,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 
  			m_aim_dist = CheckAimDis;
  			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
- 		}
+ 		}*/
  		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)
  			m_ABAimAcTime ++;
@@ -712,6 +718,7 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
+	num_bt++;
 	if (m_InvincibleTick > 0) --m_InvincibleTick;
 
 	if(m_pPlayer->m_ForceBalanced)

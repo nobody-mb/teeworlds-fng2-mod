@@ -28,7 +28,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	float dist = distance(To, pHit->m_Pos);
 	float dist2 = distance(At, pHit->m_Pos);
 	char aBuf[128] = { 0 };
-	str_format(aBuf, sizeof(aBuf), "%s|%f|%f\n", 
+	str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f\n", 
   			ID_NAME(pOwnerChar->GetPlayer()->GetCID()), dist, dist2);
   			//pOwnerChar->m_aim_dist, 
   			//pOwnerChar->m_last_tarposlen, 
