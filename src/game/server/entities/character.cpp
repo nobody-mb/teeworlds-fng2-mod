@@ -626,7 +626,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 		if (CheckAimDis < 20) {
+ 		if (CheckAimDis < 5) {
  			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
 			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
 				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, disc);
