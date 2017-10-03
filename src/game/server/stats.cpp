@@ -184,7 +184,7 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 
 	if (callback == get_kd)
 		sprintf(dst, "%.02f (%s)", best, ((best != 0) ? tmp_buf : "None"));
-	else if (callback == get_accuracy)
+	else if (callback == get_accuracy || callback == get_accuracy_all)
 		sprintf(dst, "%.02f%% (%s)", best, ((best != 0) ? tmp_buf : "None"));
 	else
 		sprintf(dst, "%d (%s)", (int)best, ((best != 0) ? tmp_buf : "None"));
@@ -390,6 +390,17 @@ double tstats::get_kills (struct tee_stats fstats, char *buf)
 double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 {
 	if (fstats.shots < 10)
+		return 0.0f;
+		
+	if (buf)
+		sprintf(buf, "%d ping", fstats.avg_ping);
+		
+	int d = fstats.shots ? fstats.shots : 1;
+	return 100 * (double)fstats.freezes / (double)d;
+}
+double tstats::get_accuracy_all (struct tee_stats fstats, char *buf)
+{
+	if (fstats.shots < 100)
 		return 0.0f;
 		
 	if (buf)
@@ -636,8 +647,11 @@ void tstats::on_msg (const char *message, int ClientID)
 			} else if (strncmp(message, "/topkd", 6) == 0) {
 				print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
 			} else if (strncmp(message, "/topaccuracy", 12) == 0) {
-				print_best("best accuracy:", 12, &get_accuracy, 
-					(message[12] == 'a'));
+				if (message[12] == 'a')
+					print_best("best accuracy (>100 shots):", 12,
+						&get_accuracy_all, 1);
+				else
+					print_best("best accuracy:", 12, &get_accuracy, 0);
 			} else if (strncmp(message, "/tophammers", 11) == 0) {
 				print_best("most hammers:", 11, &get_hammers, 
 					(message[11] == 'a'));
