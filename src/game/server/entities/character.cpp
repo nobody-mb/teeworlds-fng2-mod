@@ -9,7 +9,7 @@
 #include "laser.h"
 #include "projectile.h"
 #include "../fng2define.h"
-
+#include "../rcd.hpp"
 //input count
 struct CInputCount
 {
@@ -280,7 +280,7 @@ void CCharacter::FireWeapon()
 	bool FullAuto = false;
 	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_RIFLE)
 		FullAuto = true;
-
+	RajhCheatDetector::OnFire(m_pPlayer);
 
 	// check if we gonna fire
 	bool WillFire = false;
@@ -626,7 +626,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (aEnts[i] == this)
  			continue;
  		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 		if (CheckAimDis < 5) {
+ 		/*if (CheckAimDis < 5) {
  			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
 			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
 				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, disc);
@@ -641,7 +641,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 
  			m_aim_dist = CheckAimDis;
  			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
- 		}
+ 		}*/
  		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  		if (CheckAimDis < 1)
  			m_ABAimAcTime ++;
@@ -702,6 +702,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 	}
 #endif*/
+	mem_copy(&OldInput, &m_LatestPrevInput, sizeof(m_LatestPrevInput));
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 }
 
@@ -793,6 +794,13 @@ void CCharacter::Tick()
 			}
 		}
 	}
+	
+	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
+		RajhCheatDetector::OnFire(m_pPlayer);
+
+	int events = m_Core.m_TriggeredEvents;
+	if(events&COREEVENT_HOOK_ATTACH_PLAYER && m_Core.m_HookedPlayer != -1)
+		RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);
 	return;
 }
 
@@ -1096,6 +1104,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
 		}
 	}
+	RajhCheatDetector::OnHit(GameServer()->m_apPlayers[From], m_pPlayer->GetCID());
 	return true;
 }
 

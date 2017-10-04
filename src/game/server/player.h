@@ -6,7 +6,7 @@
 // this include should perhaps be removed
 #include "entities/character.h"
 #include "gamecontext.h"
-
+#include <valarray>
 #include <string.h>
 
 // player object
@@ -161,14 +161,20 @@ public:
 		int m_Min;
 		int m_Max;
 	} m_Latency;
-	CGameContext *GameServer() const { return m_pGameServer; }
+	//CGameContext *GameServer() const { return m_pGameServer; }
+	// RajhCheatDetector
+        int Warnings;
+        int LastWarn;
+        std::valarray<int> LastFireTick;
+        unsigned int LastFireIdx;
 
 private:
 	CCharacter *m_pCharacter;
 	CGameContext *m_pGameServer;
-
+public:
+	CGameContext *GameServer() const { return m_pGameServer; }
 	IServer *Server() const;
-
+private:
 	//
 	bool m_Spawning;
 	int m_ClientID;

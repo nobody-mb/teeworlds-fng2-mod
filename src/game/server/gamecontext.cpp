@@ -19,7 +19,7 @@
 
 #include "laserText.h"
 #include "gameserver_config.h"
-
+#include "rcd.hpp"
 #include <string>
 #include <vector>
 
@@ -538,8 +538,10 @@ void CGameContext::OnTick()
 				Server()->Kick(m_apPlayers[i]->GetCID(), 
 					       "bot client detected!");
 			} else {
-				m_apPlayers[i]->Tick();
-				m_apPlayers[i]->PostTick();
+				if (m_apPlayers[i])
+					m_apPlayers[i]->Tick();
+				if (m_apPlayers[i])
+					m_apPlayers[i]->PostTick();
 			}
 		}
 	}
@@ -658,6 +660,7 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	RajhCheatDetector::OnPlayerEnter(m_apPlayers[ClientID]);
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
 	char aBuf[512];

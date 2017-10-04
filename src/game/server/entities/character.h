@@ -123,6 +123,8 @@ private:
 	int m_LastNoAmmoSound;
 
 	// these are non-heldback inputs
+public:
+	CNetObj_PlayerInput OldInput;
 	CNetObj_PlayerInput m_LatestPrevInput;
 	CNetObj_PlayerInput m_LatestInput;
 
@@ -131,6 +133,8 @@ private:
 	CNetObj_PlayerInput m_Input;
 	int m_NumInputs;
 	int m_Jumped;
+private:
+	friend class RajhCheatDetector;
 
 	int m_DamageTakenTick;
 
