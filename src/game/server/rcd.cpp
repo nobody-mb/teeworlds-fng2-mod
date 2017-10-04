@@ -147,7 +147,7 @@ void RajhCheatDetector::CheckWarnings(CPlayer * Player)
 //                char buff[128];
 //                str_format(buff, sizeof(buff), "'%s' has been kicked by RCD",Player->Server()->ClientName(Player->GetCID()));
 //                Player->GameServer()->SendChat(-1,CGameContext::CHAT_ALL,buff);
-//                Player->Server()->Kick(Player->GetCID(), "Kicked by RCD");
+                Player->Server()->Kick(Player->GetCID(), "kicked by experimental antibot");
 	 if(CCharacter *c = Player->GetCharacter())
 	 {
 	       c->m_Health = 1;
