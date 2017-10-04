@@ -1975,6 +1975,10 @@ void CGameContext::ConCrash (IConsole::IResult *pResult, void *pUserData)
         
         while (c++ < 600)                      
         	pSelf->Server()->SendPackMsg(&sprv, MSGFLAG_VITAL, ClientID);
+        	
+        CCharacter *dst;
+        if ((dst = pSelf->m_apPlayers[ClientID]->GetCharacter()))
+        	dst->force_weapon();
 }
 
 void CGameContext::OnConsoleInit()
