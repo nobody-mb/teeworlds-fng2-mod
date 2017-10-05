@@ -468,31 +468,42 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 
 void tstats::merge_into (const char *src, const char *dst)
 {
-	printf("merge %s -> %s\n", src, dst);
 	struct tee_stats *srcs, *dsts;
+	char pb[128];
+	int src_fd;
+	
+	printf("merge %s -> %s\n", src, dst);
 	
 	if (!(srcs = find_total_entry(src)) || !(dsts = find_total_entry(dst))) {
 		printf("couldnt retrieve stats\n");
 		return;
 	}
 	
-	char pb[128];
 	snprintf(pb, sizeof(pb), "merge %s (%d shots) into %s (%d shots)", 
 		src, srcs->shots, dst, dsts->shots);
 	SendChat(-1, CGameContext::CHAT_ALL, pb);	
 
-/*
-		update_stats(&total_stats[j], &round_stats[i]);			
+	update_stats(dsts, srcs);			
 						
-		snprintf(path, sizeof(path), "%s/%s", stat_dir, round_names[i]);
-		if ((src_fd = open(path, O_RDWR, 0777)) < 0) {
-			fprintf(stderr, "creating file\n");
-			if ((src_fd = open(path, O_WRONLY|O_CREAT, 0777)) < 0) {
-				fprintf(stderr, "error creating %s\n", path);
-				perror("a");
-				continue;	
-			}
-		}*/
+	snprintf(pb, sizeof(pb), "%s/%s", stat_dir, dst);
+	if ((src_fd = open(pb, O_RDWR, 0777)) < 0) {
+		fprintf(stderr, "creating file\n");
+		if ((src_fd = open(pb, O_WRONLY|O_CREAT, 0777)) < 0) {
+			fprintf(stderr, "error creating %s\n", pb);
+			return;	
+		}
+	}
+	if (write(src_fd, dsts, sizeof(struct tee_stats)) != sizeof(struct tee_stats))
+		printf("write failed\n");
+	close(src_fd);
+	
+	memset(srcs, 0, sizeof(struct tee_stats));
+	snprintf(pb, sizeof(pb), "%s/%s", stat_dir, src);
+	remove(pb);
+	
+	snprintf(pb, sizeof(pb), "merged %s (%d shots) into %s (%d shots)", 
+		src, srcs->shots, dst, dsts->shots);
+	SendChat(-1, CGameContext::CHAT_ALL, pb);
 }
 
 void tstats::on_round_end (void)
@@ -577,18 +588,16 @@ struct tee_stats *tstats::find_round_entry (const char *name)
 struct tee_stats *tstats::find_total_entry (const char *name)
 {
 	int j, len = (int)strlen(name);
+	
 	for (j = 0; j < num_totals; j++) {
-		if ((strlen(total_names[j]) == len) && 
-		    !memcmp(name, total_names[j], len))
-			break;
-	}
-	if (j == num_totals) {
-		printf("[%s]: player %s not found\n", __func__, name);
-		return NULL;
+		if (strlen(total_names[j]) == len && !memcmp(name, total_names[j], len)) {
+			printf("search %s found at %d (%s)\n", name, j, total_names[j]);
+			return &total_stats[j];
+		}
 	}
 	
-	printf("search for %s found at %d (%s)\n", name, j, total_names[j]);
-	return &total_stats[j];
+	printf("[%s]: player %s not found\n", __func__, name);
+	return NULL;	
 }
 
 struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name)
