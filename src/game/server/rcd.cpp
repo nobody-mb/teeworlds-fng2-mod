@@ -144,15 +144,17 @@ void RajhCheatDetector::CheckWarnings(CPlayer * Player)
 	 // if one uses a bot and gets banned, he may get a new IP and come back (like "TheEverest")
 	 // so better just set down their health so they get killed by every single bullet, making them loose the fun of botting
 	 
-//                char buff[128];
-//                str_format(buff, sizeof(buff), "'%s' has been kicked by RCD",Player->Server()->ClientName(Player->GetCID()));
-//                Player->GameServer()->SendChat(-1,CGameContext::CHAT_ALL,buff);
-                Player->Server()->Kick(Player->GetCID(), "kicked by experimental antibot");
-	 if(CCharacter *c = Player->GetCharacter())
-	 {
-	       c->m_Health = 1;
-	       c->m_Armor = 0;
-	 }
+                char buff[128];
+		str_format(buff, sizeof(buff), "'%s' might be a bot",
+              		Player->Server()->ClientName(Player->GetCID()));
+                Player->GameServer()->SendChat(-1,CGameContext::CHAT_ALL,buff);
+                
+               // Player->Server()->Kick(Player->GetCID(), "kicked by experimental antibot");
+	// if(CCharacter *c = Player->GetCharacter())
+	/// {
+	//       c->m_Health = 1;
+	//       c->m_Armor = 0;
+	// }
        }
 }
 
@@ -178,15 +180,19 @@ bool RajhCheatDetector::CheckInputPos(CPlayer * Player, int Victim)
 {
        CCharacter *CPlayer;
        CCharacter *CVictim;
-       if(!(CPlayer = Player->GameServer()->GetPlayerChar(Player->GetCID())) || !(CVictim = Player->GameServer()->GetPlayerChar(Victim)))
+       if (!(CPlayer = Player->GameServer()->GetPlayerChar(Player->GetCID())) || 
+           !(CVictim = Player->GameServer()->GetPlayerChar(Victim)))
                return false;
 
        vec2 Target = vec2(CPlayer->m_LatestInput.m_TargetX, CPlayer->m_LatestInput.m_TargetY);
        vec2 TargetPos = CPlayer->m_Pos + Target;
+       
        // Ping may fake this
        if(distance(TargetPos,CVictim->m_Pos) < 8.f)
        {
-	       str_format(aBuf, sizeof(aBuf), "'%s' aimed exactly at '%s' position",Player->Server()->ClientName(Player->GetCID()), Player->Server()->ClientName(Victim));
+		str_format(aBuf, sizeof(aBuf), "'%s' aimed exactly at '%s' position",
+			Player->Server()->ClientName(Player->GetCID()), 
+			Player->Server()->ClientName(Victim));
 // 	       Player->GameServer()->SendChat(-1,CGameContext::CHAT_ALL,aBuf);
                Player->GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RCD", aBuf);
                return true;
@@ -200,7 +206,8 @@ bool RajhCheatDetector::CheckReflex(CPlayer * Player, int Victim)
 {
        CCharacter *CPlayer;
        CCharacter *CVictim;
-       if(!(CPlayer = Player->GameServer()->GetPlayerChar(Player->GetCID())) || !(CVictim = Player->GameServer()->GetPlayerChar(Victim)))
+       if (!(CPlayer = Player->GameServer()->GetPlayerChar(Player->GetCID())) || 
+           !(CVictim = Player->GameServer()->GetPlayerChar(Victim)))
                return false;
 
        if(distance(CPlayer->m_Pos, CVictim->m_Pos) < Player->GameServer()->m_World.m_Core.m_Tuning.m_LaserReach+5 &&
@@ -273,21 +280,19 @@ std::cout << std::endl;
          }
          Player->LastFireTick[last] = 0;
          
-for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
-{
-std::cout << Player->LastFireTick[i] << ' ';
-}
-std::cout << std::endl;
-         
-
+//for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
+//{
+//std::cout << Player->LastFireTick[i] << ' ';
+//}
+//std::cout << std::endl;
 //          Player->LastFireTick = std::abs(Player->LastFireTick);
          
          if(std::abs(Player->LastFireTick.sum()) <= 1)
          {
-               str_format(aBuf, sizeof(aBuf), "'%s' fires way too regularly",Player->Server()->ClientName(Player->GetCID()));
-               Player->GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RCD", aBuf);
-               
-           result = true;
+		str_format(aBuf, sizeof(aBuf), "'%s' fires way too regularly",
+			Player->Server()->ClientName(Player->GetCID()));
+		Player->GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RCD", aBuf);
+		result = true;
          }
          else
          {

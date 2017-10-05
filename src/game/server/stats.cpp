@@ -400,7 +400,7 @@ double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 }
 double tstats::get_accuracy_all (struct tee_stats fstats, char *buf)
 {
-	if (fstats.shots < 100)
+	if (fstats.shots < 1000)
 		return 0.0f;
 		
 	if (buf)
@@ -648,7 +648,7 @@ void tstats::on_msg (const char *message, int ClientID)
 				print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
 			} else if (strncmp(message, "/topaccuracy", 12) == 0) {
 				if (message[12] == 'a')
-					print_best("best accuracy (>100 shots):", 12,
+					print_best("best accuracy (>1000 shots):", 12,
 						&get_accuracy_all, 1);
 				else
 					print_best("best accuracy:", 12, &get_accuracy, 0);
