@@ -43,7 +43,7 @@ class tstats
 	double print_best_group (char *dst, struct tee_stats *stats, char **names, 
 		int num, double (*callback)(struct tee_stats, char *), double max);
 	struct tee_stats read_statsfile (const char *name, time_t create);
-	
+	void top_special (const char *message, int ClientID);
 	static double get_ping (struct tee_stats, char *);
 	static double get_wrong (struct tee_stats, char *);
 	static double get_steals (struct tee_stats, char *);
@@ -84,6 +84,7 @@ public:
 	void update_stats (struct tee_stats *dst, struct tee_stats *src);
 	struct tee_stats *add_round_entry (struct tee_stats st, const char *name);
 	struct tee_stats *find_round_entry (const char *name);
+	struct tee_stats *find_total_entry (const char *name);
 	void on_round_end (void);
 	void on_namechange (int ClientID, const char *name);
 	void on_msg (const char *message, int ClientID);

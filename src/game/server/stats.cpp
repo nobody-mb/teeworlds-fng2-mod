@@ -469,7 +469,30 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 void tstats::merge_into (const char *src, const char *dst)
 {
 	printf("merge %s -> %s\n", src, dst);
+	struct tee_stats *srcs, *dsts;
+	
+	if (!(srcs = find_total_entry(src)) || !(dsts = find_total_entry(dst))) {
+		printf("couldnt retrieve stats\n");
+		return;
+	}
+	
+	char pb[128];
+	snprintf(pb, sizeof(pb), "merge %s (%d shots) into %s (%d shots)", 
+		src, srcs->shots, dst, dsts->shots);
+	SendChat(-1, CGameContext::CHAT_ALL, pb);	
 
+/*
+		update_stats(&total_stats[j], &round_stats[i]);			
+						
+		snprintf(path, sizeof(path), "%s/%s", stat_dir, round_names[i]);
+		if ((src_fd = open(path, O_RDWR, 0777)) < 0) {
+			fprintf(stderr, "creating file\n");
+			if ((src_fd = open(path, O_WRONLY|O_CREAT, 0777)) < 0) {
+				fprintf(stderr, "error creating %s\n", path);
+				perror("a");
+				continue;	
+			}
+		}*/
 }
 
 void tstats::on_round_end (void)
@@ -551,6 +574,23 @@ struct tee_stats *tstats::find_round_entry (const char *name)
 	return NULL;
 }
 
+struct tee_stats *tstats::find_total_entry (const char *name)
+{
+	int j, len = (int)strlen(name);
+	for (j = 0; j < num_totals; j++) {
+		if ((strlen(total_names[j]) == len) && 
+		    !memcmp(name, total_names[j], len))
+			break;
+	}
+	if (j == num_totals) {
+		printf("[%s]: player %s not found\n", __func__, name);
+		return NULL;
+	}
+	
+	printf("search for %s found at %d (%s)\n", name, j, total_names[j]);
+	return &total_stats[j];
+}
+
 struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name)
 {
 	int i;
@@ -574,6 +614,55 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 	current[st.id] = &round_stats[i];
 			
 	return &round_stats[i];
+}
+
+void tstats::top_special (const char *message, int ClientID)
+{
+	if (strncmp(message, "/topping", 8) == 0) {
+		print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));
+	} else if (strncmp(message, "/topwrong", 9) == 0) {
+		print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
+	} else if (strncmp(message, "/topkills", 9) == 0) {
+		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
+	} else if (strncmp(message, "/topsteals", 10) == 0) {
+		print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
+	} else if (strncmp(message, "/topwalls", 9) == 0) {
+		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
+	} else if (strncmp(message, "/topkd", 6) == 0) {
+		print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
+	} else if (strncmp(message, "/topaccuracy", 12) == 0) {
+		if (message[12] == 'a')
+			print_best("best accuracy (>1000 shots):", 12,
+				&get_accuracy_all, 1);
+		else
+			print_best("best accuracy:", 12, &get_accuracy, 0);
+	} else if (strncmp(message, "/tophammers", 11) == 0) {
+		print_best("most hammers:", 11, &get_hammers, 
+			(message[11] == 'a'));
+	} else if (strncmp(message, "/topsuicides", 12) == 0) {
+		print_best("most suicides:", 12, &get_suicides, 
+			(message[12] == 'a'));
+	} else if (strncmp(message, "/topall", 7) == 0) {
+		char mg[128] = { 0 };
+		snprintf(mg, sizeof(mg), "all-time stats req by %s",
+				 ID_NAME(ClientID));
+		SendChat(-1, CGameContext::CHAT_ALL, mg);
+		print_best("most steals:", 4, &get_steals, 1);
+		print_best("most wallshots:", 4, &get_bounces, 1);
+		print_best("best multi:", 2, &get_max_multi, 1);
+		print_best("best spree:", 4, &get_max_spree, 1);
+		print_best("most hammers:", 4, &get_hammers, 1);		
+		print_best("most kills:", 4, &get_kills, 1);
+	} else {
+		print_best("most net steals:", 2, &get_steals, 0);
+		print_best("best spree:", 1, &get_max_spree, 0);
+		print_best("best multi:", 1, &get_max_multi, 0);
+		print_best("best k/d:", 2, &get_kd, 0);	
+		print_best("most wallshots:", 2, &get_bounces, 0);
+		print_best("most kills:", 3, &get_kills, 0);
+		print_best("best accuracy:", 4, &get_accuracy, 0);
+	}
+	last_reqd = (int)time(NULL);
 }
 
 void tstats::on_msg (const char *message, int ClientID)
@@ -640,51 +729,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			snprintf(buf, sizeof(buf), "please wait %d seconds", 10 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
-			if (strncmp(message, "/topping", 8) == 0) {
-				print_best("highest ping:", 12, &get_ping, (message[8] == 'a'));
-			} else if (strncmp(message, "/topwrong", 9) == 0) {
-				print_best("most wrong-shrine kills:", 12, &get_wrong, (message[9] == 'a'));
-			} else if (strncmp(message, "/topkills", 9) == 0) {
-				print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
-			} else if (strncmp(message, "/topsteals", 10) == 0) {
-				print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
-			} else if (strncmp(message, "/topwalls", 9) == 0) {
-				print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
-			} else if (strncmp(message, "/topkd", 6) == 0) {
-				print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
-			} else if (strncmp(message, "/topaccuracy", 12) == 0) {
-				if (message[12] == 'a')
-					print_best("best accuracy (>1000 shots):", 12,
-						&get_accuracy_all, 1);
-				else
-					print_best("best accuracy:", 12, &get_accuracy, 0);
-			} else if (strncmp(message, "/tophammers", 11) == 0) {
-				print_best("most hammers:", 11, &get_hammers, 
-					(message[11] == 'a'));
-			} else if (strncmp(message, "/topsuicides", 12) == 0) {
-				print_best("most suicides:", 12, &get_suicides, 
-					(message[12] == 'a'));
-			} else if (strncmp(message, "/topall", 7) == 0) {
-				char mg[128] = { 0 };
-				snprintf(mg, sizeof(mg), "all-time stats req by %s",
-						 ID_NAME(ClientID));
-				SendChat(-1, CGameContext::CHAT_ALL, mg);
-				print_best("most steals:", 4, &get_steals, 1);
-				print_best("most wallshots:", 4, &get_bounces, 1);
-				print_best("best multi:", 2, &get_max_multi, 1);
-				print_best("best spree:", 4, &get_max_spree, 1);
-				print_best("most hammers:", 4, &get_hammers, 1);		
-				print_best("most kills:", 4, &get_kills, 1);
-			} else {
-				print_best("most net steals:", 2, &get_steals, 0);
-				print_best("best spree:", 1, &get_max_spree, 0);
-				print_best("best multi:", 1, &get_max_multi, 0);
-				print_best("best k/d:", 2, &get_kd, 0);	
-				print_best("most wallshots:", 2, &get_bounces, 0);
-				print_best("most kills:", 3, &get_kills, 0);
-				print_best("best accuracy:", 4, &get_accuracy, 0);
-			}
-			last_reqd = (int)time(NULL);
+			top_special(message, ClientID);
 		}
 	} else if (strncmp(message, "/earrape", 8) == 0 && 
 		   game_server->m_apPlayers[ClientID] && 
@@ -701,7 +746,5 @@ void tstats::on_msg (const char *message, int ClientID)
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
-	} //else if (strncmp(message, "/timeup", 7) == 0) {
-	//		game_server->m_pController->time_up(10);
-	//}
+	}
 }	
