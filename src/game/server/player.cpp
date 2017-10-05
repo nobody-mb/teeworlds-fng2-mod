@@ -391,7 +391,7 @@ void CPlayer::CalcScore(){
 	if(g_Config.m_SvScoreDisplay == 0){
 		m_Score = m_kills + m_unfreeze;
 		//TODO: make this configurable
-		m_Score += (m_grabs_normal * g_Config.m_SvPlayerScoreSpikeNormal) + (m_grabs_team * g_Config.m_SvPlayerScoreSpikeTeam) + (m_grabs_gold * g_Config.m_SvPlayerScoreSpikeGold);
+		m_Score += (m_grabs_normal * g_Config.m_SvPlayerScoreSpikeNormal) + (m_grabs_team * g_Config.m_SvPlayerScoreSpikeTeam) + (m_grabs_false * g_Config.m_SvPlayerScoreSpikeFalse) + (m_grabs_gold * g_Config.m_SvPlayerScoreSpikeGold);
 	} else {
 		m_Score = m_kills + m_unfreeze - m_hits;
 		//TODO: make this configurable
