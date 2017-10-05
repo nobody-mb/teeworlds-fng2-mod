@@ -89,6 +89,7 @@ public:
 	void on_msg (const char *message, int ClientID);
 	void on_enter (int ClientID, const char *name);
 	void on_drop (int ClientID, const char *pReason);
+	void merge_into (const char *, const char *);
 };
 
 #endif

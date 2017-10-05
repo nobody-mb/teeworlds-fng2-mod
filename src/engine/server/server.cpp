@@ -2194,11 +2194,24 @@ void CServer::RegisterCommands()
 	Console()->Chain("sv_max_clients_per_ip", ConchainMaxclientsperipUpdate, this);
 	Console()->Chain("mod_command", ConchainModCommandUpdate, this);
 	Console()->Chain("console_output_level", ConchainConsoleOutputLevelUpdate, this);
-	Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this, "RCD: Forget all Players");
-
+	Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this, 
+		"RCD: Forget all Players");
+	Console()->Register("merge_into", "ss", CFGFLAG_SERVER, merge_into, this, 
+		"noby stats: merge_into [src] -> [dst]");
 	// register console commands in sub parts
 	m_ServerBan.InitServerBan(Console(), Storage(), this);
 	m_pGames->m_pGameServer->OnConsoleInit();
+}
+
+void CServer::merge_into (IConsole::IResult *pResult, void *pUser)
+{
+	CServer* pThis = static_cast<CServer *>(pUser);
+	CGameContext* gserver = dynamic_cast<CGameContext*>(pThis->GameServer());
+	if(pResult->NumArguments() == 2)
+	{
+		gserver->m_pController->t_stats->merge_into(
+			pResult->GetString(0), pResult->GetString(1));
+	}
 }
 
 void CServer::RcdReset(IConsole::IResult *pResult, void *pUser)

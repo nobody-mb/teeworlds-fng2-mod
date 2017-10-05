@@ -466,6 +466,12 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 					(++dst->num_samples));
 }
 
+void tstats::merge_into (const char *src, const char *dst)
+{
+	printf("merge %s -> %s\n", src, dst);
+
+}
+
 void tstats::on_round_end (void)
 {
 	int i, j, src_fd, len;
