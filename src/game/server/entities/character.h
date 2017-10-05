@@ -133,6 +133,9 @@ public:
 	CNetObj_PlayerInput m_Input;
 	int m_NumInputs;
 	int m_Jumped;
+	
+	long tb_aim_time;
+	static long get_time_us (void);
 private:
 	friend class RajhCheatDetector;
 

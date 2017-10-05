@@ -75,7 +75,8 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
-	num_bt = 0;
+	tb_aim_time = 0;
+	//num_bt = 0;
 
 	m_Core.Reset();
 	m_Core.Init(&GameServer()->m_World.m_Core, GameServer()->Collision());
@@ -390,28 +391,24 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_RIFLE:
 		{
-			vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
-			CCharacter *aEnts[MAX_CLIENTS];
- 			int Num = GameServer()->m_World.FindEntities(m_Pos + TarPos, 10,
- 			     (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
- 			for (int i = 0; i < Num; ++i) {
-				if (aEnts[i] == this)
- 					continue;
- 				char aBuf[128] = { 0 };
- 				float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 				float teedis = distance(m_Pos, aEnts[i]->m_Pos);
-  				str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶¶shot\n",
-  					ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis);
-  				printf("%s", aBuf);
-  				int fd;
-				if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+			char aBuf[128] = { 0 };
+			if (tb_aim_time) {
+				long delay = get_time_us() - tb_aim_time;
+				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+					ID_NAME(GetPlayer()->GetCID()));
+				
+				printf("** %s fired %ld us after aim\n", 
+					ID_NAME(GetPlayer()->GetCID()), delay);
+	
+				int fd;
+				if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 					perror("open");
 				else
 					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 						perror("write");		
 				close(fd);
-  			}
-
+			
+			}
 			if ((time(NULL) == ccreated)) {
 				printf("[%s]: spawn shot not counted %d\n",
 					__func__, m_pPlayer->GetCID());
@@ -565,16 +562,24 @@ void CCharacter::OnPredictedInput(CNetObj_PlayerInput *pNewInput)
 		m_Input.m_TargetY = -1;
 }
 
+#include <sys/time.h>
+long CCharacter::get_time_us (void)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000000) + tv.tv_usec;
+}
+
 void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 {
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 	mem_copy(&m_LatestInput, pNewInput, sizeof(m_LatestInput));
 	
-	float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
-			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
+	//float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
+	//		vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 	//printf("mouse traveled %f in %d ticks (%f)\n", disc, num_bt, disc / num_bt);
-	disc /= num_bt;
-	num_bt = 0;
+	//disc /= num_bt;
+	//num_bt = 0;
 
 	// it is not allowed to aim in the center
 	if(m_LatestInput.m_TargetX == 0 && m_LatestInput.m_TargetY == 0)
@@ -585,6 +590,14 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		HandleWeaponSwitch();
 		FireWeapon();
 	}
+	
+	//antibot test	
+	vec2 At;
+	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
+	if (GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this))
+		tb_aim_time = get_time_us();
+	else
+		tb_aim_time = 0;
 	
 	
 	//AntiBot by TsFreddie ------------------------------------------------------------
@@ -720,7 +733,7 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
-	num_bt++;
+	//num_bt++;
 	if (m_InvincibleTick > 0) --m_InvincibleTick;
 
 	if(m_pPlayer->m_ForceBalanced)
