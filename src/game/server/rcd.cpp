@@ -144,11 +144,12 @@ void RajhCheatDetector::CheckWarnings(CPlayer * Player)
 	 // if one uses a bot and gets banned, he may get a new IP and come back (like "TheEverest")
 	 // so better just set down their health so they get killed by every single bullet, making them loose the fun of botting
 	 
+	 	if (Player->print_count++ < 100) {
                 char buff[128];
 		str_format(buff, sizeof(buff), "'%s' might be a bot",
               		Player->Server()->ClientName(Player->GetCID()));
                 Player->GameServer()->SendChat(-1,CGameContext::CHAT_ALL,buff);
-                
+                }
                // Player->Server()->Kick(Player->GetCID(), "kicked by experimental antibot");
 	// if(CCharacter *c = Player->GetCharacter())
 	/// {
