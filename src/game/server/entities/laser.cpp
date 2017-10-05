@@ -25,7 +25,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	CCharacter *pHit = GameServer()->m_World.IntersectCharacter(m_Pos, To, 0.f, At, pOwnerChar);
 	if(!pHit || !pOwnerChar || !pOwnerChar->GetPlayer())
 		return false;
-	float dist = distance(To, pHit->m_Pos);
+	/*float dist = distance(To, pHit->m_Pos);
 	float dist2 = distance(At, pHit->m_Pos);
 	char aBuf[128] = { 0 };
 	str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f\n", 
@@ -40,7 +40,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	else
 		if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 			perror("write");		
-	close(fd);
+	close(fd);*/
 	
 	CPlayer *ppHit = pHit->GetPlayer();
 	

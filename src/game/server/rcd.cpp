@@ -253,12 +253,12 @@ bool RajhCheatDetector::CheckFastFire(CPlayer * Player)
          
          Player->LastFireIdx = 0;
 
-std::cout << "lastfiretick array for player id " << Player->GetCID() << std::endl;
-for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
-{
-std::cout << Player->LastFireTick[i] << ' ';
-}
-std::cout << std::endl;
+//std::cout << "lastfiretick array for player id " << Player->GetCID() << std::endl;
+//for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
+//{
+//std::cout << Player->LastFireTick[i] << ' ';
+//}
+//std::cout << std::endl;
          
          // derive to get the time diff between each fireing
          for(unsigned int i=0; i<Player->LastFireTick.size()-1; i++)
@@ -268,11 +268,11 @@ std::cout << std::endl;
          unsigned int last = Player->LastFireTick.size()-1;
          Player->LastFireTick[last] = Player->Server()->Tick() - Player->LastFireTick[last];
          
-for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
-{
-std::cout << Player->LastFireTick[i] << ' ';
-}
-std::cout << std::endl;
+//for (unsigned int i=0; i<Player->LastFireTick.size(); i++) 
+//{
+//std::cout << Player->LastFireTick[i] << ' ';
+//}
+//std::cout << std::endl;
          
          // derive again to get the change of the diffs
          for(unsigned int i=0; i<Player->LastFireTick.size()-1; i++)
