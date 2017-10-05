@@ -57,6 +57,7 @@ public:
 
 	//client version
 	char m_ClientVersion;
+	int print_count;
 
 	enum eClientVersion {
 		CLIENT_VERSION_NORMAL,
