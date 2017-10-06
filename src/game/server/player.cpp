@@ -28,6 +28,8 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	this->LastFireIdx = 0;
 	Warnings = 0;
 
+	tb_avg = 0;
+	tb_num = 0;
 	print_count = 0;
 	m_kills = 0;
 	m_grabs_normal = 0;

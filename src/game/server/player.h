@@ -17,7 +17,9 @@ class CPlayer
 public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
-
+	
+	long tb_avg;
+	int tb_num;
 
 	void Init(int CID);
 

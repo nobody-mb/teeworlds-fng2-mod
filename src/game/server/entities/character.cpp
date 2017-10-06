@@ -394,11 +394,32 @@ void CCharacter::FireWeapon()
 			char aBuf[128] = { 0 };
 			if (tb_aim_time) {
 				long delay = get_time_us() - tb_aim_time;
-				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
-					ID_NAME(GetPlayer()->GetCID()));
+			
+		
+				CPlayer *p;	
+				if ((p = GetPlayer())) {
+					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
+						    (++p->tb_num);
+					printf("avg %ld samples %d\n", p->tb_avg, p->tb_num);	 
+					
+					if (p->tb_avg < 500 && p->tb_num > 20) {
+						str_format(aBuf, sizeof(aBuf), 
+						"%s possible triggerbot (avg %ld us %d samples)", 
+						ID_NAME(GetPlayer()->GetCID()), 
+						p->tb_avg, p->tb_num);
+						GameServer()->SendChat(-1, 
+							CGameContext::CHAT_ALL, aBuf);
+
+					}
+					  
+				}
+	
 				
 				printf("** %s fired %ld us after aim\n", 
 					ID_NAME(GetPlayer()->GetCID()), delay);
+					
+				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+					ID_NAME(GetPlayer()->GetCID()));
 	
 				int fd;
 				if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)

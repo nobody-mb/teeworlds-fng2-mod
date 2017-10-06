@@ -2198,6 +2198,7 @@ void CServer::RegisterCommands()
 		"RCD: Forget all Players");
 	Console()->Register("merge_into", "ss", CFGFLAG_SERVER, merge_into, this, 
 		"noby stats: merge_into [src] -> [dst]");
+	
 	// register console commands in sub parts
 	m_ServerBan.InitServerBan(Console(), Storage(), this);
 	m_pGames->m_pGameServer->OnConsoleInit();
