@@ -576,10 +576,10 @@ void tstats::on_round_end (void)
 
 struct tee_stats *tstats::find_round_entry (const char *name)
 {
-	int i;
+	int i, len = (int)strlen(name);
 	
 	for (i = 0; i < 512; i++)
-		if (!strncmp(name, round_names[i], strlen(name)))
+		if (strlen(round_names[i]) == len && !memcmp(name, round_names[i], len))
 			return &round_stats[i];
 			
 	return NULL;
