@@ -610,7 +610,8 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	vec2 At;
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
 		 GameServer()->Tuning()->m_LaserReach;
-	if (GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this))
+	if (!tb_aim_time && 
+		GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this))
 		tb_aim_time = get_time_us();
 	else
 		tb_aim_time = 0;
