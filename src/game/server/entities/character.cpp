@@ -585,12 +585,6 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	if(m_LatestInput.m_TargetX == 0 && m_LatestInput.m_TargetY == 0)
 		m_LatestInput.m_TargetY = -1;
 
-	if(m_NumInputs > 2 && m_pPlayer->GetTeam() != TEAM_SPECTATORS)
-	{
-		HandleWeaponSwitch();
-		FireWeapon();
-	}
-	
 	//antibot test	
 	vec2 At;
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
@@ -600,6 +594,17 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	else
 		tb_aim_time = 0;
 	
+	if (tb_aim_time && g_Config.m_RcdEnable) {
+		printf("%s aiming at target at %ld\n", 
+			Server()->ClientName(m_pPlayer->GetCID()),
+			tb_aim_time);
+	}
+
+	if(m_NumInputs > 2 && m_pPlayer->GetTeam() != TEAM_SPECTATORS)
+	{
+		HandleWeaponSwitch();
+		FireWeapon();
+	}
 	
 	//AntiBot by TsFreddie ------------------------------------------------------------
 	vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
