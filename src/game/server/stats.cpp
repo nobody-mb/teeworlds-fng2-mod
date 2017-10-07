@@ -186,6 +186,8 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 		sprintf(dst, "%.02f (%s)", best, ((best != 0) ? tmp_buf : "None"));
 	else if (callback == get_accuracy || callback == get_accuracy_all)
 		sprintf(dst, "%.02f%% (%s)", best, ((best != 0) ? tmp_buf : "None"));
+	else if (callback == get_neg_steals)
+		sprintf(dst, "%d (%s)", (int)(-best), ((best != 0) ? tmp_buf : "None"));
 	else
 		sprintf(dst, "%d (%s)", (int)best, ((best != 0) ? tmp_buf : "None"));
 	
@@ -376,6 +378,10 @@ double tstats::get_steals (struct tee_stats fstats, char *buf)
 			((double)fstats.steals / (double)k) * 100);
 	*/	
 	return (double)(fstats.steals - fstats.stolen_from);
+}
+double tstats::get_neg_steals (struct tee_stats fstats, char *buf)
+{
+	return (double)(fstats.stolen_from - fstats.steals);
 }
 double tstats::get_kd (struct tee_stats fstats, char *buf)
 {
@@ -643,16 +649,18 @@ void tstats::top_special (const char *message, int ClientID)
 		print_best("most kills:", 12, &get_kills, (message[9] == 'a'));
 	} else if (strncmp(message, "/topsteals", 10) == 0) {
 		print_best("most net steals:", 12, &get_steals, (message[10] == 'a'));
+	} else if (strncmp(message, "/fewsteals", 10) == 0) {
+		print_best("fewest net steals:", 12, &get_neg_steals, (message[10] == 'a'));
 	} else if (strncmp(message, "/topwalls", 9) == 0) {
 		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
 	} else if (strncmp(message, "/topkd", 6) == 0) {
 		if (message[6] == 'a')
-			print_best("best kd (>1000 kills):", 16, &get_kd_all, 1);
+			print_best("best kd (>1000 kills):", 20, &get_kd_all, 1);
 		else
 			print_best("best kd:", 12, &get_kd, 0);
 	} else if (strncmp(message, "/topaccuracy", 12) == 0) {
 		if (message[12] == 'a')
-			print_best("best accuracy (>2000 shots):", 16, &get_accuracy_all, 1);
+			print_best("best accuracy (>2000 shots):", 20, &get_accuracy_all, 1);
 		else
 			print_best("best accuracy:", 12, &get_accuracy, 0);
 	} else if (strncmp(message, "/tophammers", 11) == 0) {
