@@ -749,7 +749,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			}
 			last_reqds = (int)time(NULL);
 		}
-	} else if (strncmp(message, "/top", 3) == 0) { 
+	} else if (strncmp(message, "/top", 3) == 0 || strncmp(message, "/few", 3) == 0) { 
 		int tl = (int)time(NULL) - last_reqd;
 		if (tl < 10) {
 			char buf[64] = { 0 };
