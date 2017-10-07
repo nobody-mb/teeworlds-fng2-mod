@@ -696,7 +696,7 @@ void tstats::on_msg (const char *message, int ClientID)
 {
 	printf("[cmd msg] %s: %s\n", ID_NAME(ClientID), message);
 	
-	if (strncmp(message, "/statsall", 9) == 0) {
+	if (!str_comp_nocase(message, "/statsall")) {
 		int tl = (int)time(NULL) - last_reqds;
 		if (tl < 5) { 
 			char buf[64] = { 0 };
@@ -723,7 +723,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			}
 			last_reqds = (int)time(NULL);
 		}
-	} else if (strncmp(message, "/stats", 6) == 0) {
+	} else if (!str_comp_nocase(message, "/stats")) {
 		int tl = (int)time(NULL) - last_reqds;
 		if (tl < 5) { 
 			char buf[64] = { 0 };
@@ -749,7 +749,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			}
 			last_reqds = (int)time(NULL);
 		}
-	} else if (strncmp(message, "/top", 3) == 0 || strncmp(message, "/few", 3) == 0) { 
+	} else if (!str_comp_nocase(message, "/top") || !str_comp_nocase(message, "/few")) {
 		int tl = (int)time(NULL) - last_reqd;
 		if (tl < 10) {
 			char buf[64] = { 0 };
@@ -758,7 +758,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		} else {
 			top_special(message, ClientID);
 		}
-	} else if (strncmp(message, "/earrape", 8) == 0 && 
+	} else if (!str_comp_nocase(message, "/earrape") &&
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		if ((time(NULL) - ertimer) < (60 * 100)) {
@@ -769,9 +769,13 @@ void tstats::on_msg (const char *message, int ClientID)
 					[ClientID]->GetCharacter()->m_Pos, SOUND_MENU);
 			ertimer = time(NULL);
 		}
-	} else if (strncmp(message, "/crash", 6) == 0 && 
+	} else if (!str_comp_nocase(message, "/crash") &&
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
-	}
+    }
+    else
+    {
+        SendChatTarget(ClientID, "Unknown command try '/cmdlist'.");
+    }
 }	
