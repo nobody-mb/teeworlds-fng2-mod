@@ -48,6 +48,7 @@ class tstats
 	static double get_wrong (struct tee_stats, char *);
 	static double get_steals (struct tee_stats, char *);
 	static double get_kd (struct tee_stats, char *);
+	static double get_kd_all (struct tee_stats, char *);
 	static double get_accuracy (struct tee_stats, char *);
 	static double get_max_spree (struct tee_stats fstats, char *);
 	static double get_max_multi (struct tee_stats fstats, char *);

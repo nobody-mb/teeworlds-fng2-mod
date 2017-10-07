@@ -182,7 +182,7 @@ double tstats::print_best_group (char *dst, struct tee_stats *stats, char **name
 	
 	tmp_buf[strlen(tmp_buf) - 2] = 0;
 
-	if (callback == get_kd)
+	if (callback == get_kd || callback == get_kd_all)
 		sprintf(dst, "%.02f (%s)", best, ((best != 0) ? tmp_buf : "None"));
 	else if (callback == get_accuracy || callback == get_accuracy_all)
 		sprintf(dst, "%.02f%% (%s)", best, ((best != 0) ? tmp_buf : "None"));
@@ -383,6 +383,14 @@ double tstats::get_kd (struct tee_stats fstats, char *buf)
 	int d = fstats.deaths ? fstats.deaths : 1;
 	return (double)k / (double)d;
 }
+double tstats::get_kd_all (struct tee_stats fstats, char *buf)
+{
+	int k = fstats.kills + fstats.kills_x2 + fstats.kills_wrong;
+	if (k < 1000)
+		return 0.0f;
+	int d = fstats.deaths ? fstats.deaths : 1;
+	return (double)k / (double)d;
+}
 double tstats::get_kills (struct tee_stats fstats, char *buf)
 {
 	return (double)(fstats.kills + fstats.kills_x2 + fstats.kills_wrong);
@@ -400,7 +408,7 @@ double tstats::get_accuracy (struct tee_stats fstats, char *buf)
 }
 double tstats::get_accuracy_all (struct tee_stats fstats, char *buf)
 {
-	if (fstats.shots < 1000)
+	if (fstats.shots < 2000)
 		return 0.0f;
 		
 	if (buf)
@@ -638,11 +646,13 @@ void tstats::top_special (const char *message, int ClientID)
 	} else if (strncmp(message, "/topwalls", 9) == 0) {
 		print_best("most wallshots:", 12, &get_bounces, (message[9] == 'a'));
 	} else if (strncmp(message, "/topkd", 6) == 0) {
-		print_best("best kd:", 12, &get_kd, (message[6] == 'a'));
+		if (message[6] == 'a')
+			print_best("best kd (>1000 kills):", 16, &get_kd_all, 1);
+		else
+			print_best("best kd:", 12, &get_kd, 0);
 	} else if (strncmp(message, "/topaccuracy", 12) == 0) {
 		if (message[12] == 'a')
-			print_best("best accuracy (>1000 shots):", 12,
-				&get_accuracy_all, 1);
+			print_best("best accuracy (>2000 shots):", 16, &get_accuracy_all, 1);
 		else
 			print_best("best accuracy:", 12, &get_accuracy, 0);
 	} else if (strncmp(message, "/tophammers", 11) == 0) {
