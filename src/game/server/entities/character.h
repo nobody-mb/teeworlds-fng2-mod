@@ -134,6 +134,7 @@ public:
 	int m_NumInputs;
 	int m_Jumped;
 	
+	CCharacter *tb_on;
 	long tb_aim_time;
 	static long get_time_us (void);
 private:

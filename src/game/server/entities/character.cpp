@@ -76,7 +76,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
 	tb_aim_time = 0;
-	//num_bt = 0;
+	tb_on = NULL;
 
 	m_Core.Reset();
 	m_Core.Init(&GameServer()->m_World.m_Core, GameServer()->Collision());
@@ -392,10 +392,8 @@ void CCharacter::FireWeapon()
 		case WEAPON_RIFLE:
 		{
 			char aBuf[128] = { 0 };
-			if (tb_aim_time) {
-				long delay = get_time_us() - tb_aim_time;
-			
-		
+			long delay = get_time_us() - tb_aim_time;
+			if (delay < 1000000) {
 				CPlayer *p;	
 				if ((p = GetPlayer())) {
 					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
@@ -608,13 +606,14 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 
 	//antibot test	
 	vec2 At;
+	CCharacter *tmpc;
 	vec2 Direction = m_Pos + (normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
 		 GameServer()->Tuning()->m_LaserReach);
-	if (!tb_aim_time && 
-		GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this))
+	tmpc = GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this);
+	if (tmpc && tmpc != tb_on) {
 		tb_aim_time = get_time_us();
-	else
-		tb_aim_time = 0;
+	}
+	tb_on = tmpc;
 	
 	if (tb_aim_time && g_Config.m_RcdEnable) {
 		printf("%s aiming at target at %ld\n", 
