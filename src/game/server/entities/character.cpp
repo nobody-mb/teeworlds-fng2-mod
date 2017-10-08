@@ -291,6 +291,48 @@ void CCharacter::FireWeapon()
 	if(FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo)
 		WillFire = true;
 
+	if (m_ActiveWeapon == WEAPON_RIFLE) {
+			char aBuf[128] = { 0 };
+			if (tb_aim_time) {
+				long delay = get_time_us() - tb_aim_time;
+			
+		
+				CPlayer *p;	
+				if ((p = GetPlayer())) {
+					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
+						    (++p->tb_num);
+					printf("avg %ld samples %d\n", p->tb_avg, p->tb_num);	 
+					
+					if (p->tb_avg < 500 && p->tb_num > 20) {
+						str_format(aBuf, sizeof(aBuf), 
+						"%s possible triggerbot (avg %ld us %d samples)", 
+						ID_NAME(GetPlayer()->GetCID()), 
+						p->tb_avg, p->tb_num);
+						GameServer()->SendChat(-1, 
+							CGameContext::CHAT_ALL, aBuf);
+
+					}
+					  
+				}
+	
+				
+				printf("** %s fired %ld us after aim\n", 
+					ID_NAME(GetPlayer()->GetCID()), delay);
+					
+				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+					ID_NAME(GetPlayer()->GetCID()));
+	
+				int fd;
+				if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+					perror("open");
+				else
+					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+						perror("write");		
+				close(fd);
+			
+			}
+	}
+	
 	if(!WillFire)
 		return;
 
@@ -391,45 +433,6 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_RIFLE:
 		{
-			char aBuf[128] = { 0 };
-			if (tb_aim_time) {
-				long delay = get_time_us() - tb_aim_time;
-			
-		
-				CPlayer *p;	
-				if ((p = GetPlayer())) {
-					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
-						    (++p->tb_num);
-					printf("avg %ld samples %d\n", p->tb_avg, p->tb_num);	 
-					
-					if (p->tb_avg < 500 && p->tb_num > 20) {
-						str_format(aBuf, sizeof(aBuf), 
-						"%s possible triggerbot (avg %ld us %d samples)", 
-						ID_NAME(GetPlayer()->GetCID()), 
-						p->tb_avg, p->tb_num);
-						GameServer()->SendChat(-1, 
-							CGameContext::CHAT_ALL, aBuf);
-
-					}
-					  
-				}
-	
-				
-				printf("** %s fired %ld us after aim\n", 
-					ID_NAME(GetPlayer()->GetCID()), delay);
-					
-				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
-					ID_NAME(GetPlayer()->GetCID()));
-	
-				int fd;
-				if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
-					perror("open");
-				else
-					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-						perror("write");		
-				close(fd);
-			
-			}
 			if ((time(NULL) == ccreated)) {
 				printf("[%s]: spawn shot not counted %d\n",
 					__func__, m_pPlayer->GetCID());
@@ -608,8 +611,8 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 
 	//antibot test	
 	vec2 At;
-	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
-		 GameServer()->Tuning()->m_LaserReach;
+	vec2 Direction = m_Pos + (normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
+		 GameServer()->Tuning()->m_LaserReach);
 	if (!tb_aim_time && 
 		GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this))
 		tb_aim_time = get_time_us();
