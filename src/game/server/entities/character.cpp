@@ -406,9 +406,10 @@ void CCharacter::FireWeapon()
 						((float)p->tb_num)); 
 					float perc = ((float)p->tb_under100k / 
 						((float)p->tb_num)); 
-					printf("** %s fired %ld us, avg %ld (%d), %.02f%% <100k\n", 
-						ID_NAME(GetPlayer()->GetCID()), delay, p->tb_avg,
-						p->tb_num, perc);	 
+					printf("** %s fired %ld us, avg %ld (%d)"
+						"%.02f%% <10, %.02f%% <100k\n", 
+						ID_NAME(GetPlayer()->GetCID()), delay, 
+						p->tb_avg, p->tb_num, perc1, perc);	 
 					if ((p->tb_num > 10 && perc1 > 0.7) ||
 					    (p->tb_num > 20 && perc1 > 0.5)) {
 						str_format(aBuf, sizeof(aBuf), 
