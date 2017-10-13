@@ -399,9 +399,9 @@ void CCharacter::FireWeapon()
 					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 						    (++p->tb_num);
 					if (delay < 10)
-						tb->under10++;
+						p->tb_under10++;
 					if (delay < 100000)
-						tb->under100k++;
+						p->tb_under100k++;
 					float perc1 = ((float)p->tb_under10 / 
 						((float)p->tb_num)) * 100.0f; 
 					float perc = ((float)p->tb_under100k / 
