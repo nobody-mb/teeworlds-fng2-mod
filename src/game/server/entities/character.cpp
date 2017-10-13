@@ -403,9 +403,9 @@ void CCharacter::FireWeapon()
 					if (delay < 100000)
 						p->tb_under100k++;
 					float perc1 = ((float)p->tb_under10 / 
-						((float)p->tb_num)) * 100.0f; 
+						((float)p->tb_num)); 
 					float perc = ((float)p->tb_under100k / 
-						((float)p->tb_num)) * 100.0f; 
+						((float)p->tb_num)); 
 					printf("** %s fired %ld us, avg %ld (%d), %.02f%% <100k\n", 
 						ID_NAME(GetPlayer()->GetCID()), delay, p->tb_avg,
 						p->tb_num, perc);	 
