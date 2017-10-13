@@ -398,19 +398,34 @@ void CCharacter::FireWeapon()
 				if ((p = GetPlayer())) {
 					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 						    (++p->tb_num);
+					if (delay < 10)
+						tb->under10++;
+					if (delay < 100000)
+						tb->under100k++;
+					float perc1 = ((float)p->tb_under10 / 
+						((float)p->tb_num)) * 100.0f; 
 					float perc = ((float)p->tb_under100k / 
 						((float)p->tb_num)) * 100.0f; 
 					printf("** %s fired %ld us, avg %ld (%d), %.02f%% <100k\n", 
 						ID_NAME(GetPlayer()->GetCID()), delay, p->tb_avg,
 						p->tb_num, perc);	 
-					
-					if (p->tb_num > 10 && perc > 0.7) {
+					if ((p->tb_num > 10 && perc1 > 0.7) ||
+					    (p->tb_num > 20 && perc1 > 0.5)) {
 						str_format(aBuf, sizeof(aBuf), 
-						"%s possible triggerbot (%.02f%% %d)", 
+						"%s possible triggerbot (%.02f%% %d 10)", 
+						ID_NAME(GetPlayer()->GetCID()), perc1, p->tb_num);
+						GameServer()->SendChat(-1, 
+							CGameContext::CHAT_ALL, aBuf);
+						count = 1;
+					} 					
+					if ((p->tb_num > 10 && perc > 0.75) ||
+					    (p->tb_num > 20 && perc > 0.7)) {
+						str_format(aBuf, sizeof(aBuf), 
+						"%s possible triggerbot (%.02f%% %d 100k)", 
 						ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
 						GameServer()->SendChat(-1, 
 							CGameContext::CHAT_ALL, aBuf);
-
+						count = 1;
 					} 
 				}
 	

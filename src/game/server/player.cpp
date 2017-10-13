@@ -30,6 +30,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 
 	tb_avg = 0;
 	tb_num = 0;
+	tb_under10 = 0;
 	tb_under100k = 0;
 	print_count = 0;
 	m_kills = 0;
