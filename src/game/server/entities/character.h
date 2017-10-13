@@ -135,6 +135,7 @@ public:
 	int m_Jumped;
 	
 	CCharacter *tb_on;
+	void anti_triggerbot (void);
 	long tb_aim_time;
 	static long get_time_us (void);
 private:

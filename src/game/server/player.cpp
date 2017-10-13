@@ -155,7 +155,7 @@ void CPlayer::Tick()
 		++m_TeamChangeTick;
 		if(m_EmotionDuration != 0) ++m_EmotionDuration;
  	}
- 	RajhCheatDetector::OnTick(this);
+ 	//RajhCheatDetector::OnTick(this);
 }
 
 void CPlayer::PostTick()
@@ -227,7 +227,7 @@ void CPlayer::Snap(int SnappingClient)
 
 void CPlayer::OnDisconnect(const char *pReason)
 {
-	RajhCheatDetector::OnPlayerLeave(this);
+	//RajhCheatDetector::OnPlayerLeave(this);
 	
 	KillCharacter(WEAPON_GAME, true);
 

@@ -270,6 +270,61 @@ bool CCharacter::IsFreezed(){
 	return m_Freeze.m_ActivationTick != 0;
 }
 
+void CCharacter::anti_triggerbot (void)
+{
+	char aBuf[128] = { 0 };
+	long delay = get_time_us() - tb_aim_time;
+	if (delay < 1000000) {
+		CPlayer *p;	
+		if ((p = GetPlayer())) {
+			p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
+				    (++p->tb_num);
+			if (delay < 10)
+				p->tb_under10++;
+			if (delay < 100000)
+				p->tb_under100k++;
+			float perc1 = ((float)p->tb_under10 / 
+				((float)p->tb_num)); 
+			float perc = ((float)p->tb_under100k / 
+				((float)p->tb_num)); 
+			printf("** %s %ld us, avg %ld (%d)"
+				"%.02f%% <10, %.02f%% <100k\n", 
+				ID_NAME(GetPlayer()->GetCID()), delay, 
+				p->tb_avg, p->tb_num, perc1, perc);	 
+			if ((p->tb_num > 10 && perc1 > 0.7) ||
+			    (p->tb_num > 20 && perc1 > 0.5)) {
+				str_format(aBuf, sizeof(aBuf), 
+				"%s possible triggerbot (%.02f%% %d 10)", 
+				ID_NAME(GetPlayer()->GetCID()), perc1, p->tb_num);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;
+			} 					
+			if ((p->tb_num > 10 && perc > 0.75) ||
+			    (p->tb_num > 20 && perc > 0.7)) {
+				str_format(aBuf, sizeof(aBuf), 
+				"%s possible triggerbot (%.02f%% %d 100k)", 
+				ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;
+			} 
+		}
+
+		str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+			ID_NAME(GetPlayer()->GetCID()));
+
+		int fd;
+		if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+			perror("open");
+		else
+			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+				perror("write");		
+		close(fd);
+		
+	}
+}
+
 void CCharacter::FireWeapon()
 {
 	if(m_ReloadTimer != 0 || (IsFreezed() && m_Freeze.m_ActivationTick != Server()->Tick()))
@@ -281,7 +336,7 @@ void CCharacter::FireWeapon()
 	bool FullAuto = false;
 	if(m_ActiveWeapon == WEAPON_GRENADE || m_ActiveWeapon == WEAPON_SHOTGUN || m_ActiveWeapon == WEAPON_RIFLE)
 		FullAuto = true;
-	RajhCheatDetector::OnFire(m_pPlayer);
+	//RajhCheatDetector::OnFire(m_pPlayer);
 
 	// check if we gonna fire
 	bool WillFire = false;
@@ -297,6 +352,9 @@ void CCharacter::FireWeapon()
 	// check for ammo
 	if(!m_aWeapons[m_ActiveWeapon].m_Ammo)
 	{
+		printf("%s firing without ammo\n", 
+			Server()->ClientName(m_pPlayer->GetCID()));
+		anti_triggerbot();
 		// 125ms is a magical limit of how fast a human can click
 		m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
 		if(m_LastNoAmmoSound+Server()->TickSpeed() <= Server()->Tick())
@@ -391,63 +449,8 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_RIFLE:
 		{
-			char aBuf[128] = { 0 };
-			long delay = get_time_us() - tb_aim_time;
-			if (delay < 1000000) {
-				CPlayer *p;	
-				if ((p = GetPlayer())) {
-					p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
-						    (++p->tb_num);
-					if (delay < 10)
-						p->tb_under10++;
-					if (delay < 100000)
-						p->tb_under100k++;
-					float perc1 = ((float)p->tb_under10 / 
-						((float)p->tb_num)); 
-					float perc = ((float)p->tb_under100k / 
-						((float)p->tb_num)); 
-					printf("** %s fired %ld us, avg %ld (%d)"
-						"%.02f%% <10, %.02f%% <100k\n", 
-						ID_NAME(GetPlayer()->GetCID()), delay, 
-						p->tb_avg, p->tb_num, perc1, perc);	 
-					if ((p->tb_num > 10 && perc1 > 0.7) ||
-					    (p->tb_num > 20 && perc1 > 0.5)) {
-						str_format(aBuf, sizeof(aBuf), 
-						"%s possible triggerbot (%.02f%% %d 10)", 
-						ID_NAME(GetPlayer()->GetCID()), perc1, p->tb_num);
-						GameServer()->SendChat(-1, 
-							CGameContext::CHAT_ALL, aBuf);
-						count = 1;
-					} 					
-					if ((p->tb_num > 10 && perc > 0.75) ||
-					    (p->tb_num > 20 && perc > 0.7)) {
-						str_format(aBuf, sizeof(aBuf), 
-						"%s possible triggerbot (%.02f%% %d 100k)", 
-						ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
-						GameServer()->SendChat(-1, 
-							CGameContext::CHAT_ALL, aBuf);
-						count = 1;
-					} 
-				}
-	
-				str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
-					ID_NAME(GetPlayer()->GetCID()));
-	
-				int fd;
-				if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
-					perror("open");
-				else
-					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-						perror("write");		
-				close(fd);
-			
-			}
-			if ((time(NULL) == ccreated)) {
-				printf("[%s]: spawn shot not counted %d\n",
-					__func__, m_pPlayer->GetCID());
-				//GameServer()->SendChatTarget(m_pPlayer->GetCID(), 
-				//	"spawn shot not counted");
-			} else { 
+			anti_triggerbot();
+			if ((time(NULL) != ccreated)) {	/* dont count spawn shot */
 				struct tee_stats *tmp;
 				if ((tmp = GameServer()->m_pController->t_stats->
 				           current[m_pPlayer->GetCID()])) {
@@ -458,9 +461,9 @@ void CCharacter::FireWeapon()
 				}
 			}
 			if (!count) {
-			int far = count ? 1 : GameServer()->Tuning()->m_LaserReach;
-			new CLaser(GameWorld(), m_Pos, Direction, far, 
-				m_pPlayer->GetCID());
+				new CLaser(GameWorld(), m_Pos, Direction, 
+				           GameServer()->Tuning()->m_LaserReach, 
+				           m_pPlayer->GetCID());
 			}
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
 		} break;
@@ -848,13 +851,13 @@ void CCharacter::Tick()
 			}
 		}
 	}
-	
+	/*
 	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
 		RajhCheatDetector::OnFire(m_pPlayer);
 
 	int events = m_Core.m_TriggeredEvents;
 	if(events&COREEVENT_HOOK_ATTACH_PLAYER && m_Core.m_HookedPlayer != -1)
-		RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);
+		RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
 	return;
 }
 
@@ -1158,7 +1161,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
 		}
 	}
-	RajhCheatDetector::OnHit(GameServer()->m_apPlayers[From], m_pPlayer->GetCID());
+	//RajhCheatDetector::OnHit(GameServer()->m_apPlayers[From], m_pPlayer->GetCID());
 	return true;
 }
 
