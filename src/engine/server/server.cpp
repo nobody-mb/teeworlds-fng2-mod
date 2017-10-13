@@ -1963,13 +1963,13 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 			{
 				const char *pAuthStr = pThis->m_aClients[i].m_Authed == CServer::AUTHED_ADMIN ? "(Admin)" :
 										pThis->m_aClients[i].m_Authed == CServer::AUTHED_MOD ? "(Mod)" : "";
-				CGameContext* gserver = dynamic_cast<CGameContext*>
-					(pThis->GameServer());							
+				//CGameContext* gserver = dynamic_cast<CGameContext*>
+				//	(pThis->GameServer());							
 				str_format(aBuf, sizeof(aBuf), 
-					"id=%d addr=%s name='%s' score=%d warns=%d %s", i, 
+					"id=%d addr=%s name='%s' score=%d %s", i, 
 					aAddrStr, pThis->m_aClients[i].m_aName, 
 					pThis->m_aClients[i].m_Score,
-					gserver->m_apPlayers[i]->Warnings, pAuthStr);
+					pAuthStr);
 			}
 			else
 				str_format(aBuf, sizeof(aBuf), "id=%d addr=%s connecting", i, aAddrStr);
