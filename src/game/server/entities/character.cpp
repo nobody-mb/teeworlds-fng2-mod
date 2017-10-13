@@ -281,7 +281,7 @@ void CCharacter::anti_triggerbot (void)
 				    (++p->tb_num);
 			if (delay < 10)
 				p->tb_under10++;
-			if (delay < 100000)
+			if (delay < 60000)
 				p->tb_under100k++;
 			float perc1 = ((float)p->tb_under10 / 
 				((float)p->tb_num)); 
@@ -303,7 +303,7 @@ void CCharacter::anti_triggerbot (void)
 			if ((p->tb_num > 10 && perc > 0.9) ||
 			    (p->tb_num > 100 && perc > 0.7)) {
 				str_format(aBuf, sizeof(aBuf), 
-				"%s possible triggerbot (%.02f%% %d 100k)", 
+				"%s possible triggerbot (%.02f%% %d 60k)", 
 				ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
