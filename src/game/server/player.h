@@ -20,6 +20,7 @@ public:
 	
 	long tb_avg;
 	int tb_num;
+	int tb_under100k;
 
 	void Init(int CID);
 
