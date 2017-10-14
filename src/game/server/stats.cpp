@@ -242,7 +242,7 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 	char buf[256];
 	int c, d, e;
 	
-	str_format(buf, sizeof(buf), "%s stats for %s (req. by %s) client version: %d", 
+	str_format(buf, sizeof(buf), "%s stats for '%s' (req. by '%s') client version: %d", 
 		is_all ? "total" : "round", name, Server()->ClientName(req_by), ct->version);
 	SendChat(-1, CGameContext::CHAT_ALL, buf);
 
@@ -653,7 +653,7 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 			s_killer->steals++;
 			s_owner->stolen_from++;
 			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+			str_format(aBuf, sizeof(aBuf), "'%s' stole %s's kill!", 
 				kname, Server()->ClientName(s_victim->frozeby));
 			game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		} else {
@@ -664,13 +664,13 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 	/* handle spree */
 	if (((++s_killer->spree) % 5) == 0) {
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
+		str_format(aBuf, sizeof(aBuf), "'%s' is on a spree of %d kills!", 
 			kname, s_killer->spree);
 		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	}
 	if (s_victim->spree >= 5) {
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
+		str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by '%s'!", 
 			Server()->ClientName(Victim), s_victim->spree, kname);
 		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	}
@@ -687,7 +687,7 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 		int index = s_killer->multi - 2;
 		s_killer->multis[index > 5 ? 5 : index]++;
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%s multi x%d!", 
+		str_format(aBuf, sizeof(aBuf), "'%s' multi x%d!", 
 			kname, s_killer->multi);
 		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	} else {
