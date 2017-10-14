@@ -773,5 +773,29 @@ void tstats::on_msg (const char *message, int ClientID)
 		   game_server->m_apPlayers[ClientID] && 
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		game_server->m_apPlayers[ClientID]->GetCharacter()->force_weapon();
+	} else if (strncmp(message, "/dump", 5) == 0) {
+		int i, tl = (int)time(NULL) - last_reqd;
+		if (tl > 5) {
+			char abuf[128];
+			for (i = 0; i < MAX_CLIENTS; i++) {
+				memset(abuf, 0, sizeof(abuf));
+				if (!game_server->m_apPlayers[i])
+					continue;
+				int tbn = game_server->m_apPlayers[i]->tb_num;
+				if (tbn == 0)
+					continue;
+				float perc1 = ((float)game_server->m_apPlayers[i]->tb_under10 / 
+					((float)tbn)); 
+				float perc = ((float)game_server->m_apPlayers[i]->tb_under100k / 
+					((float)tbn)); 
+				snprintf(abuf, sizeof(abuf), 
+					"** %s %d: %.02f%% <10, %.02f%% <60k\n", 
+					ID_NAME(game_server->m_apPlayers[i]->GetCID()), 
+					tbn, perc1, perc);	
+				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
+
+			}
+			last_reqd = (int)time(NULL);
+		}
 	}
 }	
