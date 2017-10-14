@@ -789,7 +789,7 @@ void tstats::on_msg (const char *message, int ClientID)
 				float perc = ((float)game_server->m_apPlayers[i]->tb_under100k / 
 					((float)tbn)); 
 				snprintf(abuf, sizeof(abuf), 
-					"** %s %d: %.02f%% <10, %.02f%% <60k\n", 
+					"** %s %d: %.02f%% <10, %.02f%% <60k", 
 					ID_NAME(game_server->m_apPlayers[i]->GetCID()), 
 					tbn, perc1, perc);	
 				SendChat(-1, CGameContext::CHAT_ALL, abuf);	

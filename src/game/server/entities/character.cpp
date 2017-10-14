@@ -287,7 +287,7 @@ void CCharacter::anti_triggerbot (void)
 				((float)p->tb_num)); 
 			float perc = ((float)p->tb_under100k / 
 				((float)p->tb_num)); 
-			printf("** %s %ld (avg %ld)\t of %d: %.02f%% <10, %.02f%% <60k\n", 
+			printf("** %s %6ld (avg %ld)\t of %d: %.02f%% <10, %.02f%% <60k\n", 
 				ID_NAME(GetPlayer()->GetCID()), delay, 
 				p->tb_avg, p->tb_num, perc1, perc);	 
 			if ((p->tb_num > 10 && perc1 > 0.9) ||
