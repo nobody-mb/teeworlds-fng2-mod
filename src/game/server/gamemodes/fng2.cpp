@@ -291,7 +291,8 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			}
 		} else if(Weapon == WEAPON_SPIKE_NORMAL){
 			if (s_killer) s_killer->kills++;
-
+			GameServer()->m_pController->t_stats->do_kill_messages(
+				s_killer, s_victim);
 			if(pKiller->GetCharacter()) 
 				GameServer()->MakeLaserTextPoints(
 					pKiller->GetCharacter()->m_Pos, 
@@ -323,6 +324,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
+			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
@@ -346,6 +348,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 			}
+			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
@@ -355,6 +358,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeGold;
 			pVictim->GetPlayer()->m_RespawnTick =
 				Server()->Tick()+Server()->TickSpeed()*.5f;
+			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
 			if(pKiller->GetCharacter())
 				GameServer()->MakeLaserTextPoints(
 					pKiller->GetCharacter()->m_Pos, pKiller->GetCID(),
@@ -369,74 +373,6 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 		}
 	}
 	
-	if (s_killer && s_victim && (Weapon == WEAPON_SPIKE_GOLD || 
-				     Weapon == WEAPON_SPIKE_BLUE || 
-				     Weapon == WEAPON_SPIKE_RED || 
-				     Weapon == WEAPON_SPIKE_NORMAL)) {
-		const char *kname = Server()->ClientName(s_killer->id);
-		int Victim = pPlVictim->GetCID();
-		s_victim->deaths++;
-		if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
-/* cause of crashing was the line: `ID_ENTRY(s_victim->frozeby)->stolen_from++` 
-   which would end up trying to dereference a structure starting at NULL when the associated stats data for the player with ID s_victim->frozeby had already been deleted (ie while player is leaving), easy fix with debugger: ```
-(gdb) info registers
-   rax            0x0      [...]
-   rip            0x43745c 0x43745c <CGameControllerFNG2::OnCharacterDeath[...]+1148>		
-(gdb) disas 0x43745c	
-   0x0000000000437444 <+1124>:  mov    0x3c20(%rax),%rax
-   0x000000000043744b <+1131>:  mov    0x6f0(%rax),%rax
-   0x0000000000437452 <+1138>:  mov    0x12048(%rax,%rdx,8),%rax
-   0x000000000043745a <+1146>:  xor    %edx,%edx
-=> 0x000000000043745c <+1148>:  addl   $0x1,0x84(%rax)```*/
-			struct tee_stats *s_owner = ID_ENTRY(s_victim->frozeby);
-			if (s_owner) {
-				s_killer->steals++;
-				s_owner->stolen_from++;
-				char aBuf[128];
-				str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
-					kname, Server()->ClientName(s_victim->frozeby));
-				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-			} else {
-				printf("no owner found with id %d\n", s_victim->frozeby);
-			}
-		}
-
-		/* handle spree */
-		if (((++s_killer->spree) % 5) == 0) {
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
-				kname, s_killer->spree);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
-		if (s_victim->spree >= 5) {
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
-				Server()->ClientName(Victim), s_victim->spree, kname);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
-		if (s_killer->spree > s_killer->spree_max)
-			s_killer->spree_max = s_killer->spree;
-		s_victim->spree = 0;
-
-		/* handle multis */
-		time_t ttmp = time(NULL);
-		if ((ttmp - s_killer->lastkilltime) <= 5) {
-			s_killer->multi++;
-			if (s_killer->max_multi < s_killer->multi)
-				s_killer->max_multi = s_killer->multi;
-			int index = s_killer->multi - 2;
-			s_killer->multis[index > 5 ? 5 : index]++;
-			char aBuf[128];
-			str_format(aBuf, sizeof(aBuf), "%s multi x%d!", 
-				kname, s_killer->multi);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		} else {
-			s_killer->multi = 1;
-		}
-		s_killer->lastkilltime = ttmp;	
-		s_victim->frozeby = -1;	
-	}
-
 	if (Weapon == WEAPON_SELF) {
 		pVictim->GetPlayer()->m_RespawnTick = 
 			Server()->Tick()+Server()->TickSpeed()*.75f;

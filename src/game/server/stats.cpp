@@ -638,6 +638,64 @@ struct tee_stats *tstats::add_round_entry (struct tee_stats st, const char *name
 			
 	return &round_stats[i];
 }
+#define ID_ENTRY(i) (game_server->m_pController->t_stats->current[i])
+
+void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_victim)
+{	
+	if (!s_killer || !s_victim)
+		return;
+	const char *kname = Server()->ClientName(s_killer->id);
+	int Victim = s_victim->id;
+	s_victim->deaths++;
+	if (s_victim->frozeby != s_killer->id && s_victim->frozeby >= 0) {
+		struct tee_stats *s_owner = ID_ENTRY(s_victim->frozeby);
+		if (s_owner) {
+			s_killer->steals++;
+			s_owner->stolen_from++;
+			char aBuf[128];
+			str_format(aBuf, sizeof(aBuf), "%s stole %s's kill!", 
+				kname, Server()->ClientName(s_victim->frozeby));
+			game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		} else {
+			printf("no owner found with id %d\n", s_victim->frozeby);
+		}
+	}
+
+	/* handle spree */
+	if (((++s_killer->spree) % 5) == 0) {
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%s is on a spree of %d kills!", 
+			kname, s_killer->spree);
+		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	}
+	if (s_victim->spree >= 5) {
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%s's spree of %d kills ended by %s!", 
+			Server()->ClientName(Victim), s_victim->spree, kname);
+		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	}
+	if (s_killer->spree > s_killer->spree_max)
+		s_killer->spree_max = s_killer->spree;
+	s_victim->spree = 0;
+
+	/* handle multis */
+	time_t ttmp = time(NULL);
+	if ((ttmp - s_killer->lastkilltime) <= 5) {
+		s_killer->multi++;
+		if (s_killer->max_multi < s_killer->multi)
+			s_killer->max_multi = s_killer->multi;
+		int index = s_killer->multi - 2;
+		s_killer->multis[index > 5 ? 5 : index]++;
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%s multi x%d!", 
+			kname, s_killer->multi);
+		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	} else {
+		s_killer->multi = 1;
+	}
+	s_killer->lastkilltime = ttmp;	
+	s_victim->frozeby = -1;	
+}
 
 void tstats::top_special (const char *message, int ClientID)
 {
