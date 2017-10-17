@@ -48,6 +48,7 @@ CCharacter::CCharacter(CGameWorld *pWorld)
 	m_Armor = 0;
 	m_Freeze.m_ActivationTick = 0;
 	count = 0;
+	lpi_us = li_us = 0;
 	m_InvincibleTick = 0;
 	m_Killer.m_KillerID = -1;
 	m_Killer.m_uiKillerHookTicks = 0;
@@ -608,7 +609,9 @@ long CCharacter::get_time_us (void)
 
 void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 {
+	lpi_us = li_us;
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
+	li_us = get_time_us();
 	mem_copy(&m_LatestInput, pNewInput, sizeof(m_LatestInput));
 	
 	//float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
@@ -854,10 +857,32 @@ void CCharacter::Tick()
 	/*
 	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
 		RajhCheatDetector::OnFire(m_pPlayer);
-
+	*/
 	int events = m_Core.m_TriggeredEvents;
-	if(events&COREEVENT_HOOK_ATTACH_PLAYER && m_Core.m_HookedPlayer != -1)
-		RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
+	if ((events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+		vec2 p1 = vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY);
+		vec2 p2 = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
+		float ds = distance(p1, p2);
+		
+		printf(" - %s hooked %d | mouse traveled %d in %d us\n", 
+			ID_NAME(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
+			 ds, li_us - lpi_us);
+			
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s", ds, li_us - lpi_us,
+			ID_NAME(GetPlayer()->GetCID()));
+
+		int fd;
+		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+			perror("open");
+		else
+			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+				perror("write");		
+		close(fd);
+
+		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
+		
+	}
 	return;
 }
 

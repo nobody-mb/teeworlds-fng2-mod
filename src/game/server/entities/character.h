@@ -126,7 +126,9 @@ private:
 public:
 	CNetObj_PlayerInput OldInput;
 	CNetObj_PlayerInput m_LatestPrevInput;
+	long lpi_us;
 	CNetObj_PlayerInput m_LatestInput;
+	long li_us;
 
 	// input
 	CNetObj_PlayerInput m_PrevInput;
