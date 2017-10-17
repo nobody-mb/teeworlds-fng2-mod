@@ -859,17 +859,28 @@ void CCharacter::Tick()
 		RajhCheatDetector::OnFire(m_pPlayer);
 	*/
 	int events = m_Core.m_TriggeredEvents;
-	if (GetPlayer() && 
-		(events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+	int teamhook = 0;
+	if (GetPlayer() && (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Core.m_HookedPlayer];
+		if (GameServer()->m_pController->IsTeamplay()) {
+			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam()) {
+				teamhook = 1;
+			}
+		}
+		float td = 0;
 		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
 			vec2(OldInput.m_TargetX, OldInput.m_TargetY));
+		if (pPlayer->GetCharacter()) {
+			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
+		}
 		
-		printf(" - %s hooked %s | mouse traveled %f in %d us\n", 
-			ID_NAME(GetPlayer()->GetCID()), ID_NAME(m_Core.m_HookedPlayer),
-			 ds, li_us - lpi_us);
+		printf(" - %s%shooked %s at %f | mouse traveled %f in %ld us\n", 
+			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
+			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
 			
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s", (long)(ds), li_us - lpi_us,
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s", (long)(ds), 
+			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
 			ID_NAME(GetPlayer()->GetCID()));
 
 		int fd;
