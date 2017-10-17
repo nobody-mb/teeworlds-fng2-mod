@@ -865,7 +865,7 @@ void CCharacter::Tick()
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 		
 		printf(" - %d hooked %d | mouse traveled %f in %d us\n", 
-			ID_NAME(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
+			(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
 			 ds, li_us - lpi_us);
 			
 		/*char aBuf[128];
