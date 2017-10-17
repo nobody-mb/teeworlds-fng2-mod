@@ -635,12 +635,12 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	}
 	tb_on = tmpc;
 	
-	if (tb_aim_time && g_Config.m_RcdEnable) {
+	/*if (tb_aim_time && g_Config.m_RcdEnable) {
 		printf("%s aiming at target at %ld\n", 
 			Server()->ClientName(m_pPlayer->GetCID()),
 			tb_aim_time);
 	}
-
+	*/
 	if(m_NumInputs > 2 && m_pPlayer->GetTeam() != TEAM_SPECTATORS)
 	{
 		HandleWeaponSwitch();
@@ -864,7 +864,7 @@ void CCharacter::Tick()
 		float ds = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 		
-		printf(" - %d hooked %d | mouse traveled %d in %d us\n", 
+		printf(" - %d hooked %d | mouse traveled %f in %d us\n", 
 			ID_NAME(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
 			 ds, li_us - lpi_us);
 			
