@@ -859,7 +859,7 @@ void CCharacter::Tick()
 		RajhCheatDetector::OnFire(m_pPlayer);
 	*/
 	int events = m_Core.m_TriggeredEvents;
-	if (g_Config.m_RcdEnable && GetPlayer() && 
+	if (GetPlayer() && 
 		(events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
 		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
 			vec2(m_PrevInput.m_TargetX, m_PrevInput.m_TargetY));
