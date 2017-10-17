@@ -874,12 +874,17 @@ void CCharacter::Tick()
 			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
 		}
 		
-		printf(" - %s%shooked %s at %f | mouse traveled %f in %ld us\n", 
+		char aBuf[128];
+		snprintf(aBuf, sizeof(aBuf), 
+			" - %s%shooked %s at %f | mouse traveled %f in %ld us\n", 
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
 			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
-			
-		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s", (long)(ds), 
+		
+		if (g_Config.m_RcdEnable)
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+	
+
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s\n", (long)(ds), 
 			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
 			ID_NAME(GetPlayer()->GetCID()));
 
