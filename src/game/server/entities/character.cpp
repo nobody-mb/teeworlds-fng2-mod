@@ -864,12 +864,12 @@ void CCharacter::Tick()
 		float ds = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 		
-		printf(" - %d hooked %d | mouse traveled %f in %d us\n", 
-			(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
+		printf(" - %s hooked %s | mouse traveled %f in %d us\n", 
+			ID_NAME(GetPlayer()->GetCID()), ID_NAME(m_Core.m_HookedPlayer),
 			 ds, li_us - lpi_us);
 			
-		/*char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s", ds, li_us - lpi_us,
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s", (long)(ds), li_us - lpi_us,
 			ID_NAME(GetPlayer()->GetCID()));
 
 		int fd;
@@ -879,7 +879,6 @@ void CCharacter::Tick()
 			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 				perror("write");		
 		close(fd);
-	}*/
 		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
 		
 	}
