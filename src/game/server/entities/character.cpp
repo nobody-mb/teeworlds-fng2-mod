@@ -860,7 +860,7 @@ void CCharacter::Tick()
 	*/
 	int events = m_Core.m_TriggeredEvents;
 	if ((events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
-		vec2 p1 = vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY);
+		/*vec2 p1 = vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY);
 		vec2 p2 = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
 		float ds = distance(p1, p2);
 		
@@ -880,7 +880,7 @@ void CCharacter::Tick()
 			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 				perror("write");		
 		close(fd);
-	}
+	}*/
 		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
 		
 	}
