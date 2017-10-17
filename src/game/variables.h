@@ -89,6 +89,8 @@ MACRO_CONFIG_INT(RcdMaxWarnings, rcd_max_warnings, 50, 0, 100, CFGFLAG_SERVER, "
 MACRO_CONFIG_INT(RcdBantime, rcd_bantime, 0, 0, 1440, CFGFLAG_SERVER, "The time to ban a player if kicked by RCD. 0 makes it just use kick")
 MACRO_CONFIG_STR(RcdBanreason, rcd_banreason, 64, "Banned by experimental anti-cheat system", CFGFLAG_SERVER, "Ban reason if kicked by RCD")
 
+MACRO_CONFIG_STR(NameBan, name_ban, 64, "", CFGFLAG_SERVER, "name to ban by default")
+
 #include "variables_special.h"
 
 // debug

@@ -660,6 +660,10 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	if (g_Config.m_NameBan && strstr(Server()->ClientName(ClientID), g_Config.m_NameBan)) {
+		Server()->Kick(ClientID, "Disconnected");
+		return;
+	}
 	//RajhCheatDetector::OnPlayerEnter(m_apPlayers[ClientID]);
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
