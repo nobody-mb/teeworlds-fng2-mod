@@ -859,17 +859,16 @@ void CCharacter::Tick()
 		RajhCheatDetector::OnFire(m_pPlayer);
 	*/
 	int events = m_Core.m_TriggeredEvents;
-	if ((events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
-		/*vec2 p1 = vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY);
-		vec2 p2 = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
-		float ds = distance(p1, p2);
+	if (g_Config.m_RcdEnable && GetPlayer() && 
+		(events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+		float ds = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
+			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 		
-		if (GetPlayer()) {
 		printf(" - %d hooked %d | mouse traveled %d in %d us\n", 
 			ID_NAME(GetPlayer()->GetCID()), m_Core.m_HookedPlayer,
 			 ds, li_us - lpi_us);
 			
-		char aBuf[128];
+		/*char aBuf[128];
 		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s", ds, li_us - lpi_us,
 			ID_NAME(GetPlayer()->GetCID()));
 
