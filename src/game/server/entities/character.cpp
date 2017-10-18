@@ -882,7 +882,7 @@ void CCharacter::Tick()
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
 			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
 		
-		if ((g_Config.m_RcdEnable == 1) || (g_Config.m_RcdEnable == 2 && isf))
+		if ((g_Config.m_RcdEnable == 1) || (g_Config.m_RcdEnable == 2 && isf && teamhook))
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 
 		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s\n", (long)(ds), 
