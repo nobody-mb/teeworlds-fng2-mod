@@ -868,21 +868,22 @@ void CCharacter::Tick()
 			}
 		}
 		float td = 0;
+		int isf = 0;
 		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
 			vec2(OldInput.m_TargetX, OldInput.m_TargetY));
 		if (pPlayer->GetCharacter()) {
+			isf = pPlayer->GetCharacter()->IsFreezed();
 			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
 		}
 		
 		char aBuf[128];
 		snprintf(aBuf, sizeof(aBuf), 
-			" - %s%shooked %s at %f | mouse traveled %f in %ld us\n", 
+			" - %s%shooked %s at %f | mouse traveled %f in %ld us", 
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
 			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
 		
-		if (g_Config.m_RcdEnable)
+		if ((g_Config.m_RcdEnable == 1) || (g_Config.m_RcdEnable == 2 && isf))
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-	
 
 		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s\n", (long)(ds), 
 			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
