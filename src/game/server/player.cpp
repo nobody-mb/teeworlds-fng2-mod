@@ -183,8 +183,11 @@ void CPlayer::Snap(int SnappingClient)
 	if(!Server()->ClientIngame(m_ClientID))
 		return;
 	
+	
+	
 	int ClientID = m_ClientID;
 	if (SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(GetCID(), GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;
+	/*if(SnappingClient > -1 && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID)) return;*/
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, ClientID, sizeof(CNetObj_ClientInfo)));
 	if(!pClientInfo)
