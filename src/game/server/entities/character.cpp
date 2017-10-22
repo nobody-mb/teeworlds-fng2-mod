@@ -77,6 +77,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
 	tb_aim_time = 0;
+	//tbspree_44k = tbmax_44k = tbspree_10 = tbmax_10 = 0;
 	tb_on = NULL;
 
 	m_Core.Reset();
@@ -278,6 +279,37 @@ void CCharacter::anti_triggerbot (void)
 	if (delay < 1000000) {
 		CPlayer *p;	
 		if ((p = GetPlayer())) {
+			if (delay < 44000) {
+				p->tbspree_44k++;
+			} else {
+				if (p->tbspree_44k > p->tbmax_44k)
+					p->tbmax_44k = p->tbspree_44k;
+				p->tbspree_44k = 0;
+			}
+			if (delay < 10) {
+				p->tbspree_10++;
+			} else {
+				if (p->tbspree_10 > p->tbmax_10)
+					p->tbmax_10 = p->tbspree_10;
+				p->tbspree_10 = 0;
+			}	
+			
+			if (p->tbmax_10 >= 9) {
+				str_format(aBuf, sizeof(aBuf), 
+					"%s possible triggerbot (max 10 %d)", 
+				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;	
+			}				
+			if (p->tbmax_44k >= 9) {
+				str_format(aBuf, sizeof(aBuf), 
+					"%s possible triggerbot (max 44k %d)", 
+					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;	
+			}		
 			p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 				    (++p->tb_num);
 			if (delay < 10)
@@ -288,15 +320,15 @@ void CCharacter::anti_triggerbot (void)
 				((float)p->tb_num)); 
 			float perc = ((float)p->tb_under100k / 
 				((float)p->tb_num)); 
-			printf("** %s %6ld (avg %ld)\t of %d: %.02f%% <10, %.02f%% <60k\n", 
+			printf("** %s %6ld\t of %d: %.02f%% <10, %.02f%% <60k sp10 %d/%d sp44k %d/%d\n", 
 				ID_NAME(GetPlayer()->GetCID()), delay, 
-				p->tb_avg, p->tb_num, perc1, perc);	 
+				p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, p->tbmax_10,
+				p->tbspree_44k, p->tbmax_44k);	 
 			if ((p->tb_num > 10 && perc1 > 0.9) ||
-			    (p->tb_num > 20 && perc1 > 0.5) || 
-			    (p->tb_num > 40 && perc1 > 0.35)) {
+			    (p->tb_num > 20 && perc1 > 0.5)) {
 				str_format(aBuf, sizeof(aBuf), 
 				"%s possible triggerbot (%.02f%% %d 10)", 
-				ID_NAME(GetPlayer()->GetCID()), perc1, p->tb_num);
+				ID_NAME(GetPlayer()->GetCID()), perc1 * 100, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;
@@ -305,7 +337,7 @@ void CCharacter::anti_triggerbot (void)
 			    (p->tb_num > 40 && perc > 0.7)) {
 				str_format(aBuf, sizeof(aBuf), 
 				"%s possible triggerbot (%.02f%% %d 60k)", 
-				ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
+				ID_NAME(GetPlayer()->GetCID()), perc * 100, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;

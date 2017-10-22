@@ -22,6 +22,9 @@ public:
 	int tb_num;
 	int tb_under10;
 	int tb_under100k;
+	
+	int tbspree_44k, tbmax_44k; /* < 15 */
+	int tbspree_10, tbmax_10; /* < 9 */
 
 	void Init(int CID);
 
