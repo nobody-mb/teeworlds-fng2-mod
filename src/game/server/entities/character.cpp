@@ -302,7 +302,7 @@ void CCharacter::anti_triggerbot (void)
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;	
 			}				
-			if (p->tbmax_44k >= 9) {
+			if (p->tbmax_44k >= 15) {
 				str_format(aBuf, sizeof(aBuf), 
 					"%s possible triggerbot (max 44k %d)", 
 					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k);
