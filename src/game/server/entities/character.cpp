@@ -750,8 +750,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if((int)(m_ABSpinLength + 0.5) > 419 && (int)(m_ABSpinLength + 0.5) < 421)
 		{
 			str_format(aBuf, sizeof(aBuf), "%s is blazing (420)", 
-			Server()->ClientName(m_pPlayer->GetCID()), 
-			(int)(m_ABSpinLength + 0.5));
+			Server()->ClientName(m_pPlayer->GetCID()));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		else
