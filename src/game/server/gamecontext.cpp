@@ -713,9 +713,23 @@ void CGameContext::OnClientConnected(int ClientID)
 bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 {
 	m_pController->t_stats->on_drop(ClientID, pReason);
-	
-	if (m_apPlayers[ClientID]->GetCharacter() && m_apPlayers[ClientID]->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force) return false;
 
+	if (m_apPlayers[ClientID]->GetCharacter() && m_apPlayers[ClientID]->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force)
+	{
+		if(m_Ragequit <= 1)
+			m_Ragequit++;
+		if(m_Ragequit == 1)
+		{
+			str_copy(m_aOldName, Server()->ClientName(ClientID), sizeof(m_aOldName));
+			char aChatText[256];
+			str_format(aChatText, sizeof(aChatText), "'%s' turned into a fagget", Server()->ClientName(ClientID));
+			SendChat(-1, CGameContext::CHAT_ALL, aChatText);
+			Server()->SetClientName(ClientID, "fagget");
+		}
+		return false;
+	}
+
+	Server()->SetClientName(ClientID, m_aOldName);
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);
 	delete m_apPlayers[ClientID];
@@ -723,6 +737,8 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 
 	(void)m_pController->CheckTeamBalance();
 	m_VoteUpdate = true;
+	m_Ragequit = 0;
+	memset(m_aOldName, 0, sizeof(m_aOldName));
 
 	// update spectator modes
 	for(int i = 0; i < MAX_CLIENTS; ++i)

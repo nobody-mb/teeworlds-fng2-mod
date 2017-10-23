@@ -240,8 +240,6 @@ void CPlayer::OnDisconnect(const char *pReason)
 		char aBuf[512];
 		if(pReason && *pReason)
 			str_format(aBuf, sizeof(aBuf), "'%s' has left the game (%s)", Server()->ClientName(m_ClientID), pReason);
-		else if(m_pCharacter && m_pCharacter->IsFreezed())
-			str_format(aBuf, sizeof(aBuf), "'%s' did ragequit", Server()->ClientName(m_ClientID));
 		else
 			str_format(aBuf, sizeof(aBuf), "'%s' has left the game", Server()->ClientName(m_ClientID));
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
