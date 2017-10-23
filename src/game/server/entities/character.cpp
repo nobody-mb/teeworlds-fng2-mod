@@ -282,6 +282,8 @@ void CCharacter::anti_triggerbot (void)
 			if (delay < 44000) {
 				p->tbspree_44k++;
 			} else {
+				if (p->tbspree_44k > 5)
+					p->tbnum_44k++;
 				if (p->tbspree_44k > p->tbmax_44k)
 					p->tbmax_44k = p->tbspree_44k;
 				p->tbspree_44k = 0;
@@ -289,23 +291,25 @@ void CCharacter::anti_triggerbot (void)
 			if (delay < 10) {
 				p->tbspree_10++;
 			} else {
+				if (p->tbspree_10 > 5)
+					p->tbnum_10++;
 				if (p->tbspree_10 > p->tbmax_10)
 					p->tbmax_10 = p->tbspree_10;
 				p->tbspree_10 = 0;
 			}	
 			
-			if (p->tbmax_10 >= 9) {
+			if ((p->tb_num < 100 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
 				str_format(aBuf, sizeof(aBuf), 
-					"%s possible triggerbot (max 10 %d)", 
-				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10);
+					"%s possible triggerbot (max 10 %d %d)", 
+				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;	
 			}				
-			if (p->tbmax_44k >= 15) {
+			if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
 				str_format(aBuf, sizeof(aBuf), 
-					"%s possible triggerbot (max 44k %d)", 
-					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k);
+					"%s possible triggerbot (max 44k %d %d)", 
+					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;	
@@ -320,10 +324,10 @@ void CCharacter::anti_triggerbot (void)
 				((float)p->tb_num)); 
 			float perc = ((float)p->tb_under100k / 
 				((float)p->tb_num)); 
-			printf("** %s %6ld\t of %d: %.02f%% <10, %.02f%% <60k sp10 %d/%d sp44k %d/%d\n", 
+			printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d %d/%d | %d %d/%d\n", 
 				ID_NAME(GetPlayer()->GetCID()), delay, 
-				p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, p->tbmax_10,
-				p->tbspree_44k, p->tbmax_44k);	 
+				p->tb_num, perc1 * 100, perc * 100, p->tbnum_10, p->tbspree_10, 
+				p->tbmax_10, p->tbnum_44k, p->tbspree_44k, p->tbmax_44k);	 
 			if ((p->tb_num > 10 && perc1 > 0.9) ||
 			    (p->tb_num > 20 && perc1 > 0.5)) {
 				str_format(aBuf, sizeof(aBuf), 
