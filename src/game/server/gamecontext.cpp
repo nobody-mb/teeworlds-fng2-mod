@@ -715,7 +715,7 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 	CPlayer *pPlayer = m_apPlayers[ClientID];
 	m_pController->t_stats->on_drop(ClientID, pReason);
 
-	if (m_apPlayers[ClientID]->GetCharacter() && m_apPlayers[ClientID]->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force)
+	if (pPlayer->GetCharacter() && pPlayer->GetCharacter()->IsFreezed() && !m_pController->IsGameOver() && !Force)
 	{
 		if(pPlayer->m_Ragequit <= 1)
 			pPlayer->m_Ragequit++;
