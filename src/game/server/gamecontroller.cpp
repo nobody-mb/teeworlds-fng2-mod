@@ -167,44 +167,40 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 	int Type = -1;
 	int SubType = 0;
 
-	if(Index == ENTITY_SPAWN)
-		m_aaSpawnPoints[0][m_aNumSpawnPoints[0]++] = Pos;
-	else if(Index == ENTITY_SPAWN_RED)
-		m_aaSpawnPoints[1][m_aNumSpawnPoints[1]++] = Pos;
-	else if(Index == ENTITY_SPAWN_BLUE)
-		m_aaSpawnPoints[2][m_aNumSpawnPoints[2]++] = Pos;
-	else if(Index == ENTITY_ARMOR_1)
-		Type = POWERUP_ARMOR;
-	else if(Index == ENTITY_HEALTH_1)
-		Type = POWERUP_HEALTH;
-	else if(Index == ENTITY_WEAPON_SHOTGUN)
-	{
-		Type = POWERUP_WEAPON;
-		SubType = WEAPON_SHOTGUN;
-	}
-	else if(Index == ENTITY_WEAPON_GRENADE)
-	{
-		Type = POWERUP_WEAPON;
-		SubType = WEAPON_GRENADE;
-	}
-	else if(Index == ENTITY_WEAPON_RIFLE)
-	{
-		Type = POWERUP_WEAPON;
-		SubType = WEAPON_RIFLE;
-	}
-	else if(Index == ENTITY_POWERUP_NINJA && m_Config.m_SvPowerups)
-	{
-		Type = POWERUP_NINJA;
-		SubType = WEAPON_NINJA;
-	}
-
-	if(Type != -1)
-	{
-		CPickup *pPickup = new CPickup(&GameServer()->m_World, Type, SubType);
-		pPickup->m_Pos = Pos;
-		return true;
-	}
-
+	switch(Index) {
+		case ENTITY_SPAWN: m_aaSpawnPoints[0][m_aNumSpawnPoints[0]++] = Pos; break;
+		case ENTITY_SPAWN_RED: m_aaSpawnPoints[1][m_aNumSpawnPoints[1]++] = Pos; break;
+		case ENTITY_SPAWN_BLUE: m_aaSpawnPoints[2][m_aNumSpawnPoints[2]++] = Pos; break;
+			
+		default: if (!CFG(SuppressEntities)) {
+			if(Index == ENTITY_ARMOR_1)
+				Type = POWERUP_ARMOR;
+			else if(Index == ENTITY_HEALTH_1)
+				Type = POWERUP_HEALTH;
+			else if(Index == ENTITY_WEAPON_SHOTGUN) {
+				Type = POWERUP_WEAPON;
+				SubType = WEAPON_SHOTGUN;
+			}
+			else if(Index == ENTITY_WEAPON_GRENADE) {
+				Type = POWERUP_WEAPON;
+				SubType = WEAPON_GRENADE;
+			}
+			else if(Index == ENTITY_WEAPON_RIFLE) {
+				Type = POWERUP_WEAPON;
+				SubType = WEAPON_RIFLE;
+			}
+			else if(Index == ENTITY_POWERUP_NINJA && m_Config.m_SvPowerups) {
+				Type = POWERUP_NINJA;
+				SubType = WEAPON_NINJA;
+			}
+			
+			if(Type != -1)
+			{
+				CPickup *pPickup = new CPickup(&GameServer()->m_World, Type, SubType);
+				pPickup->m_Pos = Pos;
+				return true;
+			}
+		} break;
 	return false;
 }
 
@@ -659,9 +655,14 @@ int IGameController::GetAutoTeam(int NotThisID)
 		}
 	}
 
-	int Team = 0;
-	if(IsTeamplay())
-		Team = aNumplayers[TEAM_RED] > aNumplayers[TEAM_BLUE] ? TEAM_BLUE : TEAM_RED;
+ 	int Team = 0;
+-	if(IsTeamplay())
+-		Team = aNumplayers[TEAM_RED] > aNumplayers[TEAM_BLUE] ? TEAM_BLUE : TEAM_RED;
++	if(IsTeamplay()) {
++		if(aNumplayers[TEAM_RED] > aNumplayers[TEAM_BLUE]) Team = TEAM_BLUE;
++		else if(aNumplayers[TEAM_BLUE] > aNumplayers[TEAM_RED]) Team = TEAM_RED;
++		else Team = rand() % 2;
++	}
 
 	if(CanJoinTeam(Team, NotThisID))
 		return Team;
