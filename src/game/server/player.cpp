@@ -50,6 +50,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_EmotionDuration = 0;
 
 	m_ClientVersion = CLIENT_VERSION_NORMAL;
+	m_Ragequit = 0;
 	
 	memset(m_SnappingClients, -1, sizeof(m_SnappingClients));
 	m_SnappingClients[0].id = ClientID;
