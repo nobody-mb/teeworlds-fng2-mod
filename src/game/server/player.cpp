@@ -183,8 +183,11 @@ void CPlayer::Snap(int SnappingClient)
 	if(!Server()->ClientIngame(m_ClientID))
 		return;
 	
+	//
+	
 	int ClientID = m_ClientID;
 	if (SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(GetCID(), GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;
+	/* return;*/
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, ClientID, sizeof(CNetObj_ClientInfo)));
 	if(!pClientInfo)
@@ -218,7 +221,8 @@ void CPlayer::Snap(int SnappingClient)
 			return;
 		
 		pSpectatorInfo->m_SpectatorID = m_SpectatorID;
-		if(!GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID))
+	/*	if(!GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID))*/
+	if(SnappingClient > -1 && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID))
 			pSpectatorInfo->m_SpectatorID = m_SpectatorID;
 		pSpectatorInfo->m_X = m_ViewPos.x;
 		pSpectatorInfo->m_Y = m_ViewPos.y;

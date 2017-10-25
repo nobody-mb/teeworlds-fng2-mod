@@ -660,6 +660,10 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	if (g_Config.m_NameBan && strstr(Server()->ClientName(ClientID), g_Config.m_NameBan)) {
+		Server()->Kick(ClientID, "Disconnected");
+		return;
+	}
 	//RajhCheatDetector::OnPlayerEnter(m_apPlayers[ClientID]);
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
@@ -859,7 +863,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char aDesc[VOTE_DESC_LENGTH] = {0};
 			char aCmd[VOTE_CMD_LENGTH] = {0};
 			CNetMsg_Cl_CallVote *pMsg = (CNetMsg_Cl_CallVote *)pRawMsg;
-			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "No reason given";
+			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em a fagget!";
 
 			if(str_comp_nocase(pMsg->m_Type, "option") == 0)
 			{
@@ -1783,7 +1787,7 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	const char *pType = pResult->GetString(0);
 	const char *pValue = pResult->GetString(1);
-	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "No reason given";
+	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "I em a fagget!";
 	char aBuf[128] = {0};
 
 	if(str_comp_nocase(pType, "option") == 0)

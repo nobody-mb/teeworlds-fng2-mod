@@ -84,12 +84,17 @@ MACRO_CONFIG_INT(SvVoteKick, sv_vote_kick, 1, 0, 1, CFGFLAG_SERVER, "Allow votin
 MACRO_CONFIG_INT(SvVoteKickMin, sv_vote_kick_min, 0, 0, MAX_CLIENTS, CFGFLAG_SERVER, "Minimum number of players required to start a kick vote")
 MACRO_CONFIG_INT(SvVoteKickBantime, sv_vote_kick_bantime, 5, 0, 1440, CFGFLAG_SERVER, "The time to ban a player if kicked by vote. 0 makes it just use kick")
 
-MACRO_CONFIG_INT(RcdEnable, rcd_enable, 1, 0, 1, CFGFLAG_SERVER, "Enable cheat detection")
+MACRO_CONFIG_INT(RcdEnable, rcd_enable, 0, 0, 2, CFGFLAG_SERVER, "Enable cheat detection")
 MACRO_CONFIG_INT(RcdMaxWarnings, rcd_max_warnings, 50, 0, 100, CFGFLAG_SERVER, "Set the number of warnings before kick")
 MACRO_CONFIG_INT(RcdBantime, rcd_bantime, 0, 0, 1440, CFGFLAG_SERVER, "The time to ban a player if kicked by RCD. 0 makes it just use kick")
 MACRO_CONFIG_STR(RcdBanreason, rcd_banreason, 64, "Banned by experimental anti-cheat system", CFGFLAG_SERVER, "Ban reason if kicked by RCD")
 
+
 MACRO_CONFIG_INT(SuppressEntities, sv_suppress_entities, 1, 0, 1, CFGFLAG_SERVER, "for non fng maps, disables spawning of pickups")	
+
+ 
+MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
+
 
 #include "variables_special.h"
 

@@ -48,6 +48,7 @@ CCharacter::CCharacter(CGameWorld *pWorld)
 	m_Armor = 0;
 	m_Freeze.m_ActivationTick = 0;
 	count = 0;
+	lpi_us = li_us = 0;
 	m_InvincibleTick = 0;
 	m_Killer.m_KillerID = -1;
 	m_Killer.m_uiKillerHookTicks = 0;
@@ -76,6 +77,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
 	tb_aim_time = 0;
+	//tbspree_44k = tbmax_44k = tbspree_10 = tbmax_10 = 0;
 	tb_on = NULL;
 
 	m_Core.Reset();
@@ -277,6 +279,41 @@ void CCharacter::anti_triggerbot (void)
 	if (delay < 1000000) {
 		CPlayer *p;	
 		if ((p = GetPlayer())) {
+			if (delay < 44000) {
+				p->tbspree_44k++;
+			} else {
+				if (p->tbspree_44k > 5)
+					p->tbnum_44k++;
+				if (p->tbspree_44k > p->tbmax_44k)
+					p->tbmax_44k = p->tbspree_44k;
+				p->tbspree_44k = 0;
+			}
+			if (delay < 10) {
+				p->tbspree_10++;
+			} else {
+				if (p->tbspree_10 > 5)
+					p->tbnum_10++;
+				if (p->tbspree_10 > p->tbmax_10)
+					p->tbmax_10 = p->tbspree_10;
+				p->tbspree_10 = 0;
+			}	
+			
+			if ((p->tb_num < 50 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
+				str_format(aBuf, sizeof(aBuf), 
+					"%s possible triggerbot (max 10 %d %d)", 
+				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;	
+			}				
+			if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
+				str_format(aBuf, sizeof(aBuf), 
+					"%s possible triggerbot (max 44k %d %d)", 
+					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
+				GameServer()->SendChat(-1, 
+					CGameContext::CHAT_ALL, aBuf);
+				count = 1;	
+			}		
 			p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 				    (++p->tb_num);
 			if (delay < 10)
@@ -287,15 +324,15 @@ void CCharacter::anti_triggerbot (void)
 				((float)p->tb_num)); 
 			float perc = ((float)p->tb_under100k / 
 				((float)p->tb_num)); 
-			printf("** %s %6ld (avg %ld)\t of %d: %.02f%% <10, %.02f%% <60k\n", 
+			printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d %d/%d | %d %d/%d\n", 
 				ID_NAME(GetPlayer()->GetCID()), delay, 
-				p->tb_avg, p->tb_num, perc1, perc);	 
+				p->tb_num, perc1 * 100, perc * 100, p->tbnum_10, p->tbspree_10, 
+				p->tbmax_10, p->tbnum_44k, p->tbspree_44k, p->tbmax_44k);	 
 			if ((p->tb_num > 10 && perc1 > 0.9) ||
-			    (p->tb_num > 20 && perc1 > 0.5) || 
-			    (p->tb_num > 40 && perc1 > 0.35)) {
+			    (p->tb_num > 20 && perc1 > 0.5)) {
 				str_format(aBuf, sizeof(aBuf), 
 				"%s possible triggerbot (%.02f%% %d 10)", 
-				ID_NAME(GetPlayer()->GetCID()), perc1, p->tb_num);
+				ID_NAME(GetPlayer()->GetCID()), perc1 * 100, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;
@@ -304,7 +341,7 @@ void CCharacter::anti_triggerbot (void)
 			    (p->tb_num > 40 && perc > 0.7)) {
 				str_format(aBuf, sizeof(aBuf), 
 				"%s possible triggerbot (%.02f%% %d 60k)", 
-				ID_NAME(GetPlayer()->GetCID()), perc, p->tb_num);
+				ID_NAME(GetPlayer()->GetCID()), perc * 100, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
 				count = 1;
@@ -608,7 +645,9 @@ long CCharacter::get_time_us (void)
 
 void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 {
+	lpi_us = li_us;
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
+	li_us = get_time_us();
 	mem_copy(&m_LatestInput, pNewInput, sizeof(m_LatestInput));
 	
 	//float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
@@ -632,12 +671,12 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	}
 	tb_on = tmpc;
 	
-	if (tb_aim_time && g_Config.m_RcdEnable) {
+	/*if (tb_aim_time && g_Config.m_RcdEnable) {
 		printf("%s aiming at target at %ld\n", 
 			Server()->ClientName(m_pPlayer->GetCID()),
 			tb_aim_time);
 	}
-
+	*/
 	if(m_NumInputs > 2 && m_pPlayer->GetTeam() != TEAM_SPECTATORS)
 	{
 		HandleWeaponSwitch();
@@ -708,10 +747,20 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
  	if ((m_ABSpinTime == 10) && !m_pPlayer->GetBot(0))
 	{
 		m_pPlayer->SetBot(0);
-		str_format(aBuf, sizeof(aBuf), "%s is spinning (%d)", 
+		if((int)(m_ABSpinLength + 0.5) > 419 && (int)(m_ABSpinLength + 0.5) < 421)
+		{
+			str_format(aBuf, sizeof(aBuf), "%s is blazing (420)", 
 			Server()->ClientName(m_pPlayer->GetCID()), 
 			(int)(m_ABSpinLength + 0.5));
-		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		else
+		{
+			str_format(aBuf, sizeof(aBuf), "%s is spinning (%d)", 
+			Server()->ClientName(m_pPlayer->GetCID()), 
+			(int)(m_ABSpinLength + 0.5));
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
 	}
 	if ((m_ABAimAcTime == 5) && !m_pPlayer->GetBot(1))
  	{
@@ -854,10 +903,48 @@ void CCharacter::Tick()
 	/*
 	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
 		RajhCheatDetector::OnFire(m_pPlayer);
-
+	*/
 	int events = m_Core.m_TriggeredEvents;
-	if(events&COREEVENT_HOOK_ATTACH_PLAYER && m_Core.m_HookedPlayer != -1)
-		RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
+	int teamhook = 0;
+	if (GetPlayer() && (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Core.m_HookedPlayer];
+		if (GameServer()->m_pController->IsTeamplay()) {
+			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam()) {
+				teamhook = 1;
+			}
+		}
+		float td = 0;
+		int isf = 0;
+		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
+			vec2(OldInput.m_TargetX, OldInput.m_TargetY));
+		if (pPlayer->GetCharacter()) {
+			isf = pPlayer->GetCharacter()->IsFreezed();
+			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
+		}
+		
+		char aBuf[128];
+		snprintf(aBuf, sizeof(aBuf), 
+			" - %s%shooked %s at %f | mouse traveled %f in %ld us", 
+			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
+			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
+		
+		if ((g_Config.m_RcdEnable == 1) || (g_Config.m_RcdEnable == 2 && isf && teamhook))
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s\n", (long)(ds), 
+			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
+			ID_NAME(GetPlayer()->GetCID()));
+
+		int fd;
+		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+			perror("open");
+		else
+			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+				perror("write");		
+		close(fd);
+		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
+		
+	}
 	return;
 }
 
@@ -1234,7 +1321,10 @@ void CCharacter::Snap(int SnappingClient)
 		return;
 
 	int ClientID = m_pPlayer->GetCID();
-	if(GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->AddSnappingClient(m_pPlayer->GetCID(), Distance, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;
+	
+	if(SnappingClient != -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->AddSnappingClient(m_pPlayer->GetCID(), Distance, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;
+	
+	/*if(GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->AddSnappingClient(m_pPlayer->GetCID(), Distance, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;*/
 
 	CNetObj_Character *pCharacter = static_cast<CNetObj_Character *>(Server()->SnapNewItem(NETOBJTYPE_CHARACTER, ClientID, sizeof(CNetObj_Character)));
 	if(!pCharacter)
@@ -1273,7 +1363,7 @@ void CCharacter::Snap(int SnappingClient)
 	pCharacter->m_Direction = m_Input.m_Direction;
 
 	int HookedID = pCharacter->m_HookedPlayer;
-	if (HookedID != -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(HookedID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, HookedID)) {
+if (HookedID != -1 && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(HookedID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, HookedID)) {
 		pCharacter->m_HookedPlayer = -1;
 	}
 	else if(IsAlive()) pCharacter->m_HookedPlayer = HookedID;
