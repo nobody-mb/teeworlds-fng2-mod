@@ -25,6 +25,9 @@ public:
 	
 	int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
 	int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
+	
+	int m_Ragequit;
+	char m_aOldName[MAX_NAME_LENGTH];
 
 	void Init(int CID);
 
