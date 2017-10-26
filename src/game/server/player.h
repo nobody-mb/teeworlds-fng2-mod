@@ -64,6 +64,7 @@ public:
 	int m_selfkills;
 	int m_teamkills;
 	int m_unfreeze;
+	bool m_spinbot; // If the player is spinning automatically
 
 	//client version
 	char m_ClientVersion;

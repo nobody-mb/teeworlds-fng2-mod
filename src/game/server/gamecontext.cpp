@@ -1347,6 +1347,21 @@ void CGameContext::CmdStats(CGameContext* pContext, int pClientID, const char** 
 {
 }
 
+void CGameContext::CmdSpinbot(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum)
+{
+	bool state = true;
+	if (ArgNum > 0) {
+		if (strcmp(pArgs[0], "off") == 0) {
+			state = false;
+			pContext->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "spinbotarg", pArgs[0]);
+		}
+	}
+	
+	CPlayer* p = pContext->m_apPlayers[pClientID];
+	p->m_spinbot = state;
+	
+}
+
 void CGameContext::CmdWhisper(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum){
 	CPlayer* p = pContext->m_apPlayers[pClientID];
 	
@@ -2059,6 +2074,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 	AddServerCommand("c", "whisper to the player, you whispered to last", "<text>", CmdConversation);
 	AddServerCommand("help", "show the cmd list or get more information to any command", "<command>", CmdHelp);
 	AddServerCommand("cmdlist", "show the cmd list", 0, CmdHelp);
+	AddServerCommand("spinbot", "enable spin bot", 0, CmdSpinbot);
 	if(m_Config->m_SvEmoteWheel || m_Config->m_SvEmotionalTees) AddServerCommand("emote", "enable custom emotes", "<emote type> <time in seconds>", CmdEmote);
 
 	//if(!data) // only load once

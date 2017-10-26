@@ -179,6 +179,7 @@ public:
 	void ExecuteServerCommand(int pClientID, const char* pLine);
 	
 	static void CmdStats(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
+	static void CmdSpinbot(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdWhisper(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdConversation(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdHelp(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
