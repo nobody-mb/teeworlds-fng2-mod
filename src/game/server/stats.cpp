@@ -687,8 +687,17 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 		int index = s_killer->multi - 2;
 		s_killer->multis[index > 5 ? 5 : index]++;
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "'%s' multi x%d!", 
-			kname, s_killer->multi);
+		if (s_killer->multi == 2)
+			str_format(aBuf, sizeof(aBuf), "'%s' got a double kill!", kname);
+		else if (s_killer->multi == 3)
+			str_format(aBuf, sizeof(aBuf), "'%s' got a triple kill!", kname);
+		else if (s_killer->multi == 4)
+			str_format(aBuf, sizeof(aBuf), "'%s' got a quadruple kill!", kname);
+		else if (s_killer->multi == 5)
+			str_format(aBuf, sizeof(aBuf), "'%s' got a quintuple kill!", kname);
+		else
+			str_format(aBuf, sizeof(aBuf), "'%s' got a %dx multikill!", 
+				kname, s_killer->multi);
 		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	} else {
 		s_killer->multi = 1;
@@ -788,6 +797,7 @@ void tstats::on_msg (const char *message, int ClientID)
 			snprintf(buf, sizeof(buf), "please wait %d seconds", 5 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
+			
 			struct tee_stats *tmp;
 			if (strlen(message) > 7) {
 				char namebuf[64] = { 0 };

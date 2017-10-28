@@ -11,6 +11,7 @@ CGameControllerFNG2Solo::CGameControllerFNG2Solo(class CGameContext *pGameServer
 : IGameController((class CGameContext*)pGameServer)
 {
 	m_pGameType = "fng2";
+        m_HasBeenKill = false;
 	
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
@@ -20,6 +21,7 @@ CGameControllerFNG2Solo::CGameControllerFNG2Solo(class CGameContext *pGameServer
 : IGameController((class CGameContext*)pGameServer, pConfig)
 {
 	m_pGameType = "fng2";
+        m_HasBeenKill = false;
 	
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
@@ -43,6 +45,7 @@ void CGameControllerFNG2Solo::Tick()
 		// game over.. wait for restart
 		if(Server()->Tick() > m_GameOverTick+Server()->TickSpeed()*10)
 		{
+                        m_HasBeenKill = false;
 			if(m_Config.m_SvTournamentMode){
 			} else {
 				CycleMap();
@@ -249,16 +252,40 @@ int CGameControllerFNG2Solo::OnCharacterDeath(class CCharacter *pVictim, class C
 				m_aTeamscore[pKiller->GetTeam()]++; //make this config.?
 			}
 		} else if(Weapon == WEAPON_SPIKE_NORMAL){
+                        if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeNormal);
 			pKiller->m_grabs_normal++;
 			pVictim->GetPlayer()->m_deaths++;
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED || Weapon == WEAPON_SPIKE_BLUE){
+                        if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			pKiller->m_grabs_team++;
 			pVictim->GetPlayer()->m_deaths++;
 			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeTeam);
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
+                        if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			pKiller->m_grabs_gold++;
 			pVictim->GetPlayer()->m_deaths++;
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;

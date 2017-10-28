@@ -15,6 +15,7 @@ CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer)
 {
 	m_pGameType = "fng2";
 	m_GameFlags = GAMEFLAG_TEAMS;
+	m_HasBeenKill = false;
 	
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
@@ -25,7 +26,8 @@ CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer, CConfi
 {
 	m_pGameType = "fng2";
 	m_GameFlags = GAMEFLAG_TEAMS;
-	
+	m_HasBeenKill = false;
+
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
 }
@@ -48,6 +50,7 @@ void CGameControllerFNG2::Tick()
 		// game over.. wait for restart
 		if(Server()->Tick() > m_GameOverTick+Server()->TickSpeed()*10)
 		{
+			m_HasBeenKill = false;
 			if(m_Config.m_SvTournamentMode){
 			} else {
 				CycleMap();
@@ -282,7 +285,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			if (s_killer) s_killer->freezes++;
 			
 			if (IsTeamplay() && pVictim->GetPlayer()->GetTeam() ==
-			    pKiller->GetTeam())
+				pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
 			else {
 				pKiller->m_kills++; // normal kill
@@ -291,6 +294,14 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			}
 		} else if(Weapon == WEAPON_SPIKE_NORMAL){
 			if (s_killer) s_killer->kills++;
+			if (!m_HasBeenKill) {
+				m_HasBeenKill = true;
+				char buf[54];
+				snprintf(buf, sizeof(buf), "'%s' drew first blood!",
+					ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+			}
+
 			GameServer()->m_pController->t_stats->do_kill_messages(
 				s_killer, s_victim);
 			if(pKiller->GetCharacter()) 
@@ -304,6 +315,14 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED){
+			if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!", 
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			if(pKiller->GetTeam() == TEAM_RED) {
 				if (s_killer) s_killer->kills_x2++;
 				pKiller->m_grabs_team++;
@@ -315,6 +334,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
+				// wrong shrine sacrifice
 				if (s_killer) s_killer->kills_wrong++;
 				pKiller->m_grabs_false++;				
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeFalse;
@@ -323,11 +343,24 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCharacter()->m_Pos, 
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
+				// msg
+				char buf[68];
+				snprintf(buf, sizeof(buf), "'%s' sacrified in the wrong shrine!",
+					ID_NAME(pKiller->GetCID()));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
 			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
+			if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!", 
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			if(pKiller->GetTeam() == TEAM_BLUE) {
 				if (s_killer) s_killer->kills_x2++;
 				pKiller->m_grabs_team++;
@@ -339,6 +372,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
+				// wrong shrine sacrifice
 				if (s_killer) s_killer->kills_wrong++;
 				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeFalse;
@@ -347,11 +381,24 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 						pKiller->GetCharacter()->m_Pos, 
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
+				// msg
+                                char buf[68];
+                                snprintf(buf, sizeof(buf), "'%s' sacrified in the wrong shrine!",
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
 			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
 			pVictim->GetPlayer()->m_RespawnTick = 
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
+                        if (!m_HasBeenKill) {
+                                m_HasBeenKill = true;
+                                char buf[54];
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
+                                        ID_NAME(pKiller->GetCID()));
+                                GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
+                        }
+
 			if (s_killer) s_killer->kills_x2++;
 			pKiller->m_grabs_gold++;
 			pVictim->GetPlayer()->m_deaths++;

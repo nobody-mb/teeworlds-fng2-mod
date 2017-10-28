@@ -723,9 +723,9 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 		{
 			str_copy(pPlayer->m_aOldName, Server()->ClientName(ClientID), sizeof(pPlayer->m_aOldName));
 			char aChatText[256];
-			str_format(aChatText, sizeof(aChatText), "'%s' turned into a fagget", Server()->ClientName(ClientID));
+			str_format(aChatText, sizeof(aChatText), "'%s' rage quitted... Feel the salt", Server()->ClientName(ClientID));
 			SendChat(-1, CGameContext::CHAT_ALL, aChatText);
-			Server()->SetClientName(ClientID, "fagget");
+			Server()->SetClientName(ClientID, "salty n00b");
 		}
 		return false;
 	}
@@ -881,7 +881,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char aDesc[VOTE_DESC_LENGTH] = {0};
 			char aCmd[VOTE_CMD_LENGTH] = {0};
 			CNetMsg_Cl_CallVote *pMsg = (CNetMsg_Cl_CallVote *)pRawMsg;
-			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em a fagget!";
+			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em nub";
 
 			if(str_comp_nocase(pMsg->m_Type, "option") == 0)
 			{
@@ -1174,12 +1174,16 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				     Version == 605 || Version == 708);
 				     
 			if (pPlayer->print_count++ < 5) {
-				snprintf(buf, sizeof(buf), "'%s' client version %d %s", 
-					ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
-				SendChat(-1, CGameContext::CHAT_ALL, buf);
+				//snprintf(buf, sizeof(buf), "'%s' is using client version %d %s", 
+				//	ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
+				if (botcl) {
+					snprintf(buf, sizeof(buf), "'%s' is using a bot client, version %d!",
+						ID_NAME(pPlayer->GetCID()), Version);
+					SendChat(-1, CGameContext::CHAT_ALL, buf);
+				}
 			}
 			if (botcl)
-				Server()->Kick(ClientID, "bot client detected!");
+				Server()->Kick(ClientID, "Bot client detected!");
 		}
 	}
 	else
@@ -1805,7 +1809,7 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	const char *pType = pResult->GetString(0);
 	const char *pValue = pResult->GetString(1);
-	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "I em a fagget!";
+	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "I em nub";
 	char aBuf[128] = {0};
 
 	if(str_comp_nocase(pType, "option") == 0)

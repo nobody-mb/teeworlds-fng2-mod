@@ -20,5 +20,7 @@ public:
 	virtual void PostReset();
 protected:
 	void EndRound();	
+private:
+	bool m_HasBeenKill;
 };
 #endif

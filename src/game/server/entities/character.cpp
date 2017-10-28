@@ -300,7 +300,7 @@ void CCharacter::anti_triggerbot (void)
 			
 			if ((p->tb_num < 50 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
 				str_format(aBuf, sizeof(aBuf), 
-					"%s possible triggerbot (max 10 %d %d)", 
+					"%s may be a triggerbot (max 10 %d %d)", 
 				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
@@ -308,7 +308,7 @@ void CCharacter::anti_triggerbot (void)
 			}				
 			if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
 				str_format(aBuf, sizeof(aBuf), 
-					"%s possible triggerbot (max 44k %d %d)", 
+					"%s may be a triggerbot (max 44k %d %d)", 
 					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
 				GameServer()->SendChat(-1, 
 					CGameContext::CHAT_ALL, aBuf);
@@ -710,7 +710,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		if (TarPosLength > 634 && !m_pPlayer->GetBot(1)) {
 			m_pPlayer->SetBot(1);
 			str_format(aBuf, sizeof(aBuf), 
-				"%s is AimBot(Invaild Mouse Pos len %f dist %f)", 
+				"'%s' appears to be an aimbot (mouse position: len %f dist %f)", 
 				Server()->ClientName(m_pPlayer->GetCID()), TarPosLength,
 					 TravelDis);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
@@ -749,13 +749,13 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 		m_pPlayer->SetBot(0);
 		if((int)(m_ABSpinLength + 0.5) > 419 && (int)(m_ABSpinLength + 0.5) < 421)
 		{
-			str_format(aBuf, sizeof(aBuf), "%s is blazing (420)", 
+			str_format(aBuf, sizeof(aBuf), "'%s' is blazing (420)", 
 			Server()->ClientName(m_pPlayer->GetCID()));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		else
 		{
-			str_format(aBuf, sizeof(aBuf), "%s is spinning (%d)", 
+			str_format(aBuf, sizeof(aBuf), "'%s' is spinning (%d)", 
 			Server()->ClientName(m_pPlayer->GetCID()), 
 			(int)(m_ABSpinLength + 0.5));
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
@@ -764,14 +764,14 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	if ((m_ABAimAcTime == 5) && !m_pPlayer->GetBot(1))
  	{
  		m_pPlayer->SetBot(1);
- 		str_format(aBuf, sizeof(aBuf), "%s is AimBot(Position matching) %f", 
+ 		str_format(aBuf, sizeof(aBuf), "'%s' appears to be an aimbot (position) %f", 
  			Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
  		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
  	}
  	if ((m_ABAimTime == 10) && !m_pPlayer->GetBot(1))
  	{
  		m_pPlayer->SetBot(1);
- 		str_format(aBuf, sizeof(aBuf), "%s is AimBot(Similar behavior) %f", 
+ 		str_format(aBuf, sizeof(aBuf), "'%s' appears to be an aimbot (behavior) %f", 
  			Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
   		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
   	}
@@ -787,9 +787,9 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 			str_format(aBuf, sizeof(aBuf), "Ban %s",Server()->
 				ClientName(m_pPlayer->GetCID()));
 			char aCmd[128];
-			str_format(aCmd, sizeof(aCmd), "Ban %d 60 Bot Detected!",
+			str_format(aCmd, sizeof(aCmd), "Ban %d 60 Bot detected!",
 				m_pPlayer->GetCID());
-			GameServer()->StartVote(aBuf, aCmd, "Bot Detected![By System]");
+			GameServer()->StartVote(aBuf, aCmd, "Bot detected!");
 			m_ABNextBanTick = Server()->Tick() + Server()->TickSpeed() * 60;
 		}
 	}
@@ -923,7 +923,7 @@ void CCharacter::Tick()
 		
 		char aBuf[128];
 		snprintf(aBuf, sizeof(aBuf), 
-			" - %s%shooked %s at %f | mouse traveled %f in %ld us", 
+			" - %s%shooked %s at %f | mouse traveled %f in %ld µs", 
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
 			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
 		
