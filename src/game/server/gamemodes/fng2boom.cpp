@@ -302,7 +302,7 @@ int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class C
 				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeFalse);
                                 // msg
                                 char buf[68];
-                                snprintf(buf, sizeof(buf), "'%s' sacrified in the wrong shrine!",
+                                snprintf(buf, sizeof(buf), "'%s' sacrificed in the wrong shrine!",
                                         ID_NAME(pKiller->GetCID()));
                                 GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
@@ -328,7 +328,7 @@ int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class C
 				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeFalse);
                                 // msg
                                 char buf[68];
-                                snprintf(buf, sizeof(buf), "'%s' sacrified in the wrong shrine!",
+                                snprintf(buf, sizeof(buf), "'%s' sacrificed in the wrong shrine!",
                                         ID_NAME(pKiller->GetCID()));
                                 GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
