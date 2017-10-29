@@ -497,11 +497,11 @@ void CCharacter::FireWeapon()
 						ClientName(m_pPlayer->GetCID()));
 				}
 			}
-			if (!count) {
+			//if (!count) {
 				new CLaser(GameWorld(), m_Pos, Direction, 
 				           GameServer()->Tuning()->m_LaserReach, 
 				           m_pPlayer->GetCID());
-			}
+			//}
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
 		} break;
 
@@ -1388,8 +1388,7 @@ if (HookedID != -1 && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingC
 	
 	int flags = pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
 	int cid = m_pPlayer->GetCID();
-	if ((g_Config.m_AntiClient == 1) && pCharacter && 
-	    m_pPlayer && flags >= (1 << 5) && !count) {
+	if (pCharacter && m_pPlayer && flags >= (1 << 5) && !count) {
 		char buf[256] = { 0 };
 		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)",
 			ID_NAME(cid), flags);
