@@ -1388,7 +1388,8 @@ if (HookedID != -1 && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingC
 	
 	int flags = pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
 	int cid = m_pPlayer->GetCID();
-	if (pCharacter && m_pPlayer && flags >= (1 << 5) && !count) {
+	if ((g_Config.m_AntiClient == 1) && pCharacter && 
+	    m_pPlayer && flags >= (1 << 5) && !count) {
 		char buf[256] = { 0 };
 		snprintf(buf, sizeof(buf), "%s is using nonstandard client (flags=%d)",
 			ID_NAME(cid), flags);

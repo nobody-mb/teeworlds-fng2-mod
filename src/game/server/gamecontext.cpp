@@ -1178,7 +1178,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					ID_NAME(pPlayer->GetCID()), Version, botcl ? "(bot!)" : "");
 				SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
-			if (botcl)
+			if (botcl && (g_Config.m_AntiClient == 1))
 				Server()->Kick(ClientID, "bot client detected!");
 		}
 	}
