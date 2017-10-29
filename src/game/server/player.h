@@ -174,10 +174,10 @@ public:
 	} m_Latency;
 	//CGameContext *GameServer() const { return m_pGameServer; }
 	// RajhCheatDetector
-        int Warnings;
-        int LastWarn;
-        std::valarray<int> LastFireTick;
-        unsigned int LastFireIdx;
+      //  int Warnings;
+       // int LastWarn;
+       // std::valarray<int> LastFireTick;
+      // unsigned int LastFireIdx;
 
 private:
 	CCharacter *m_pCharacter;

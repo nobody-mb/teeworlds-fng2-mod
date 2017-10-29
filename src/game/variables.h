@@ -90,6 +90,7 @@ MACRO_CONFIG_INT(RcdBantime, rcd_bantime, 0, 0, 1440, CFGFLAG_SERVER, "The time 
 MACRO_CONFIG_STR(RcdBanreason, rcd_banreason, 64, "Banned by experimental anti-cheat system", CFGFLAG_SERVER, "Ban reason if kicked by RCD")
 
 MACRO_CONFIG_INT(AntiClient, anti_client, 1, 0, 1, CFGFLAG_SERVER, "kick cheat clients")
+MACRO_CONFIG_INT(TsfAntibot, tsf_antibot, 1, 0, 1, CFGFLAG_SERVER, "tsfreddie antibot")
 
 MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
 

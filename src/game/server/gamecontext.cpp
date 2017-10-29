@@ -19,7 +19,7 @@
 
 #include "laserText.h"
 #include "gameserver_config.h"
-#include "rcd.hpp"
+//#include "rcd.hpp"
 #include <string>
 #include <vector>
 
