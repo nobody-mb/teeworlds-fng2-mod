@@ -723,9 +723,9 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 		{
 			str_copy(pPlayer->m_aOldName, Server()->ClientName(ClientID), sizeof(pPlayer->m_aOldName));
 			char aChatText[256];
-			str_format(aChatText, sizeof(aChatText), "'%s' turned into a fagget", Server()->ClientName(ClientID));
+			str_format(aChatText, sizeof(aChatText), "'%s' ragequit", Server()->ClientName(ClientID));
 			SendChat(-1, CGameContext::CHAT_ALL, aChatText);
-			Server()->SetClientName(ClientID, "fagget");
+			Server()->SetClientName(ClientID, "noob");
 		}
 		return false;
 	}
@@ -881,7 +881,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char aDesc[VOTE_DESC_LENGTH] = {0};
 			char aCmd[VOTE_CMD_LENGTH] = {0};
 			CNetMsg_Cl_CallVote *pMsg = (CNetMsg_Cl_CallVote *)pRawMsg;
-			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em a fagget!";
+			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "just funvote";
 
 			if(str_comp_nocase(pMsg->m_Type, "option") == 0)
 			{
@@ -1805,7 +1805,7 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	const char *pType = pResult->GetString(0);
 	const char *pValue = pResult->GetString(1);
-	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "I em a fagget!";
+	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "just funvote";
 	char aBuf[128] = {0};
 
 	if(str_comp_nocase(pType, "option") == 0)
