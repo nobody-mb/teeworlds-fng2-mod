@@ -91,6 +91,8 @@ MACRO_CONFIG_STR(RcdBanreason, rcd_banreason, 64, "Banned by experimental anti-c
 
 MACRO_CONFIG_INT(AntiClient, anti_client, 1, 0, 1, CFGFLAG_SERVER, "kick cheat clients")
 MACRO_CONFIG_INT(TsfAntibot, tsf_antibot, 1, 0, 1, CFGFLAG_SERVER, "tsfreddie antibot")
+MACRO_CONFIG_INT(AntiTrigger, anti_trigger, 1, 0, 1, CFGFLAG_SERVER, "noby anti-triggerbot")
+MACRO_CONFIG_INT(LogHooks, log_hooks, 1, 0, 1, CFGFLAG_SERVER, "save hook data to file")
 
 MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
 

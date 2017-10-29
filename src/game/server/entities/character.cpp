@@ -276,7 +276,7 @@ void CCharacter::anti_triggerbot (void)
 {
 	char aBuf[128] = { 0 };
 	long delay = get_time_us() - tb_aim_time;
-	if (delay >= 1000000)
+	if (delay >= 1000000 || !g_Config.m_AntiTrigger)
 		return;
 		
 	CPlayer *p;	
@@ -880,19 +880,17 @@ void CCharacter::Tick()
 	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
 		RajhCheatDetector::OnFire(m_pPlayer);
 	*/
-	int events = m_Core.m_TriggeredEvents;
-	int teamhook = 0;
-	if (GetPlayer() && (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+	int fd, teamhook = 0, isf = 0, events = m_Core.m_TriggeredEvents;
+	float td = 0, ds = 0;
+	
+	if ((g_Config.m_LogHooks == 1) && GetPlayer() && 
+	    (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
 		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Core.m_HookedPlayer];
-		if (GameServer()->m_pController->IsTeamplay()) {
-			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam()) {
+		if (GameServer()->m_pController->IsTeamplay())
+			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam())
 				teamhook = 1;
-			}
-		}
-		float td = 0;
-		int isf = 0;
-		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
-			vec2(OldInput.m_TargetX, OldInput.m_TargetY));
+		ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
+			      vec2(OldInput.m_TargetX, OldInput.m_TargetY));
 		if (pPlayer->GetCharacter()) {
 			isf = pPlayer->GetCharacter()->IsFreezed();
 			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
@@ -911,16 +909,14 @@ void CCharacter::Tick()
 			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
 			ID_NAME(GetPlayer()->GetCID()));
 
-		int fd;
 		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 			perror("open");
 		else
 			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 				perror("write");		
-		close(fd);
-		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
-		
+		close(fd);		
 	}
+	
 	return;
 }
 
