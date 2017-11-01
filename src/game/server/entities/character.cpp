@@ -325,15 +325,15 @@ void CCharacter::anti_triggerbot (void)
 			p->tb_under10++;
 		if (delay < 60000)
 			p->tb_under100k++;
-		float perc1 = ((float)p->tb_under10 / 
-			((float)p->tb_num)); 
-		float perc = ((float)p->tb_under100k / 
-			((float)p->tb_num)); 
-		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d/%d | %d/%d | %d %d %d\n", 
-			ID_NAME(GetPlayer()->GetCID()), delay, 
-			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, 
+		float perc1 = ((float)p->tb_under10 /
+			((float)p->tb_num));
+		float perc = ((float)p->tb_under100k /
+			((float)p->tb_num));
+		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d/%d | %d/%d | %d %d %d\n",
+			ID_NAME(GetPlayer()->GetCID()), delay,
+			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10,
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k,
-			p->ra_get(p->ra5), p->ra_get(p->ra7), p->ra_get(p->ra10));	 
+			p->ra_get(p->ra5), p->ra_get(p->ra7), p->ra_get(p->ra10));
 		if ((p->tb_num > 10 && perc1 > 0.9) ||
 		    (p->tb_num > 20 && perc1 > 0.5)) {
 			str_format(aBuf, sizeof(aBuf),
