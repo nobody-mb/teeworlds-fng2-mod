@@ -841,23 +841,20 @@ void tstats::on_msg (const char *message, int ClientID)
 			char abuf[128];
 			for (i = 0; i < MAX_CLIENTS; i++) {
 				memset(abuf, 0, sizeof(abuf));
-				if (!game_server->m_apPlayers[i])
+				CPlayer *pt = game_server->m_apPlayers[i];
+				if (!pt)
 					continue;
-				int tbn = game_server->m_apPlayers[i]->tb_num;
+				int tbn = pt->tb_num;
 				if (tbn == 0)
 					continue;
-				float perc1 = ((float)game_server->m_apPlayers[i]->tb_under10 / 
-					((float)tbn)); 
-				float perc = ((float)game_server->m_apPlayers[i]->tb_under100k / 
-					((float)tbn)); 
+				float perc1 = ((float)pt->tb_under10 / (float)tbn); 
+				float perc = ((float)pt->tb_under100k / (float)tbn); 
+				
 				snprintf(abuf, sizeof(abuf), 
-					"** %s %d: %.02f%% 10 %.02f%% %d %d %d %d", 
-					ID_NAME(game_server->m_apPlayers[i]->GetCID()), 
-					tbn, perc1*100, perc*100, 
-					game_server->m_apPlayers[i]->tbnum_10,
-					game_server->m_apPlayers[i]->tbmax_10,
-					game_server->m_apPlayers[i]->tbnum_44k,
-					game_server->m_apPlayers[i]->tbmax_44k);	
+				 "** %s %d: %.02f%% 10 %.02f%% %d %d | %d %d %d", 
+				 ID_NAME(pt->GetCID()), tbn, perc1*100, perc*100, 
+				 pt->tbmax_10, pt->tbmax_44k, pt->ra_get(pt->ra5), 
+				 pt->ra_get(pt->ra7), pt->ra_get(pt->ra10));
 				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
 
 			}

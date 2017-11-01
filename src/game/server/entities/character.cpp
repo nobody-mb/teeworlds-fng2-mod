@@ -281,6 +281,9 @@ void CCharacter::anti_triggerbot (void)
 		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
+		p->ra_add(p->ra5, delay);
+		p->ra_add(p->ra7, delay);
+		p->ra_add(p->ra10, delay);
 		if (delay < 44000) {
 			p->tbspree_44k++;
 		} else {
@@ -326,10 +329,11 @@ void CCharacter::anti_triggerbot (void)
 			((float)p->tb_num)); 
 		float perc = ((float)p->tb_under100k / 
 			((float)p->tb_num)); 
-		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d %d/%d | %d %d/%d\n", 
+		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d/%d | %d/%d | %d %d %d\n", 
 			ID_NAME(GetPlayer()->GetCID()), delay, 
-			p->tb_num, perc1 * 100, perc * 100, p->tbnum_10, p->tbspree_10, 
-			p->tbmax_10, p->tbnum_44k, p->tbspree_44k, p->tbmax_44k);	 
+			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, 
+			p->tbmax_10, p->tbspree_44k, p->tbmax_44k,
+			p->ra_get(p->ra5), p->ra_get(p->ra7), p->ra_get(p->ra10));	 
 		if ((p->tb_num > 10 && perc1 > 0.9) ||
 		    (p->tb_num > 20 && perc1 > 0.5)) {
 			str_format(aBuf, sizeof(aBuf), 
