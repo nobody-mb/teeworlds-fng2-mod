@@ -486,6 +486,15 @@ bool CServer::IsAuthed(int ClientID)
 	return m_aClients[ClientID].m_Authed;
 }
 
+int CServer::AuthType(int ClientID)
+{
+	switch(m_aClients[ClientID].m_Authed) {
+		case CServer::AUTHED_ADMIN:   return 2; break;
+		case CServer::AUTHED_MOD:     return 1; break;
+		default: return -1; break;
+	}
+}
+
 int CServer::GetClientInfo(int ClientID, CClientInfo *pInfo)
 {
 	dbg_assert(ClientID >= 0 && ClientID < MAX_CLIENTS, "client_id is not valid");
