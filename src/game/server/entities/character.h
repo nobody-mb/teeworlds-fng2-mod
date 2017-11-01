@@ -141,7 +141,7 @@ public:
 	long tb_aim_time;
 	static long get_time_us (void);
 private:
-	friend class RajhCheatDetector;
+	//friend class RajhCheatDetector;
 
 	int m_DamageTakenTick;
 

@@ -3,7 +3,7 @@
 #include <new>
 #include <engine/shared/config.h>
 #include "player.h"
-#include "rcd.hpp"
+//#include "rcd.hpp"
 
 MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
 
@@ -21,12 +21,6 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_SpectatorID = SPEC_FREEVIEW;
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
-	
-	this->LastWarn = Server()->Tick();
-	this->LastFireTick = std::valarray<int>(Server()->Tick(), 30+1); 
-	// for 30 real time diffs we need one extra
-	this->LastFireIdx = 0;
-	Warnings = 0;
 
 	tb_avg = 0;
 	tb_num = 0;

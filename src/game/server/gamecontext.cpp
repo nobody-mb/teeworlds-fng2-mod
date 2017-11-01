@@ -19,7 +19,7 @@
 
 #include "laserText.h"
 #include "gameserver_config.h"
-#include "rcd.hpp"
+//#include "rcd.hpp"
 #include <string>
 #include <vector>
 
@@ -533,7 +533,8 @@ void CGameContext::OnTick()
 	{
 		if(m_apPlayers[i])
 		{
-			if (m_apPlayers[i]->GetCharacter() &&
+			if ((g_Config.m_AntiClient == 1) &&
+			    m_apPlayers[i]->GetCharacter() &&
 			    m_apPlayers[i]->GetCharacter()->count == 1) {
 				Server()->Kick(m_apPlayers[i]->GetCID(), 
 					       "bot client detected!");
@@ -723,6 +724,7 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 		{
 			str_copy(pPlayer->m_aOldName, Server()->ClientName(ClientID), sizeof(pPlayer->m_aOldName));
 			char aChatText[256];
+
 			str_format(aChatText, sizeof(aChatText), "'%s' rage quitted... Feel the salt", Server()->ClientName(ClientID));
 			SendChat(-1, CGameContext::CHAT_ALL, aChatText);
 			Server()->SetClientName(ClientID, "salty n00b");
@@ -881,7 +883,11 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char aDesc[VOTE_DESC_LENGTH] = {0};
 			char aCmd[VOTE_CMD_LENGTH] = {0};
 			CNetMsg_Cl_CallVote *pMsg = (CNetMsg_Cl_CallVote *)pRawMsg;
+<<<<<<< HEAD
 			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em nub";
+=======
+			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "funvote :P";
+>>>>>>> 9611b15df716b4636603879bc7dc6bbbfe08255e
 
 			if(str_comp_nocase(pMsg->m_Type, "option") == 0)
 			{
@@ -1182,8 +1188,13 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					SendChat(-1, CGameContext::CHAT_ALL, buf);
 				}
 			}
+<<<<<<< HEAD
 			if (botcl)
 				Server()->Kick(ClientID, "Bot client detected!");
+=======
+			if (botcl && (g_Config.m_AntiClient == 1))
+				Server()->Kick(ClientID, "bot client detected!");
+>>>>>>> 9611b15df716b4636603879bc7dc6bbbfe08255e
 		}
 	}
 	else
@@ -1809,7 +1820,7 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	const char *pType = pResult->GetString(0);
 	const char *pValue = pResult->GetString(1);
-	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "I em nub";
+	const char *pReason = pResult->NumArguments() > 2 && pResult->GetString(2)[0] ? pResult->GetString(2) : "aboose / fv";
 	char aBuf[128] = {0};
 
 	if(str_comp_nocase(pType, "option") == 0)

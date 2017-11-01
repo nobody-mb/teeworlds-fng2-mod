@@ -478,7 +478,7 @@ void CNetBan::ConBan(IConsole::IResult *pResult, void *pUser)
 
 	const char *pStr = pResult->GetString(0);
 	int Minutes = pResult->NumArguments()>1 ? clamp(pResult->GetInteger(1), 0, 44640) : 30;
-	const char *pReason = pResult->NumArguments()>2 ? pResult->GetString(2) : "I em nub";
+	const char *pReason = pResult->NumArguments()>2 ? pResult->GetString(2) : "admin aboose";
 
 	NETADDR Addr;
 	if(net_addr_from_str(&Addr, pStr) == 0)
@@ -494,7 +494,7 @@ void CNetBan::ConBanRange(IConsole::IResult *pResult, void *pUser)
 	const char *pStr1 = pResult->GetString(0);
 	const char *pStr2 = pResult->GetString(1);
 	int Minutes = pResult->NumArguments()>2 ? clamp(pResult->GetInteger(2), 0, 44640) : 30;
-	const char *pReason = pResult->NumArguments()>3 ? pResult->GetString(3) : "I em nub";
+	const char *pReason = pResult->NumArguments()>3 ? pResult->GetString(3) : "admin aboose";
 
 	CNetRange Range;
 	if(net_addr_from_str(&Range.m_LB, pStr1) == 0 && net_addr_from_str(&Range.m_UB, pStr2) == 0)

@@ -474,10 +474,14 @@ void tstats::update_stats (struct tee_stats *dst, struct tee_stats *src)
 	if (src->is_bot)
 		dst->is_bot += 1;
 	dst->join_time += (time(NULL) - src->join_time);
-	dst->avg_ping = (unsigned short)((float)(src->avg_ping + 
-					(float)(dst->num_samples * 
-					dst->avg_ping)) / 
-					(++dst->num_samples));
+	dst->avg_ping = src->avg_ping;
+			//(unsigned short)ADD_AVG(src->avg_ping, 
+					//	dst->avg_ping, 
+					///	dst->num_samples);
+			//(unsigned short)((float)(src->avg_ping + 
+			//		(float)(dst->num_samples * 
+			//		dst->avg_ping)) / 
+			//		(++dst->num_samples));
 }
 
 void tstats::merge_into (const char *src, const char *dst)

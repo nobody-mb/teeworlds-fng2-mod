@@ -9,7 +9,7 @@
 #include "laser.h"
 #include "projectile.h"
 #include "../fng2define.h"
-#include "../rcd.hpp"
+//#include "../rcd.hpp"
 //input count
 struct CInputCount
 {
@@ -276,90 +276,90 @@ void CCharacter::anti_triggerbot (void)
 {
 	char aBuf[128] = { 0 };
 	long delay = get_time_us() - tb_aim_time;
-	if (delay < 1000000) {
-		CPlayer *p;	
-		if ((p = GetPlayer())) {
-			if (delay < 44000) {
-				p->tbspree_44k++;
-			} else {
-				if (p->tbspree_44k > 5)
-					p->tbnum_44k++;
-				if (p->tbspree_44k > p->tbmax_44k)
-					p->tbmax_44k = p->tbspree_44k;
-				p->tbspree_44k = 0;
-			}
-			if (delay < 10) {
-				p->tbspree_10++;
-			} else {
-				if (p->tbspree_10 > 5)
-					p->tbnum_10++;
-				if (p->tbspree_10 > p->tbmax_10)
-					p->tbmax_10 = p->tbspree_10;
-				p->tbspree_10 = 0;
-			}	
-			
-			if ((p->tb_num < 50 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
-				str_format(aBuf, sizeof(aBuf), 
-					"%s may be a triggerbot (max 10 %d %d)", 
-				ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
-				GameServer()->SendChat(-1, 
-					CGameContext::CHAT_ALL, aBuf);
-				count = 1;	
-			}				
-			if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
-				str_format(aBuf, sizeof(aBuf), 
-					"%s may be a triggerbot (max 44k %d %d)", 
-					ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
-				GameServer()->SendChat(-1, 
-					CGameContext::CHAT_ALL, aBuf);
-				count = 1;	
-			}		
-			p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
-				    (++p->tb_num);
-			if (delay < 10)
-				p->tb_under10++;
-			if (delay < 60000)
-				p->tb_under100k++;
-			float perc1 = ((float)p->tb_under10 / 
-				((float)p->tb_num)); 
-			float perc = ((float)p->tb_under100k / 
-				((float)p->tb_num)); 
-			printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d %d/%d | %d %d/%d\n", 
-				ID_NAME(GetPlayer()->GetCID()), delay, 
-				p->tb_num, perc1 * 100, perc * 100, p->tbnum_10, p->tbspree_10, 
-				p->tbmax_10, p->tbnum_44k, p->tbspree_44k, p->tbmax_44k);	 
-			if ((p->tb_num > 10 && perc1 > 0.9) ||
-			    (p->tb_num > 20 && perc1 > 0.5)) {
-				str_format(aBuf, sizeof(aBuf), 
-				"%s possible triggerbot (%.02f%% %d 10)", 
-				ID_NAME(GetPlayer()->GetCID()), perc1 * 100, p->tb_num);
-				GameServer()->SendChat(-1, 
-					CGameContext::CHAT_ALL, aBuf);
-				count = 1;
-			} 					
-			if ((p->tb_num > 10 && perc > 0.99) ||
-			    (p->tb_num > 40 && perc > 0.7)) {
-				str_format(aBuf, sizeof(aBuf), 
-				"%s possible triggerbot (%.02f%% %d 60k)", 
-				ID_NAME(GetPlayer()->GetCID()), perc * 100, p->tb_num);
-				GameServer()->SendChat(-1, 
-					CGameContext::CHAT_ALL, aBuf);
-				count = 1;
-			} 
-		}
-
-		str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
-			ID_NAME(GetPlayer()->GetCID()));
-
-		int fd;
-		if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
-			perror("open");
-		else
-			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-				perror("write");		
-		close(fd);
+	if (delay >= 1000000 || !g_Config.m_AntiTrigger)
+		return;
 		
+	CPlayer *p;	
+	if ((p = GetPlayer())) {
+		if (delay < 44000) {
+			p->tbspree_44k++;
+		} else {
+			if (p->tbspree_44k > 5)
+				p->tbnum_44k++;
+			if (p->tbspree_44k > p->tbmax_44k)
+				p->tbmax_44k = p->tbspree_44k;
+			p->tbspree_44k = 0;
+		}
+		if (delay < 10) {
+			p->tbspree_10++;
+		} else {
+			if (p->tbspree_10 > 5)
+				p->tbnum_10++;
+			if (p->tbspree_10 > p->tbmax_10)
+				p->tbmax_10 = p->tbspree_10;
+			p->tbspree_10 = 0;
+		}	
+		
+		if ((p->tb_num < 50 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
+			str_format(aBuf, sizeof(aBuf), 
+				"%s may be a triggerbot (max 10 %d %d)", 
+			ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;	
+		}				
+		if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
+			str_format(aBuf, sizeof(aBuf), 
+				"%s may be a triggerbot (max 44k %d %d)", 
+				ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;	
+		}		
+		p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
+			    (++p->tb_num);
+		if (delay < 10)
+			p->tb_under10++;
+		if (delay < 60000)
+			p->tb_under100k++;
+		float perc1 = ((float)p->tb_under10 / 
+			((float)p->tb_num)); 
+		float perc = ((float)p->tb_under100k / 
+			((float)p->tb_num)); 
+		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d %d/%d | %d %d/%d\n", 
+			ID_NAME(GetPlayer()->GetCID()), delay, 
+			p->tb_num, perc1 * 100, perc * 100, p->tbnum_10, p->tbspree_10, 
+			p->tbmax_10, p->tbnum_44k, p->tbspree_44k, p->tbmax_44k);	 
+		if ((p->tb_num > 10 && perc1 > 0.9) ||
+		    (p->tb_num > 20 && perc1 > 0.5)) {
+			str_format(aBuf, sizeof(aBuf), 
+			"%s may be a triggerbot (%.02f%% %d 10)", 
+			ID_NAME(GetPlayer()->GetCID()), perc1 * 100, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		} 					
+		if ((p->tb_num > 10 && perc > 0.99) ||
+		    (p->tb_num > 40 && perc > 0.7)) {
+			str_format(aBuf, sizeof(aBuf), 
+			"%s may be a triggerbot (%.02f%% %d 60k)", 
+			ID_NAME(GetPlayer()->GetCID()), perc * 100, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		} 
 	}
+
+	str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+		ID_NAME(GetPlayer()->GetCID()));
+
+	int fd;
+	if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+		perror("open");
+	else
+		if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+			perror("write");		
+	close(fd);
 }
 
 void CCharacter::FireWeapon()
@@ -497,11 +497,11 @@ void CCharacter::FireWeapon()
 						ClientName(m_pPlayer->GetCID()));
 				}
 			}
-			if (!count) {
+			//if (!count) {
 				new CLaser(GameWorld(), m_Pos, Direction, 
 				           GameServer()->Tuning()->m_LaserReach, 
 				           m_pPlayer->GetCID());
-			}
+			//}
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE);
 		} break;
 
@@ -649,12 +649,6 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 	li_us = get_time_us();
 	mem_copy(&m_LatestInput, pNewInput, sizeof(m_LatestInput));
-	
-	//float disc = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY),
-	//		vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
-	//printf("mouse traveled %f in %d ticks (%f)\n", disc, num_bt, disc / num_bt);
-	//disc /= num_bt;
-	//num_bt = 0;
 
 	// it is not allowed to aim in the center
 	if(m_LatestInput.m_TargetX == 0 && m_LatestInput.m_TargetY == 0)
@@ -663,150 +657,133 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	//antibot test	
 	vec2 At;
 	CCharacter *tmpc;
-	vec2 Direction = m_Pos + (normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY)) *
-		 GameServer()->Tuning()->m_LaserReach);
+	vec2 Direction = m_Pos + (normalize(vec2(m_LatestInput.m_TargetX, 
+		m_LatestInput.m_TargetY)) * GameServer()->Tuning()->m_LaserReach);
 	tmpc = GameServer()->m_World.IntersectCharacter(m_Pos, Direction, 0.f, At, this);
-	if (tmpc && tmpc != tb_on) {
+	if (tmpc && tmpc != tb_on)
 		tb_aim_time = get_time_us();
-	}
 	tb_on = tmpc;
-	
-	/*if (tb_aim_time && g_Config.m_RcdEnable) {
-		printf("%s aiming at target at %ld\n", 
-			Server()->ClientName(m_pPlayer->GetCID()),
-			tb_aim_time);
-	}
-	*/
+
 	if(m_NumInputs > 2 && m_pPlayer->GetTeam() != TEAM_SPECTATORS)
 	{
 		HandleWeaponSwitch();
 		FireWeapon();
 	}
 	
-	//AntiBot by TsFreddie ------------------------------------------------------------
-	vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
- 	CCharacter *aEnts[MAX_CLIENTS];
- 	int Num = GameServer()->m_World.FindEntities(m_Pos + TarPos, 10, (CEntity**)aEnts,
- 		MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
-	char aBuf[255];
-	// Dyn:632 Normal:399
-	//vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
-	float TarPosLength = length(TarPos);
-	float TravelDis = distance(m_ABSpinPos,TarPos);
+	if (g_Config.m_TsfAntibot == 1) {
+		//AntiBot by TsFreddie ------------------------------------------------------------
+		vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
+		CCharacter *aEnts[MAX_CLIENTS];
+		int Num = GameServer()->m_World.FindEntities(m_Pos + TarPos, 10, (CEntity**)aEnts,
+			MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+		char aBuf[255];
+		// Dyn:632 Normal:399
+		//vec2 TarPos = vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY);
+		float TarPosLength = length(TarPos);
+		float TravelDis = distance(m_ABSpinPos,TarPos);
 	
-	m_last_travel_dist = TravelDis;
-	m_last_tarposlen = TarPosLength;
+		m_last_travel_dist = TravelDis;
+		m_last_tarposlen = TarPosLength;
 	
-	if (TarPosLength < 398 || (TarPosLength > 401 && TarPosLength < 632)) {
-		if (TravelDis > 50) {
-			if (abs(m_ABSpinLength - TarPosLength) < 1)
-				m_ABSpinTime ++;
-			else
-				m_ABSpinTime = 0;
-			m_ABSpinLength = TarPosLength;
-			m_ABSpinPos = TarPos;
+		if (TarPosLength < 398 || (TarPosLength > 401 && TarPosLength < 632)) {
+			if (TravelDis > 50) {
+				if (abs(m_ABSpinLength - TarPosLength) < 1)
+					m_ABSpinTime ++;
+				else
+					m_ABSpinTime = 0;
+				m_ABSpinLength = TarPosLength;
+				m_ABSpinPos = TarPos;
+			}
+		} else {
+			if (TarPosLength > 634 && !m_pPlayer->GetBot(1)) {
+				m_pPlayer->SetBot(1);
+				str_format(aBuf, sizeof(aBuf), 
+					"%s appears to be an aimbot (mouse position: len %f dist %f)", 
+					Server()->ClientName(m_pPlayer->GetCID()), TarPosLength,
+						 TravelDis);
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
 		}
-	} else {
-		if (TarPosLength > 634 && !m_pPlayer->GetBot(1)) {
-			m_pPlayer->SetBot(1);
-			str_format(aBuf, sizeof(aBuf), 
-				"'%s' appears to be an aimbot (mouse position: len %f dist %f)", 
-				Server()->ClientName(m_pPlayer->GetCID()), TarPosLength,
-					 TravelDis);
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-		}
-	}
-	//m_aim_dist = 99999;
-	for (int i = 0; i < Num; ++i)
-	{
-		if (aEnts[i] == this)
- 			continue;
- 		float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
- 		/*if (CheckAimDis < 5) {
- 			float teedis = distance(m_Pos, aEnts[i]->m_Pos);
-			str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
-				ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, disc);
-			printf("%s", aBuf);
-			int fd;
-			if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
-				perror("open");
-			else
-				if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-					perror("write");		
-			close(fd);
+		//m_aim_dist = 99999;
+		for (int i = 0; i < Num; ++i)
+		{
+			if (aEnts[i] == this)
+				continue;
+			float CheckAimDis = distance(m_Pos + TarPos, aEnts[i]->m_Pos);
+			/*if (CheckAimDis < 5) {
+				float teedis = distance(m_Pos, aEnts[i]->m_Pos);
+				str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f¶%f¶aim\n",
+					ID_NAME(m_pPlayer->GetCID()), CheckAimDis, teedis, disc);
+				printf("%s", aBuf);
+				int fd;
+				if ((fd = open("dist.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
+					perror("open");
+				else
+					if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+						perror("write");		
+				close(fd);
 
- 			m_aim_dist = CheckAimDis;
- 			//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
- 		}*/
- 		//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
- 		if (CheckAimDis < 1)
- 			m_ABAimAcTime ++;
- 		else
- 			m_ABAimAcTime = 0;
- 	}
- 	if ((m_ABSpinTime == 10) && !m_pPlayer->GetBot(0))
-	{
-		m_pPlayer->SetBot(0);
-		if((int)(m_ABSpinLength + 0.5) > 419 && (int)(m_ABSpinLength + 0.5) < 421)
+				m_aim_dist = CheckAimDis;
+				//printf("dist %f %s", m_aim_dist, ID_NAME(m_pPlayer->GetCID()));
+			}*/
+			//GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			if (CheckAimDis < 1)
+				m_ABAimAcTime ++;
+			else
+				m_ABAimAcTime = 0;
+		}
+		if ((m_ABSpinTime == 10) && !m_pPlayer->GetBot(0))
 		{
-			str_format(aBuf, sizeof(aBuf), "'%s' is blazing (420)", 
-			Server()->ClientName(m_pPlayer->GetCID()));
+			m_pPlayer->SetBot(0);
+			if((int)(m_ABSpinLength + 0.5) > 419 && (int)(m_ABSpinLength + 0.5) < 421)
+			{
+				str_format(aBuf, sizeof(aBuf), "%s is blazing (420)", 
+				Server()->ClientName(m_pPlayer->GetCID()));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
+			else
+			{
+				str_format(aBuf, sizeof(aBuf), "%s is spinning (%d)", 
+				Server()->ClientName(m_pPlayer->GetCID()), 
+				(int)(m_ABSpinLength + 0.5));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+			}
+		}
+		if ((m_ABAimAcTime == 5) && !m_pPlayer->GetBot(1))
+		{
+			m_pPlayer->SetBot(1);
+			str_format(aBuf, sizeof(aBuf), "%s appears to be an aimbot (position matching) %f", 
+				Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
-		else
+		if ((m_ABAimTime == 10) && !m_pPlayer->GetBot(1))
 		{
-			str_format(aBuf, sizeof(aBuf), "'%s' is spinning (%d)", 
-			Server()->ClientName(m_pPlayer->GetCID()), 
-			(int)(m_ABSpinLength + 0.5));
+			m_pPlayer->SetBot(1);
+			str_format(aBuf, sizeof(aBuf), "%s appears to be an aimbot (behavior) %f", 
+				Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
-	}
-	if ((m_ABAimAcTime == 5) && !m_pPlayer->GetBot(1))
- 	{
- 		m_pPlayer->SetBot(1);
- 		str_format(aBuf, sizeof(aBuf), "'%s' appears to be an aimbot (position) %f", 
- 			Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
- 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
- 	}
- 	if ((m_ABAimTime == 10) && !m_pPlayer->GetBot(1))
- 	{
- 		m_pPlayer->SetBot(1);
- 		str_format(aBuf, sizeof(aBuf), "'%s' appears to be an aimbot (behavior) %f", 
- 			Server()->ClientName(m_pPlayer->GetCID()), m_ABSpinLength);
-  		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-  	}
 	
-	if (m_pPlayer && Server()->Tick() > m_ABNextBanTick && m_pPlayer->GetBot(1))
-	{
-		struct tee_stats *tmp = GameServer()->m_pController->t_stats->
-			current[m_pPlayer->GetCID()];
-		if (tmp && ++tmp->is_bot < 2) {
-			str_format(aBuf, sizeof(aBuf), "Voting to ban %s.",Server()->
-				ClientName(m_pPlayer->GetCID()));
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-			str_format(aBuf, sizeof(aBuf), "Ban %s",Server()->
-				ClientName(m_pPlayer->GetCID()));
-			char aCmd[128];
-			str_format(aCmd, sizeof(aCmd), "Ban %d 60 Bot detected!",
-				m_pPlayer->GetCID());
-			GameServer()->StartVote(aBuf, aCmd, "Bot detected!");
-			m_ABNextBanTick = Server()->Tick() + Server()->TickSpeed() * 60;
+		if (m_pPlayer && Server()->Tick() > m_ABNextBanTick && m_pPlayer->GetBot(1))
+		{
+			struct tee_stats *tmp = GameServer()->m_pController->t_stats->
+				current[m_pPlayer->GetCID()];
+			if (tmp && ++tmp->is_bot < 2) {
+				str_format(aBuf, sizeof(aBuf), "Voting to ban %s.",Server()->
+					ClientName(m_pPlayer->GetCID()));
+				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+				str_format(aBuf, sizeof(aBuf), "Ban %s",Server()->
+					ClientName(m_pPlayer->GetCID()));
+				char aCmd[128];
+				str_format(aCmd, sizeof(aCmd), "Ban %d 60 Bot detected!",
+					m_pPlayer->GetCID());
+				GameServer()->StartVote(aBuf, aCmd, "Bot detected!");
+				m_ABNextBanTick = Server()->Tick() + Server()->TickSpeed() * 60;
+			}
 		}
-	}
 	// -------------------------------------------------------------------------------------
-/*	
-#ifndef __APPLE__
-	const int twac = m_AntiCheats.CheckInputs(Server()->Tick(), m_LatestInput, 
-		m_LatestPrevInput);
-	if (twac) {
-		dbg_msg("ANTI-CHEAT", "Detected! %d", twac);
-		char buf[256] = { 0 };
-		snprintf(buf, sizeof(buf), "%s %d", 
-			ID_NAME(m_pPlayer->GetCID()), twac);
-		if (twac != 2)
-		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 	}
-#endif*/
+
 	mem_copy(&OldInput, &m_LatestPrevInput, sizeof(m_LatestPrevInput));
 	mem_copy(&m_LatestPrevInput, &m_LatestInput, sizeof(m_LatestInput));
 }
@@ -903,19 +880,17 @@ void CCharacter::Tick()
 	if(CountInput(m_LatestPrevInput.m_Hook, m_LatestInput.m_Hook).m_Presses)
 		RajhCheatDetector::OnFire(m_pPlayer);
 	*/
-	int events = m_Core.m_TriggeredEvents;
-	int teamhook = 0;
-	if (GetPlayer() && (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
+	int fd, teamhook = 0, isf = 0, events = m_Core.m_TriggeredEvents;
+	float td = 0, ds = 0;
+	
+	if ((g_Config.m_LogHooks == 1) && GetPlayer() && 
+	    (events & COREEVENT_HOOK_ATTACH_PLAYER) && m_Core.m_HookedPlayer != -1) {
 		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Core.m_HookedPlayer];
-		if (GameServer()->m_pController->IsTeamplay()) {
-			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam()) {
+		if (GameServer()->m_pController->IsTeamplay())
+			if (pPlayer && m_pPlayer->GetTeam() == pPlayer->GetTeam())
 				teamhook = 1;
-			}
-		}
-		float td = 0;
-		int isf = 0;
-		float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
-			vec2(OldInput.m_TargetX, OldInput.m_TargetY));
+		ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
+			      vec2(OldInput.m_TargetX, OldInput.m_TargetY));
 		if (pPlayer->GetCharacter()) {
 			isf = pPlayer->GetCharacter()->IsFreezed();
 			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
@@ -934,16 +909,14 @@ void CCharacter::Tick()
 			(long)td, li_us - lpi_us, (teamhook ? '+' : '-'), 
 			ID_NAME(GetPlayer()->GetCID()));
 
-		int fd;
 		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 			perror("open");
 		else
 			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
 				perror("write");		
-		close(fd);
-		//RajhCheatDetector::OnHit(m_pPlayer, m_Core.m_HookedPlayer);*/
-		
+		close(fd);		
 	}
+	
 	return;
 }
 
@@ -1411,11 +1384,11 @@ int CCharacter::NetworkClipped(int SnappingClient, float& Distance, vec2 CheckPo
 	float dx = GameServer()->m_apPlayers[SnappingClient]->m_ViewPos.x - CheckPos.x;
 	float dy = GameServer()->m_apPlayers[SnappingClient]->m_ViewPos.y - CheckPos.y;
 
-	if (absolute(dx) > 900.0f || absolute(dy) > 700.0f)
+	if (absolute(dx) > 950.0f || absolute(dy) > 750.0f)
 		return 1;
 	
 	Distance = distance(GameServer()->m_apPlayers[SnappingClient]->m_ViewPos, CheckPos);
-	if (distance(GameServer()->m_apPlayers[SnappingClient]->m_ViewPos, CheckPos) > 1000.0f)
+	if (distance(GameServer()->m_apPlayers[SnappingClient]->m_ViewPos, CheckPos) > 1050.0f)
 		return 1;
 	return 0;
 }

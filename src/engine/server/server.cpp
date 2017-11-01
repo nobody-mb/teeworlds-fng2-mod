@@ -29,7 +29,7 @@
 #include <engine/shared/linereader.h>
 #include <mastersrv/mastersrv.h>
 #include "game/server/gamecontext.h"
-#include "game/server/rcd.hpp"
+//#include "game/server/rcd.hpp"
 
 #include "register.h"
 #include "server.h"
@@ -263,7 +263,7 @@ void CServerBan::ConBanExt(IConsole::IResult *pResult, void *pUser)
 
 	const char *pStr = pResult->GetString(0);
 	int Minutes = pResult->NumArguments()>1 ? clamp(pResult->GetInteger(1), 0, 44640) : 30;
-	const char *pReason = pResult->NumArguments()>2 ? pResult->GetString(2) : "I em nub";
+	const char *pReason = pResult->NumArguments()>2 ? pResult->GetString(2) : "admin aboose";
 
 	if(StrAllnum(pStr))
 	{
@@ -2194,8 +2194,8 @@ void CServer::RegisterCommands()
 	Console()->Chain("sv_max_clients_per_ip", ConchainMaxclientsperipUpdate, this);
 	Console()->Chain("mod_command", ConchainModCommandUpdate, this);
 	Console()->Chain("console_output_level", ConchainConsoleOutputLevelUpdate, this);
-	Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this, 
-		"RCD: Forget all Players");
+	//Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this, 
+	//	"RCD: Forget all Players");
 	Console()->Register("merge_into", "ss", CFGFLAG_SERVER, merge_into, this, 
 		"noby stats: merge_into [src] -> [dst]");
 	
@@ -2215,7 +2215,7 @@ void CServer::merge_into (IConsole::IResult *pResult, void *pUser)
 	}
 }
 
-void CServer::RcdReset(IConsole::IResult *pResult, void *pUser)
+/*void CServer::RcdReset(IConsole::IResult *pResult, void *pUser)
 {
 	CServer* pThis = static_cast<CServer *>(pUser);
 	CGameContext* gserver = dynamic_cast<CGameContext*>(pThis->GameServer());
@@ -2231,7 +2231,7 @@ void CServer::RcdReset(IConsole::IResult *pResult, void *pUser)
 	}
 	
 	RajhCheatDetector::ForgetAllClients();
-}
+}*/
 
 int CServer::StartGameServer(const char* pMap, CConfiguration* pConfig){
 	unsigned int freeGameID = 1;

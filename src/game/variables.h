@@ -89,6 +89,11 @@ MACRO_CONFIG_INT(RcdMaxWarnings, rcd_max_warnings, 50, 0, 100, CFGFLAG_SERVER, "
 MACRO_CONFIG_INT(RcdBantime, rcd_bantime, 0, 0, 1440, CFGFLAG_SERVER, "The time to ban a player if kicked by RCD. 0 makes it just use kick")
 MACRO_CONFIG_STR(RcdBanreason, rcd_banreason, 64, "Banned by experimental anti-cheat system", CFGFLAG_SERVER, "Ban reason if kicked by RCD")
 
+MACRO_CONFIG_INT(AntiClient, anti_client, 1, 0, 1, CFGFLAG_SERVER, "kick cheat clients")
+MACRO_CONFIG_INT(TsfAntibot, tsf_antibot, 1, 0, 1, CFGFLAG_SERVER, "tsfreddie antibot")
+MACRO_CONFIG_INT(AntiTrigger, anti_trigger, 1, 0, 1, CFGFLAG_SERVER, "noby anti-triggerbot")
+MACRO_CONFIG_INT(LogHooks, log_hooks, 1, 0, 1, CFGFLAG_SERVER, "save hook data to file")
+
 MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
 
 MACRO_CONFIG_INT(SuppressEntities, sv_suppress_entities, 1, 0, 1, CFGFLAG_SERVER, "for non fng maps, disables spawning of pickups")	
