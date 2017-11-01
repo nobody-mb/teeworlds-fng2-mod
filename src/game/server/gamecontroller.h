@@ -17,7 +17,7 @@ class IGameController
 protected:
 	vec2 m_aaSpawnPoints[3][64];
 	int m_aNumSpawnPoints[3];
-	
+
 	CConfiguration& m_Config;
 
 	bool m_CustomConfig;
@@ -73,7 +73,7 @@ public:
 	int time_up (int num);
 
 	CConfiguration* GetConfig() { return &m_Config; }
-	
+
 	bool IsTeamplay() const;
 	bool IsGameOver() const { return m_GameOverTick != -1; }
 
@@ -85,7 +85,7 @@ public:
 
 	void DoWarmup(int Seconds);
 	void TogglePause();
-	
+
 	tstats *t_stats;
 
 	void StartRound();

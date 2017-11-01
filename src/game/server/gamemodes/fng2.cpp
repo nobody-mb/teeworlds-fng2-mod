@@ -16,7 +16,7 @@ CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer)
 	m_pGameType = "fng2";
 	m_GameFlags = GAMEFLAG_TEAMS;
 	m_HasBeenKill = false;
-	
+
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
 }
@@ -66,9 +66,9 @@ void CGameControllerFNG2::Tick()
 			GameServer()->m_World.m_Paused = false;
 	}
 
-	
+
 	// game is Paused
-	if(GameServer()->m_World.m_Paused) {		
+	if(GameServer()->m_World.m_Paused) {
 		if (m_GameOverTick == -1) {
 		}
 		if(GameServer()->m_World.m_Paused) ++m_RoundStartTick;
@@ -190,7 +190,7 @@ void CGameControllerFNG2::DoWincheck()
 					else
 						m_SuddenDeath = 1;
 				}
-			}			
+			}
 		}
 		else
 		{
@@ -227,11 +227,11 @@ void CGameControllerFNG2::DoWincheck()
 void CGameControllerFNG2::Snap(int SnappingClient)
 {
 	IGameController::Snap(SnappingClient);
-	
+
 	CNetObj_GameData *pGameDataObj = (CNetObj_GameData *)Server()->SnapNewItem(NETOBJTYPE_GAMEDATA, 0, sizeof(CNetObj_GameData));
 	if(!pGameDataObj)
 		return;
-	
+
 	/*pGameDataObj->m_FlagCarrierRed = FLAG_ATSTAND;
 	pGameDataObj->m_FlagCarrierBlue = FLAG_ATSTAND;*/
 
@@ -248,27 +248,27 @@ void CGameControllerFNG2::OnCharacterSpawn(class CCharacter *pChr)
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
 	pChr->GiveWeapon(WEAPON_RIFLE, -1);
 }
-	
-int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim, 
+
+int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 	class CPlayer *pKiller, int Weapon)
 {
 	CPlayer *pPlVictim = NULL;
 	struct tee_stats *s_victim = NULL, *s_killer = NULL;
-	
+
 	//printf("[on character death] victim = %p killer = %p\n", pVictim, pKiller);
-	
+
 	if (!pVictim || !pKiller)
 		return 0;
-	
-	if (!(pPlVictim = pVictim->GetPlayer()) || 
+
+	if (!(pPlVictim = pVictim->GetPlayer()) ||
 	    !(s_victim = ID_ENTRY(pPlVictim->GetCID())))
 		printf("couldnt find victim player entry\n");
-		
+
 	if (Weapon == WEAPON_GAME) {
 		if (s_victim) s_victim->frozeby = -1;
 		return 0;
 	}
-		
+
 	if (!(s_killer = ID_ENTRY(pKiller->GetCID())))
 		printf("couldnt find killer player entry\n");
 
@@ -283,7 +283,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 				s_victim->frozeby = s_killer->id;
 			}
 			if (s_killer) s_killer->freezes++;
-			
+
 			if (IsTeamplay() && pVictim->GetPlayer()->GetTeam() ==
 				pKiller->GetTeam())
 				pKiller->m_teamkills++; // teamkill
@@ -304,21 +304,21 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 
 			GameServer()->m_pController->t_stats->do_kill_messages(
 				s_killer, s_victim);
-			if(pKiller->GetCharacter()) 
+			if(pKiller->GetCharacter())
 				GameServer()->MakeLaserTextPoints(
-					pKiller->GetCharacter()->m_Pos, 
-					pKiller->GetCID(), 
+					pKiller->GetCharacter()->m_Pos,
+					pKiller->GetCID(),
 					m_Config.m_SvPlayerScoreSpikeNormal);
 			pKiller->m_grabs_normal++;
-			pVictim->GetPlayer()->m_deaths++;		
+			pVictim->GetPlayer()->m_deaths++;
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeNormal;
-			pVictim->GetPlayer()->m_RespawnTick = 
+			pVictim->GetPlayer()->m_RespawnTick =
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED){
 			if (!m_HasBeenKill) {
                                 m_HasBeenKill = true;
                                 char buf[54];
-                                snprintf(buf, sizeof(buf), "'%s' drew first blood!", 
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
                                         ID_NAME(pKiller->GetCID()));
                                 GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
                         }
@@ -330,17 +330,17 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeTeam;
 				if(pKiller->GetCharacter())
 					GameServer()->MakeLaserTextPoints(
-						pKiller->GetCharacter()->m_Pos, 
+						pKiller->GetCharacter()->m_Pos,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
 				// wrong shrine sacrifice
 				if (s_killer) s_killer->kills_wrong++;
-				pKiller->m_grabs_false++;				
+				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeFalse;
 				if(pKiller->GetCharacter())
 					GameServer()->MakeLaserTextPoints(
-						pKiller->GetCharacter()->m_Pos, 
+						pKiller->GetCharacter()->m_Pos,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 				// msg
@@ -350,13 +350,13 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
 			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
-			pVictim->GetPlayer()->m_RespawnTick = 
+			pVictim->GetPlayer()->m_RespawnTick =
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_BLUE){
 			if (!m_HasBeenKill) {
                                 m_HasBeenKill = true;
                                 char buf[54];
-                                snprintf(buf, sizeof(buf), "'%s' drew first blood!", 
+                                snprintf(buf, sizeof(buf), "'%s' drew first blood!",
                                         ID_NAME(pKiller->GetCID()));
                                 GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
                         }
@@ -368,7 +368,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeTeam;
 				if(pKiller->GetCharacter())
 					GameServer()->MakeLaserTextPoints(
-						pKiller->GetCharacter()->m_Pos, 
+						pKiller->GetCharacter()->m_Pos,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
@@ -376,9 +376,9 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 				if (s_killer) s_killer->kills_wrong++;
 				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_RED] += m_Config.m_SvTeamScoreSpikeFalse;
-				if(pKiller->GetCharacter()) 
+				if(pKiller->GetCharacter())
 					GameServer()->MakeLaserTextPoints(
-						pKiller->GetCharacter()->m_Pos, 
+						pKiller->GetCharacter()->m_Pos,
 						pKiller->GetCID(),
 						m_Config.m_SvPlayerScoreSpikeFalse);
 				// msg
@@ -388,7 +388,7 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
                                 GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 			}
 			GameServer()->m_pController->t_stats->do_kill_messages(s_killer, s_victim);
-			pVictim->GetPlayer()->m_RespawnTick = 
+			pVictim->GetPlayer()->m_RespawnTick =
 				Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_GOLD){
                         if (!m_HasBeenKill) {
@@ -419,17 +419,17 @@ int CGameControllerFNG2::OnCharacterDeath (class CCharacter *pVictim,
 			}
 		}
 	}
-	
+
 	if (Weapon == WEAPON_SELF) {
-		pVictim->GetPlayer()->m_RespawnTick = 
+		pVictim->GetPlayer()->m_RespawnTick =
 			Server()->Tick()+Server()->TickSpeed()*.75f;
-		if (s_victim) s_victim->frozeby = -1;	
+		if (s_victim) s_victim->frozeby = -1;
 	} else if (Weapon == WEAPON_WORLD) {
-		pVictim->GetPlayer()->m_RespawnTick = 
+		pVictim->GetPlayer()->m_RespawnTick =
 			Server()->Tick()+Server()->TickSpeed()*.75f;
 		if (s_victim) s_victim->frozeby = -1;
 	}
-	
+
 	return 0;
 }
 

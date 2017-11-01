@@ -85,7 +85,7 @@ class CClient : public IClient, public CDemoPlayer::IListner
 	int64 m_LocalStartTime;
 
 	int m_DebugFont;
-	
+
 	int64 m_LastRenderTime;
 	float m_RenderFrameTimeLow;
 	float m_RenderFrameTimeHigh;

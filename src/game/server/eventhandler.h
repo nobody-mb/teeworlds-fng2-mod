@@ -41,7 +41,7 @@ struct QuadroMask {
 
 	long long operator & (const QuadroMask& mask){
 		return (m_Mask[0] & mask[0]) | (m_Mask[1] & mask[1]) | (m_Mask[2] & mask[2]) | (m_Mask[3] & mask[3]);
-	}	
+	}
 
 	QuadroMask& operator^(long long mask) {
 		m_Mask[0] ^= mask;

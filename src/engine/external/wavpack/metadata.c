@@ -27,7 +27,7 @@ int read_metadata_buff (WavpackContext *wpc, WavpackMetadata *wpmd)
         if (!wpc->infile (&tchar, 1))
             return FALSE;
 
-        wpmd->byte_length += (int32_t) tchar << 9; 
+        wpmd->byte_length += (int32_t) tchar << 9;
 
         if (!wpc->infile (&tchar, 1))
             return FALSE;

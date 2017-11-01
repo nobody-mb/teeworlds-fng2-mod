@@ -249,7 +249,7 @@ void CNetBan::MakeBanInfo(const CBan<T> *pBan, char *pBuf, unsigned BuffSize, in
 			pBuf[0] = 0;
 		return;
 	}
-	
+
 	// build type based part
 	char aBuf[256];
 	if(Type == MSGTYPE_PLAYER)
@@ -407,7 +407,7 @@ int CNetBan::UnbanByRange(const CNetRange *pRange)
 {
 	if(pRange->IsValid())
 		return Unban(&m_BanRangePool, pRange);
-	
+
 	Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "net_ban", "ban failed (invalid range)");
 	return -1;
 }
@@ -468,7 +468,7 @@ bool CNetBan::IsBanned(const NETADDR *pAddr, char *pBuf, unsigned BufferSize) co
 			}
 		}
 	}
-	
+
 	return false;
 }
 

@@ -28,24 +28,24 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	/*float dist = distance(To, pHit->m_Pos);
 	float dist2 = distance(At, pHit->m_Pos);
 	char aBuf[128] = { 0 };
-	str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f\n", 
+	str_format(aBuf, sizeof(aBuf), "%s¶%f¶%f\n",
   			ID_NAME(pOwnerChar->GetPlayer()->GetCID()), dist, dist2);
-  			//pOwnerChar->m_aim_dist, 
-  			//pOwnerChar->m_last_tarposlen, 
+  			//pOwnerChar->m_aim_dist,
+  			//pOwnerChar->m_last_tarposlen,
   			//pOwnerChar->m_last_travel_dist);
-	
+
 	int fd;
 	if ((fd = open("distshot.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 		perror("open");
 	else
 		if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
-			perror("write");		
+			perror("write");
 	close(fd);*/
-	
+
 	CPlayer *ppHit = pHit->GetPlayer();
-	
+
 	if (ppHit && m_Bounces && !GameServer()->m_pController->
-			IsFriendlyFire(m_Owner, ppHit->GetCID()) && 
+			IsFriendlyFire(m_Owner, ppHit->GetCID()) &&
 			!pHit->IsFreezed()) {
 		int oid = pOwnerChar->GetPlayer()->GetCID();
 		struct tee_stats *o = GameServer()->m_pController->t_stats->current[oid];

@@ -19,7 +19,7 @@ class CSounds : public CComponent
 	int64 m_QueueWaitTime;
 	class CJob m_SoundJob;
 	bool m_WaitForSoundJob;
-	
+
 	int GetSampleId(int SetId);
 
 public:

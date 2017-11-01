@@ -915,7 +915,7 @@ int str_comp(const char *a, const char *b);
 */
 int is_whitespace(char chr);
 
-/*	
+/*
 like str_comp_nocase. just with whitespaces additionally
 */
 int str_comp_nocase_whitespace(const char* pStr, const char* pStr2);

@@ -10,24 +10,24 @@
 CGameControllerFNG2BoomSolo::CGameControllerFNG2BoomSolo(class CGameContext *pGameServer)
 : IGameController((class CGameContext*)pGameServer)
 {
-	m_pGameType = "fng2";	
+	m_pGameType = "fng2";
         m_HasBeenKill = false;
 
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
-	
+
 	g_pData->m_Weapons.m_aId[WEAPON_GRENADE].m_Ammoregentime = 1500;
 }
 
 CGameControllerFNG2BoomSolo::CGameControllerFNG2BoomSolo(class CGameContext *pGameServer, CConfiguration& pConfig)
 : IGameController((class CGameContext*)pGameServer, pConfig)
 {
-	m_pGameType = "fng2";	
+	m_pGameType = "fng2";
         m_HasBeenKill = false;
 
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
-	
+
 	g_pData->m_Weapons.m_aId[WEAPON_GRENADE].m_Ammoregentime = 1500;
 }
 
@@ -65,9 +65,9 @@ void CGameControllerFNG2BoomSolo::Tick()
 			GameServer()->m_World.m_Paused = false;
 	}
 
-	
+
 	// game is Paused
-	if(GameServer()->m_World.m_Paused) {		
+	if(GameServer()->m_World.m_Paused) {
 		if (m_GameOverTick == -1) {
 		}
 		if(GameServer()->m_World.m_Paused) ++m_RoundStartTick;
@@ -189,7 +189,7 @@ void CGameControllerFNG2BoomSolo::DoWincheck()
 					else
 						m_SuddenDeath = 1;
 				}
-			}			
+			}
 		}
 		else
 		{
@@ -237,7 +237,7 @@ void CGameControllerFNG2BoomSolo::OnCharacterSpawn(class CCharacter *pChr)
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
 	pChr->GiveWeapon(WEAPON_GRENADE, 5);
 }
-	
+
 int CGameControllerFNG2BoomSolo::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
 	// do scoreing
@@ -299,7 +299,7 @@ int CGameControllerFNG2BoomSolo::OnCharacterDeath(class CCharacter *pVictim, cla
 		}
 	}
 	if(Weapon == WEAPON_SELF){
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;		
+		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
 	} else if (Weapon == WEAPON_WORLD)
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
 	return 0;

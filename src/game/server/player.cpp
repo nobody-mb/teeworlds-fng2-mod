@@ -39,13 +39,13 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_unfreeze = 0;
 
 	m_ChatSpamCount = 0;
-	
+
 	m_Emotion = EMOTE_NORMAL;
 	m_EmotionDuration = 0;
 
 	m_ClientVersion = CLIENT_VERSION_NORMAL;
 	m_Ragequit = 0;
-	
+
 	memset(m_SnappingClients, -1, sizeof(m_SnappingClients));
 	m_SnappingClients[0].id = ClientID;
 	m_SnappingClients[0].distance = 0;
@@ -100,14 +100,14 @@ void CPlayer::Tick()
 			m_Latency.m_AccumMin = 1000;
 			m_Latency.m_AccumMax = 0;
 			struct tee_stats *tmp;
-			if (GameServer() && GameServer()->m_pController && 
+			if (GameServer() && GameServer()->m_pController &&
 			   (tmp = GameServer()->m_pController->
 			    t_stats->current[GetCID()])) {
 				if (!(++tmp->ping_tick % 16)) {
 					tmp->ping_tick = 0;
 					tmp->avg_ping = (unsigned short)ADD_AVG(
-							m_Latency.m_Avg, 
-							tmp->avg_ping, 
+							m_Latency.m_Avg,
+							tmp->avg_ping,
 							tmp->num_samples);
 				}
 			} else {
@@ -138,7 +138,7 @@ void CPlayer::Tick()
 		}
 		else if(m_Spawning && m_RespawnTick <= Server()->Tick())
 			TryRespawn();
-		
+
 		if(m_EmotionDuration != 0) --m_EmotionDuration;
 	}
 	else
@@ -177,9 +177,9 @@ void CPlayer::Snap(int SnappingClient)
 #endif
 	if(!Server()->ClientIngame(m_ClientID))
 		return;
-	
+
 	//
-	
+
 	int ClientID = m_ClientID;
 	if (SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(GetCID(), GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, ClientID)) return;
 	/* return;*/
@@ -214,7 +214,7 @@ void CPlayer::Snap(int SnappingClient)
 		CNetObj_SpectatorInfo *pSpectatorInfo = static_cast<CNetObj_SpectatorInfo *>(Server()->SnapNewItem(NETOBJTYPE_SPECTATORINFO, ClientID, sizeof(CNetObj_SpectatorInfo)));
 		if(!pSpectatorInfo)
 			return;
-		
+
 		pSpectatorInfo->m_SpectatorID = m_SpectatorID;
 	/*	if(!GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID))*/
 	if(SnappingClient > -1 && !GameServer()->m_apPlayers[SnappingClient]->IsSnappingClient(m_SpectatorID, GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion, pSpectatorInfo->m_SpectatorID))
@@ -227,7 +227,7 @@ void CPlayer::Snap(int SnappingClient)
 void CPlayer::OnDisconnect(const char *pReason)
 {
 	//RajhCheatDetector::OnPlayerLeave(this);
-	
+
 	KillCharacter(WEAPON_GAME, true);
 
 	if(Server()->ClientIngame(m_ClientID))
@@ -400,7 +400,7 @@ void CPlayer::CalcScore(){
 		m_Score = m_kills + m_unfreeze - m_hits;
 		//TODO: make this configurable
 		m_Score += (m_grabs_normal * g_Config.m_SvPlayerScoreSpikeNormal) + (m_grabs_team * g_Config.m_SvPlayerScoreSpikeTeam) + (m_grabs_false * g_Config.m_SvPlayerScoreSpikeFalse) + (m_grabs_gold * g_Config.m_SvPlayerScoreSpikeGold) - (m_deaths * g_Config.m_SvPlayerScoreSpikeNormal);
-		m_Score -= m_teamkills;	
+		m_Score -= m_teamkills;
 	}
 }
 
@@ -440,7 +440,7 @@ bool CPlayer::AddSnappingClient(int RealID, float Distance, char ClientVersion, 
 				else highestDistance = m_SnappingClients[i].distance;
 			}
 		}
-		
+
 		//only add clients every 2 ticks, else client overloads
 		if (id > -1 && highestDistance > Distance) {
 			m_SnappingClients[id].id = RealID;
@@ -468,7 +468,7 @@ bool CPlayer::AddSnappingClient(int RealID, float Distance, char ClientVersion, 
 					else highestDistance = m_SnappingClients[i].distance;
 				}
 			}
-			
+
 			//only add clients every 2 ticks, else client overloads
 			if (id > -1 && highestDistance > Distance) {
 				m_SnappingClients[id].id = RealID;
@@ -520,7 +520,7 @@ int CPlayer::GetRealIDFromSnappingClients(int SnapID) {
 		if (m_SnappingClients[SnapID].id != 0xFFFFFFFF) return m_SnappingClients[SnapID].id;
 	}
 	else {
-		if (MAX_CLIENTS > DDNET_CLIENT_MAX_CLIENTS) {			
+		if (MAX_CLIENTS > DDNET_CLIENT_MAX_CLIENTS) {
 			if (m_SnappingClients[SnapID].id != 0xFFFFFFFF) return m_SnappingClients[SnapID].id;
 		}
 		else return SnapID;

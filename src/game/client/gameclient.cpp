@@ -226,7 +226,7 @@ void CGameClient::OnInit()
 	m_UI.SetGraphics(Graphics(), TextRender());
 	m_RenderTools.m_pGraphics = Graphics();
 	m_RenderTools.m_pUI = UI();
-	
+
 	int64 Start = time_get();
 
 	// set the language

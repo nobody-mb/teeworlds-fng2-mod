@@ -1464,7 +1464,7 @@ void CEditor::DoQuadEnvelopes(const array<CQuad> &lQuads, int TexID)
 	//Draw Quads
 	Graphics()->TextureSet(TexID);
 	Graphics()->QuadsBegin();
-	
+
 	for(int j = 0; j < Num; j++)
 	{
 		if(!apEnvelope[j])

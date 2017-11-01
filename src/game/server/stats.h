@@ -38,9 +38,9 @@ class tstats
 	IServer *m_pServer;
 
 	void send_stats (const char *name, int req_by, struct tee_stats *ct, int is_all);
-	void print_best (const char *msg, int max, 
+	void print_best (const char *msg, int max,
 		double (*callback)(struct tee_stats, char *), int all);
-	double print_best_group (char *dst, struct tee_stats *stats, char **names, 
+	double print_best_group (char *dst, struct tee_stats *stats, char **names,
 		int num, double (*callback)(struct tee_stats, char *), double max);
 	struct tee_stats read_statsfile (const char *name, time_t create);
 	void top_special (const char *message, int ClientID);
@@ -62,14 +62,14 @@ class tstats
 	char **total_names;
 	int num_totals;
 	int max_totals;
-	
+
 	int last_reqd;
 	int last_reqds;
-	
+
 	struct tee_stats round_stats[512];
 	char *round_names[512];
 	int round_index;
-	
+
 	void SendChat(int ChatterClientID, int Team, const char *pText);
 	void SendChatTarget(int To, const char *pText);
 
@@ -80,7 +80,7 @@ public:
 	tstats(CGameContext *game_srv, const char *dir);
 	~tstats();
 	int ertimer;
-	
+
 	struct tee_stats *current[512];
 	void do_kill_messages (struct tee_stats *, struct tee_stats *);
 	void update_stats (struct tee_stats *dst, struct tee_stats *src);

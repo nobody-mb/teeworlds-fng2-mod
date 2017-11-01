@@ -700,7 +700,7 @@ void CMenus::RenderSettingsGraphics(CUIRect MainView)
 		g_Config.m_GfxFsaaSamples = (g_Config.m_GfxFsaaSamples+1)%17;
 		CheckSettings = true;
 	}
-	
+
 	MainView.HSplitTop(20.0f, &Button, &MainView);
 	if(DoButton_CheckBox(&g_Config.m_GfxThreaded, Localize("Threaded rendering"), g_Config.m_GfxThreaded, &Button))
 	{
@@ -718,7 +718,7 @@ void CMenus::RenderSettingsGraphics(CUIRect MainView)
 			CheckSettings = true;
 		}
 	}
-		
+
 	MainView.HSplitTop(20.0f, &Button, &MainView);
 	if(DoButton_CheckBox(&g_Config.m_GfxTextureQuality, Localize("Quality Textures"), g_Config.m_GfxTextureQuality, &Button))
 	{

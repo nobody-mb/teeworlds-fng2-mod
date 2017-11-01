@@ -232,7 +232,7 @@ int CServerBan::BanAddr(const NETADDR *pAddr, int Seconds, const char *pReason, 
 	if(force){
 		int ret = Ban(&m_BanAddrPool, pAddr, Seconds, pReason);
 		if(ret != 0) return ret;
-		
+
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 		{
 			if(Server()->m_aClients[i].m_State == CServer::CClient::STATE_EMPTY)
@@ -311,7 +311,7 @@ CServer::CServer() : m_DemoRecorder(&m_SnapshotDelta)
 
 	m_RconClientID = IServer::RCON_CID_SERV;
 	m_RconAuthLevel = AUTHED_ADMIN;
-	
+
 	m_PlayerCount = 0;
 
 	Init();
@@ -601,7 +601,7 @@ int CServer::SendMsgEx(CMsgPacker *pMsg, int Flags, int ClientID, bool System)
 void CServer::DoSnapshot()
 {
 	sGame* p = m_pGames;
-	while(p != NULL){	
+	while(p != NULL){
 		p->GameServer()->OnPreSnap();
 		p = p->m_pNext;
 	}
@@ -766,9 +766,9 @@ int CServer::DelClientCallback(int ClientID, const char *pReason, void *pUser, b
 	// notify the mod about the drop, if the mod says, that the connection can't be free'd, we don't drop the connection
 	if(pThis->m_aClients[ClientID].m_State >= CClient::STATE_READY) {
 		sGame* p = pThis->GetGame(pThis->m_aClients[ClientID].m_uiGameID);
-		if(p != NULL) 
+		if(p != NULL)
 			CanDrop = p->GameServer()->OnClientDrop(ClientID, pReason, ForceDisconnect);
-		
+
 	}
 
 	if (CanDrop) {
@@ -823,7 +823,7 @@ void CServer::SendMap(int ClientID, unsigned int pGameID)
 			map = map->m_pNextMap;
 		}
 		if (!map) return;
-		
+
 		lastsent[ClientID] = 0;
 		lastask[ClientID] = 0;
 		lastasktick[ClientID] = Tick();
@@ -913,7 +913,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 
 	if(Unpacker.Error())
 		return;
-	
+
 	if(g_Config.m_SvNetlimit && Msg != NETMSG_REQUEST_MAP_DATA)
 	{
 		int64 Now = time_get();
@@ -967,7 +967,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 		{
 			if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) == 0 || m_aClients[ClientID].m_State < CClient::STATE_CONNECTING)
 				return;
-	
+
 			if(m_aClients[ClientID].m_uiGameID == GAME_ID_INVALID || m_aClients[ClientID].m_uiGameID == 0){
 				int Chunk = Unpacker.GetInt();
 				unsigned int ChunkSize = 1024-128;
@@ -981,7 +981,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 				{
 					lastsent[ClientID] = Chunk;
 				}
-			
+
 				// drop faulty map data requests
 				if(Chunk < 0 || Offset > m_CurrentMapSize)
 					return;
@@ -993,7 +993,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 						ChunkSize = 0;
 					Last = 1;
 				}
-				
+
 				if (lastsent[ClientID] < Chunk+g_Config.m_SvMapWindow && g_Config.m_SvHighBandwidth)
 					return;
 
@@ -1010,7 +1010,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 					char aBuf[256];
 					str_format(aBuf, sizeof(aBuf), "sending chunk %d with size %d", Chunk, ChunkSize);
 					Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
-				}				
+				}
 			} else {
 				sMap* mapToDownload = m_pMaps;
 				while(mapToDownload){
@@ -1019,7 +1019,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 					}
 					mapToDownload = mapToDownload->m_pNextMap;
 				}
-				
+
 				if(mapToDownload){
 					int Chunk = Unpacker.GetInt();
 					unsigned int ChunkSize = 1024-128;
@@ -1045,7 +1045,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 							ChunkSize = 0;
 						Last = 1;
 					}
-				
+
 					if (lastsent[ClientID] < Chunk+g_Config.m_SvMapWindow && g_Config.m_SvHighBandwidth)
 						return;
 
@@ -1081,9 +1081,9 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 					GameServer()->OnClientConnected(ClientID);
 					m_aClients[ClientID].m_uiGameID = 0;
 				}
-				else {		
+				else {
 					sGame* p = GetGame(m_aClients[ClientID].m_uiGameID);
-					if(p != NULL) p->GameServer()->OnClientConnected(ClientID);					
+					if(p != NULL) p->GameServer()->OnClientConnected(ClientID);
 				}
 				SendConnectionReady(ClientID);
 			}
@@ -1092,10 +1092,10 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 		{
 			if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && m_aClients[ClientID].m_State == CClient::STATE_READY){
 				bool isReady = false;
-				
+
 				sGame* p = GetGame(m_aClients[ClientID].m_uiGameID);
 				if(p != NULL) isReady = p->GameServer()->IsClientReady(ClientID);
-				
+
 				if(isReady) {
 					char aAddrStr[NETADDR_MAXSTRSIZE];
 					net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), true);
@@ -1103,8 +1103,8 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 					char aBuf[256];
 					str_format(aBuf, sizeof(aBuf), "player has entered the game. ClientID=%x addr=%s", ClientID, aAddrStr);
 					Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
-					m_aClients[ClientID].m_State = CClient::STATE_INGAME;					
-				
+					m_aClients[ClientID].m_State = CClient::STATE_INGAME;
+
 					sGame* p = GetGame(m_aClients[ClientID].m_uiGameID);
 					if(p != NULL) p->GameServer()->OnClientEnter(ClientID);
 				}
@@ -1159,7 +1159,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			m_aClients[ClientID].m_CurrentInput %= 200;
 
 			// call the mod with the fresh input data
-			if(m_aClients[ClientID].m_State == CClient::STATE_INGAME) {		
+			if(m_aClients[ClientID].m_State == CClient::STATE_INGAME) {
 				sGame* p = GetGame(m_aClients[ClientID].m_uiGameID);
 				if(p != NULL) p->GameServer()->OnClientDirectInput(ClientID, m_aClients[ClientID].m_LatestInput.m_aData);
 			}
@@ -1315,7 +1315,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, bool Extended)
 	str_format(aBuf, sizeof(aBuf), "%d", Token);
 	p.AddString(aBuf, 6);
 
-	p.AddString(GameServer()->Version(), 32); 
+	p.AddString(GameServer()->Version(), 32);
 	//ddnet code
 	if (Extended)
 	{
@@ -1448,7 +1448,7 @@ void CServer::PumpNetwork()
 				{
 					ServerInfo = true;
 					Extended = false;
-				} 
+				}
 				else if (Packet.m_DataSize == sizeof(SERVERBROWSE_GETINFO64) + 1 &&
 					mem_comp(Packet.m_pData, SERVERBROWSE_GETINFO64, sizeof(SERVERBROWSE_GETINFO64)) == 0)
 				{
@@ -1483,7 +1483,7 @@ void CServer::PumpNetwork()
 				unsigned int Offset = Chunk * ChunkSize;
 				int Last = 0;
 
-				//ddnet code			
+				//ddnet code
 				// drop faulty map data requests
 				if(Chunk < 0 || Offset > m_CurrentMapSize)
 					return;
@@ -1509,7 +1509,7 @@ void CServer::PumpNetwork()
 					char aBuf[256];
 					str_format(aBuf, sizeof(aBuf), "sending chunk %d with size %d", Chunk, ChunkSize);
 					Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
-				}				
+				}
 			} else {
 				sMap* mapToDownload = m_pMaps;
 				while(mapToDownload){
@@ -1518,7 +1518,7 @@ void CServer::PumpNetwork()
 					}
 					mapToDownload = mapToDownload->m_pNextMap;
 				}
-				
+
 				if(mapToDownload){
 					int Chunk = lastsent[i]++;
 					unsigned int ChunkSize = 1024-128;
@@ -1662,7 +1662,7 @@ IMap* CServer::LoadAndGetMap(const char *pMapName, unsigned int pGameID)
 	}
 	map->m_pMap = pEngineMap;
 	map->m_uiGameID = pGameID;
-	
+
 	// get the crc of the map
 	map->m_CurrentMapCrc = pEngineMap->Crc();
 	char aBufMsg[256];
@@ -1693,7 +1693,7 @@ bool CServer::ChangeMap(const char *pMapName, unsigned int pGameID){
 		if(pMap->m_uiGameID == pGameID){
 			char aBuf[512];
 			str_format(aBuf, sizeof(aBuf), "maps/%s.map", pMapName);
-			
+
 			// check for valid standard map
 			if (!m_MapChecker.ReadAndValidateMap(Storage(), aBuf, IStorage::TYPE_ALL))
 			{
@@ -1734,7 +1734,7 @@ bool CServer::ChangeMap(const char *pMapName, unsigned int pGameID){
 	}
 	return false;
 }
-	
+
 void CServer::InitRegister(CNetServer *pNetServer, IEngineMasterServer *pMasterServer, IConsole *pConsole)
 {
 	m_Register.Init(pNetServer, pMasterServer, pConsole);
@@ -1859,7 +1859,7 @@ int CServer::Run()
 							{
 								if(m_aClients[c].m_State == CClient::STATE_INGAME) {
 									sGame* p = GetGame(m_aClients[c].m_uiGameID);
-									if(p != NULL) p->GameServer()->OnClientPredictedInput(c, m_aClients[c].m_aInputs[i].m_aData);				
+									if(p != NULL) p->GameServer()->OnClientPredictedInput(c, m_aClients[c].m_aInputs[i].m_aData);
 								}
 								break;
 							}
@@ -1867,7 +1867,7 @@ int CServer::Run()
 					}
 
 					sGame* p = m_pGames;
-					while(p != NULL){	
+					while(p != NULL){
 						p->GameServer()->OnTick();
 						p = p->m_pNext;
 					}
@@ -1964,10 +1964,10 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 				const char *pAuthStr = pThis->m_aClients[i].m_Authed == CServer::AUTHED_ADMIN ? "(Admin)" :
 										pThis->m_aClients[i].m_Authed == CServer::AUTHED_MOD ? "(Mod)" : "";
 				//CGameContext* gserver = dynamic_cast<CGameContext*>
-				//	(pThis->GameServer());							
-				str_format(aBuf, sizeof(aBuf), 
-					"id=%d addr=%s name='%s' score=%d %s", i, 
-					aAddrStr, pThis->m_aClients[i].m_aName, 
+				//	(pThis->GameServer());
+				str_format(aBuf, sizeof(aBuf),
+					"id=%d addr=%s name='%s' score=%d %s", i,
+					aAddrStr, pThis->m_aClients[i].m_aName,
 					pThis->m_aClients[i].m_Score,
 					pAuthStr);
 			}
@@ -2115,28 +2115,28 @@ void CServer::ConchainConsoleOutputLevelUpdate(IConsole::IResult *pResult, void 
 
 void CServer::ConStartGame(IConsole::IResult *pResult, void *pUser){
 	CServer *pThis = static_cast<CServer *>(pUser);
-	
+
 	if(pResult->NumArguments() == 1)
-	{	
+	{
 		pThis->StartGameServer(pResult->GetString(0));
 	}
 }
 
 void CServer::ConStopGame(IConsole::IResult *pResult, void *pUser){
 	CServer *pThis = static_cast<CServer *>(pUser);
-	
+
 	if(pResult->NumArguments() == 1)
 	{
 		unsigned int GameID = pResult->GetInteger(0);
 		if(GameID == 0) return; //cant stop the "main" game server
-		
+
 		pThis->StopGameServer(GameID);
 	}
 }
 
 void CServer::ConMovePlayerToGame(IConsole::IResult *pResult, void *pUser){
 	CServer *pThis = static_cast<CServer *>(pUser);
-	
+
 	if(pResult->NumArguments() == 2)
 	{
 		int ID = pResult->GetInteger(0);
@@ -2147,7 +2147,7 @@ void CServer::ConMovePlayerToGame(IConsole::IResult *pResult, void *pUser){
 
 void CServer::ConServerStatus(IConsole::IResult *pResult, void *pUser){
 	CServer *pThis = static_cast<CServer *>(pUser);
-	
+
 	char aBuf[1024];
 
 	sGame* pGame = pThis->m_pGames;
@@ -2157,7 +2157,7 @@ void CServer::ConServerStatus(IConsole::IResult *pResult, void *pUser){
 			if(pMap->m_uiGameID == pGame->m_uiGameID) break;
 			pMap = pMap->m_pNextMap;
 		}
-		
+
 		str_format(aBuf, sizeof(aBuf), "id=%u map=%s", pGame->m_uiGameID, (pMap) ? pMap->m_aCurrentMap : ((pGame->m_uiGameID == 0) ? pThis->m_aCurrentMap : ""));
 		pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Server", aBuf);
 		pGame = pGame->m_pNext;
@@ -2194,11 +2194,11 @@ void CServer::RegisterCommands()
 	Console()->Chain("sv_max_clients_per_ip", ConchainMaxclientsperipUpdate, this);
 	Console()->Chain("mod_command", ConchainModCommandUpdate, this);
 	Console()->Chain("console_output_level", ConchainConsoleOutputLevelUpdate, this);
-	//Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this, 
+	//Console()->Register("rcd_reset", "", CFGFLAG_SERVER, RcdReset, this,
 	//	"RCD: Forget all Players");
-	Console()->Register("merge_into", "ss", CFGFLAG_SERVER, merge_into, this, 
+	Console()->Register("merge_into", "ss", CFGFLAG_SERVER, merge_into, this,
 		"noby stats: merge_into [src] -> [dst]");
-	
+
 	// register console commands in sub parts
 	m_ServerBan.InitServerBan(Console(), Storage(), this);
 	m_pGames->m_pGameServer->OnConsoleInit();
@@ -2229,37 +2229,37 @@ void CServer::merge_into (IConsole::IResult *pResult, void *pUser)
 			}
 		}
 	}
-	
+
 	RajhCheatDetector::ForgetAllClients();
 }*/
 
 int CServer::StartGameServer(const char* pMap, CConfiguration* pConfig){
 	unsigned int freeGameID = 1;
-		
+
 	sGame* g = m_pGames;
 	while(g->m_pNext){
 		if(g->m_pNext->m_uiGameID != freeGameID) break;
 		++freeGameID;
 		g = g->m_pNext;
 	}
-	
+
 	IMap* map = LoadAndGetMap(pMap, freeGameID);
-	
+
 	if(map){
 		if(g->m_pNext){
 			sGame* gtmp = g->m_pNext;
-			
+
 			g->m_pNext = new sGame;
 			g = g->m_pNext;
 			g->m_pNext = gtmp;
-		} else {			
+		} else {
 			g->m_pNext = new sGame;
-			g = g->m_pNext;			
+			g = g->m_pNext;
 		}
-		
+
 		g->m_pGameServer = CreateGameServer();
 		g->m_uiGameID = freeGameID;
-		
+
 		/*for(int c = 0; c < MAX_CLIENTS; c++)
 		{
 			if(pThis->m_aClients[c].m_State <= CClient::STATE_AUTH)
@@ -2274,9 +2274,9 @@ int CServer::StartGameServer(const char* pMap, CConfiguration* pConfig){
 		if(pConfig) g->m_pGameServer->OnInit(Kernel(), map, pConfig);
 		else g->m_pGameServer->OnInit(Kernel(), map);
 	} else return -1;
-	
-	
-	return freeGameID;	
+
+
+	return freeGameID;
 }
 
 void CServer::StopGameServer(int GameID, int MoveToGameID){
@@ -2307,8 +2307,8 @@ void CServer::StopGameServer(int GameID, int MoveToGameID){
 				pMap->m_pNextMap = mtmp;
 			}
 		}
-		
-		if(pGame->m_pNext){	
+
+		if(pGame->m_pNext){
 			for(int c = 0; c < MAX_CLIENTS; c++)
 			{
 				if(m_aClients[c].m_State <= CClient::STATE_AUTH || m_aClients[c].m_uiGameID != pGame->m_pNext->m_uiGameID)
@@ -2333,14 +2333,14 @@ void CServer::MovePlayerToGameServer(int PlayerID, int GameID){
 	if(PlayerID < MAX_CLIENTS){
 		if(m_aClients[PlayerID].m_State <= CClient::STATE_AUTH || m_aClients[PlayerID].m_uiGameID == GameID)
 			return;
-		
+
 		sGame* pGameLeave = m_pGames;
 		while(pGameLeave){
 			if(pGameLeave->m_uiGameID == m_aClients[PlayerID].m_uiGameID) break;
 			pGameLeave = pGameLeave->m_pNext;
-		}			
-		
-		
+		}
+
+
 		sGame* pGame = GetGame(GameID);
 		if (pGame) {
 			if (pGame->m_uiGameID == GameID) {
@@ -2360,25 +2360,25 @@ void CServer::KickConnectingPlayers(int GameID, const char* pReason){
 	{
 		if(m_aClients[c].m_State != CClient::STATE_CONNECTING || m_aClients[c].m_uiGameID != GameID)
 			continue;
-		
+
 		KickForce(c, pReason);
 	}
 }
 
-bool CServer::CheckForConnectingPlayers(int GameID){	
+bool CServer::CheckForConnectingPlayers(int GameID){
 	for(int c = 0; c < MAX_CLIENTS; c++)
 	{
 		if(m_aClients[c].m_State == CClient::STATE_CONNECTING && m_aClients[c].m_uiGameID == GameID)
 			return true;
 	}
-	
+
 	return false;
 }
 
 bool CServer::ChangeGameServerMap(int GameID, const char* pMapName){
 	sGame* g = GetGame(GameID);
 	if(g){
-		if(ChangeMap(pMapName, GameID)){		
+		if(ChangeMap(pMapName, GameID)){
 			// new map loaded
 			g->GameServer()->OnShutdown();
 
@@ -2392,15 +2392,15 @@ bool CServer::ChangeGameServerMap(int GameID, const char* pMapName){
 				m_aClients[c].Reset();
 				m_aClients[c].m_State = CClient::STATE_CONNECTING;
 			}
-			
+
 			sMap* pMap = m_pMaps;
 			while(pMap){
 				if(pMap->m_uiGameID == GameID) break;
 				pMap = pMap->m_pNextMap;
 			}
-			
+
 			if(pMap) g->GameServer()->OnInit(Kernel(), pMap->m_pMap, g->GameServer()->m_Config);
-			
+
 			return true;
 		} else return false;
 	} else return false;

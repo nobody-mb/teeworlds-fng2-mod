@@ -111,7 +111,7 @@ int CNetServer::Recv(CNetChunk *pChunk)
 		// no more packets for now
 		if(Bytes <= 0)
 			break;
-		
+
 		// check if we just should drop the packet
 		char aBuf[128];
 		if(NetBan() && NetBan()->IsBanned(&Addr, aBuf, sizeof(aBuf)))

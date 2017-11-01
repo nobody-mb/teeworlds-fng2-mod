@@ -96,7 +96,7 @@ MACRO_CONFIG_INT(LogHooks, log_hooks, 1, 0, 1, CFGFLAG_SERVER, "save hook data t
 
 MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
 
-MACRO_CONFIG_INT(SuppressEntities, sv_suppress_entities, 1, 0, 1, CFGFLAG_SERVER, "for non fng maps, disables spawning of pickups")	
+MACRO_CONFIG_INT(SuppressEntities, sv_suppress_entities, 1, 0, 1, CFGFLAG_SERVER, "for non fng maps, disables spawning of pickups")
 
 #include "variables_special.h"
 

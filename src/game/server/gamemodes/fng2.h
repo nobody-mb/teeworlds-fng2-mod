@@ -14,12 +14,12 @@ public:
 	virtual void Snap(int SnappingClient);
 	virtual void OnCharacterSpawn(class CCharacter *pChr);
 	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon);
-	
+
 	virtual void DoWincheck();
-	
+
 	virtual void PostReset();
 protected:
-	void EndRound();	
+	void EndRound();
 private:
 	bool m_HasBeenKill;
 };

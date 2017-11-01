@@ -65,7 +65,7 @@ class CServer : public IServer
 	sMap *m_pMaps;
 	class IConsole *m_pConsole;
 	class IStorage *m_pStorage;
-	
+
 	int m_PlayerCount;
 public:
 	class IGameServer *GameServer() { return m_pGames->m_pGameServer; }
@@ -90,7 +90,7 @@ public:
 	{
 	public:
 		unsigned int m_uiGameID;
-		
+
 		enum
 		{
 			STATE_EMPTY = 0,
@@ -115,7 +115,7 @@ public:
 		int m_State;
 		int m_Latency;
 		int m_SnapRate;
-		
+
 		//netlimi
 		int m_TrafficSince;
 		int m_Traffic;
@@ -176,7 +176,7 @@ public:
 
 	virtual int BanAddr(const NETADDR *pAddr, int Seconds, const char *pReason, bool Force = true) { return m_ServerBan.BanAddr(pAddr, Seconds, pReason, Force); }
 	virtual void GetNetAddr(NETADDR *pAddr, int ClientID){ *pAddr = *m_NetServer.ClientAddr(ClientID); }
-	
+
 	int TrySetClientName(int ClientID, const char *pName);
 
 	virtual void SetClientName(int ClientID, const char *pName);
@@ -265,16 +265,16 @@ public:
 	virtual void MovePlayerToGameServer(int PlayerID, int GameID);
 	virtual void KickConnectingPlayers(int GameID, const char* pReason);
 	virtual bool CheckForConnectingPlayers(int GameID);
-	
+
 	virtual struct sGame* GetGame(int GameID);
 
 	virtual int SnapNewID();
 	virtual void SnapFreeID(int ID);
 	virtual void *SnapNewItem(int Type, int ID, int Size);
 	void SnapSetStaticsize(int ItemType, int Size);
-	
+
 	const char *GetAnnouncementLine(char const *FileName);
-	unsigned m_AnnouncementLastLine;	
+	unsigned m_AnnouncementLastLine;
 };
 
 #endif

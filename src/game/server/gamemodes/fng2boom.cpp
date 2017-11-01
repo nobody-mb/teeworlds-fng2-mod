@@ -13,10 +13,10 @@ CGameControllerFNG2Boom::CGameControllerFNG2Boom(class CGameContext *pGameServer
 	m_pGameType = "fng2";
 	m_GameFlags = GAMEFLAG_TEAMS;
         m_HasBeenKill = false;
-	
+
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
-	
+
 	g_pData->m_Weapons.m_aId[WEAPON_GRENADE].m_Ammoregentime = 1500;
 }
 
@@ -26,10 +26,10 @@ CGameControllerFNG2Boom::CGameControllerFNG2Boom(class CGameContext *pGameServer
 	m_pGameType = "fng2";
 	m_GameFlags = GAMEFLAG_TEAMS;
         m_HasBeenKill = false;
-	
+
 	if(m_Config.m_SvTournamentMode) m_Warmup = 60*Server()->TickSpeed();
 	else m_Warmup = m_Config.m_SvWarmup;
-	
+
 	g_pData->m_Weapons.m_aId[WEAPON_GRENADE].m_Ammoregentime = 1500;
 }
 
@@ -67,9 +67,9 @@ void CGameControllerFNG2Boom::Tick()
 			GameServer()->m_World.m_Paused = false;
 	}
 
-	
+
 	// game is Paused
-	if(GameServer()->m_World.m_Paused) {		
+	if(GameServer()->m_World.m_Paused) {
 		if (m_GameOverTick == -1) {
 		}
 		if(GameServer()->m_World.m_Paused) ++m_RoundStartTick;
@@ -191,7 +191,7 @@ void CGameControllerFNG2Boom::DoWincheck()
 					else
 						m_SuddenDeath = 1;
 				}
-			}			
+			}
 		}
 		else
 		{
@@ -228,11 +228,11 @@ void CGameControllerFNG2Boom::DoWincheck()
 void CGameControllerFNG2Boom::Snap(int SnappingClient)
 {
 	IGameController::Snap(SnappingClient);
-	
+
 	CNetObj_GameData *pGameDataObj = (CNetObj_GameData *)Server()->SnapNewItem(NETOBJTYPE_GAMEDATA, 0, sizeof(CNetObj_GameData));
 	if(!pGameDataObj)
 		return;
-	
+
 	/*pGameDataObj->m_FlagCarrierRed = FLAG_ATSTAND;
 	pGameDataObj->m_FlagCarrierBlue = FLAG_ATSTAND;*/
 
@@ -249,7 +249,7 @@ void CGameControllerFNG2Boom::OnCharacterSpawn(class CCharacter *pChr)
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
 	pChr->GiveWeapon(WEAPON_GRENADE, 5);
 }
-	
+
 int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
 	// do scoreing
@@ -278,7 +278,7 @@ int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class C
 
 			if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeNormal);
 			pKiller->m_grabs_normal++;
-			pVictim->GetPlayer()->m_deaths++;		
+			pVictim->GetPlayer()->m_deaths++;
 			m_aTeamscore[pKiller->GetTeam()] += m_Config.m_SvTeamScoreSpikeNormal;
 			pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.5f;
 		} else if(Weapon == WEAPON_SPIKE_RED){
@@ -297,7 +297,7 @@ int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class C
 				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeTeam);
 			} else {
 				// wrong shrine sacrifice
-				pKiller->m_grabs_false++;				
+				pKiller->m_grabs_false++;
 				m_aTeamscore[TEAM_BLUE] += m_Config.m_SvTeamScoreSpikeFalse;
 				if(pKiller->GetCharacter()) GameServer()->MakeLaserTextPoints(pKiller->GetCharacter()->m_Pos, pKiller->GetCID(), m_Config.m_SvPlayerScoreSpikeFalse);
                                 // msg
@@ -352,7 +352,7 @@ int CGameControllerFNG2Boom::OnCharacterDeath(class CCharacter *pVictim, class C
 		}
 	}
 	if(Weapon == WEAPON_SELF){
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;		
+		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
 	} else if (Weapon == WEAPON_WORLD)
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*.75f;
 	return 0;

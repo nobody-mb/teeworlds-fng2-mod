@@ -212,7 +212,7 @@ typedef struct {
 
     uchar int32_sent_bits, int32_zeros, int32_ones, int32_dups;
     uchar float_flags, float_shift, float_max_exp, float_norm_exp;
- 
+
     struct decorr_pass decorr_passes [MAX_NTERMS];
 
 } WavpackStream;

@@ -83,7 +83,7 @@ MACRO_CONFIG_INT(GfxThreaded, gfx_threaded, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT
 
 MACRO_CONFIG_INT(InpMousesens, inp_mousesens, 100, 5, 100000, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Mouse sensitivity")
 
-//increased svname, for ddnet 
+//increased svname, for ddnet
 MACRO_CONFIG_STR(SvName, sv_name, 256, "unnamed server", CFGFLAG_SERVER, "Server name")
 MACRO_CONFIG_STR(Bindaddr, bindaddr, 128, "", CFGFLAG_CLIENT|CFGFLAG_SERVER|CFGFLAG_MASTER, "Address to bind the client/server to")
 MACRO_CONFIG_INT(SvPort, sv_port, 8303, 0, 0, CFGFLAG_SERVER, "Port to use for the server")

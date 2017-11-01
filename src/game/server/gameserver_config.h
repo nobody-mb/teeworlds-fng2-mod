@@ -7,13 +7,13 @@
 class CGameServerConfig
 {
 	public:
-	
+
 	CConfiguration m_Config;
-	
+
 	class CConfigCommand *m_pFirstCommand;
 
 	class IStorage *m_pStorage;
-	
+
 	int ParseArgs(class CResult *pResult);
 
 	void AddCommandSorted(CConfigCommand *pCommand);
@@ -26,7 +26,7 @@ public:
 	virtual void Register(const char *pName, int Flags, IConsole::FCommandCallback pfnFunc, void *pUser);
 	virtual void ExecuteLine(const char *pStr);
 	virtual void ExecuteFile(const char *pFilename, class IKernel* pKernel);
-	
+
 	void ToConfigObject(struct CConfiguration*& pConfig);
 };
 

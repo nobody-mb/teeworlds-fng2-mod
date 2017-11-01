@@ -17,15 +17,15 @@ class CPlayer
 public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
-	
+
 	long tb_avg;
 	int tb_num;
 	int tb_under10;
 	int tb_under100k;
-	
+
 	int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
 	int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
-	
+
 	int m_Ragequit;
 	char m_aOldName[MAX_NAME_LENGTH];
 
@@ -34,7 +34,7 @@ public:
 	void TryRespawn();
 	void Respawn();
 	void SetTeam(int Team, bool DoChatMsg=true);
-	
+
 	//doesnt kill the character
 	void SetTeamSilent(int Team);
 	int GetTeam() const { return m_Team; };
@@ -52,7 +52,7 @@ public:
 	CCharacter *GetCharacter();
 
 	virtual void ResetStats();
-	
+
 	//score things
 	int m_kills; //kills made by laser
 	int m_grabs_normal; //kills made by grabbing oponents into spikes - normal spikes
@@ -104,7 +104,7 @@ public:
 
 	//how often did we spam
 	int m_ChatSpamCount;
-	
+
 	//---------------------------------------------------------
 	// this is used for snapping so we know how we can clip the view for the player
 	vec2 m_ViewPos;
@@ -119,7 +119,7 @@ public:
 	int m_SpectatorID;
 
 	bool m_IsReady;
-	
+
 	int m_Emotion;
 	long long m_EmotionDuration;
 
@@ -158,10 +158,10 @@ public:
 		int m_TargetY;
 	} m_LatestActivity;
 
-	
+
 	bool GetBot(int BotType) { switch (BotType) {case 0: return m_SpinBot; case 1: return m_AimBot; default: return false;} }
 	void SetBot(int BotType) { switch (BotType) {case 0: m_SpinBot = true; break; case 1:m_AimBot = true; break;} }
-	
+
 	// network latency calculations
 	struct
 	{
@@ -183,7 +183,7 @@ private:
 	bool m_Spawning;
 	int m_ClientID;
 	int m_Team;
-	
+
 	void CalcScore();
 	//Anti-Bot
 	bool m_SpinBot;

@@ -85,7 +85,7 @@ void CGraphics_Threaded::FlushVertices()
 	{
 		// kick command buffer and try again
 		KickCommandBuffer();
-		
+
 		Cmd.m_pVertices = (CCommandBuffer::SVertex *)m_pCommandBuffer->AllocData(sizeof(CCommandBuffer::SVertex)*NumVerts);
 		if(Cmd.m_pVertices == 0x0)
 		{

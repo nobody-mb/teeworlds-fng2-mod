@@ -55,7 +55,7 @@ struct QuadroMask {
 
 	long long operator & (const QuadroMask& mask){
 		return (m_Mask[0] & mask[0]) | (m_Mask[1] & mask[1]) | (m_Mask[2] & mask[2]) | (m_Mask[3] & mask[3]);
-	}	
+	}
 
 	QuadroMask& operator^(long long mask) {
 		m_Mask[0] ^= mask;
@@ -77,13 +77,13 @@ struct sServerCommand{
 	const char* m_ArgFormat;
 	sServerCommand* m_NextCommand;
 	ServerCommandExecuteFunc m_Func;
-	
+
 	sServerCommand(const char* pCmd, const char* pDesc, const char* pArgFormat, ServerCommandExecuteFunc pFunc) : m_Cmd(pCmd), m_Desc(pDesc), m_ArgFormat(pArgFormat), m_NextCommand(0), m_Func(pFunc) {}
-	
-	void ExecuteCommand(class CGameContext* pContext, int pClientID, const char* pArgs){	
+
+	void ExecuteCommand(class CGameContext* pContext, int pClientID, const char* pArgs){
 		const char* m_Args[128/2];
 		int m_ArgCount = 0;
-		
+
 		const char* c = pArgs;
 		const char* s = pArgs;
 		while(c && *c){
@@ -96,7 +96,7 @@ struct sServerCommand{
 		if (s) {
 			m_Args[m_ArgCount++] = s;
 		}
-		
+
 		m_Func(pContext, pClientID, m_Args, m_ArgCount);
 	}
 };
@@ -170,20 +170,20 @@ class CGameContext : public IGameServer
 	static struct CMute m_aMutes[MAX_MUTES];
 	void Mute(const char *pIP, int Secs, const char *pDisplayName);
 
-	
+
 	sServerCommand* FindCommand(const char* pCmd);
 	void AddServerCommandSorted(sServerCommand* pCmd);
 public:
 	sServerCommand* m_FirstServerCommand;
 	void AddServerCommand(const char* pCmd, const char* pDesc, const char* pArgFormat, ServerCommandExecuteFunc pFunc);
 	void ExecuteServerCommand(int pClientID, const char* pLine);
-	
+
 	static void CmdStats(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdWhisper(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdConversation(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdHelp(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
 	static void CmdEmote(CGameContext* pContext, int pClientID, const char** pArgs, int ArgNum);
-	
+
 	IServer *Server() const { return m_pServer; }
 	class IConsole *Console() { return m_pConsole; }
 	CCollision *Collision() { return &m_Collision; }
@@ -233,7 +233,7 @@ public:
 
 	// helper functions
 	void MakeLaserTextPoints(vec2 pPos, int pOwner, int pPoints);
-	
+
 	void CreateDamageInd(vec2 Pos, float AngleMod, int Amount, int Team, int FromPlayerID = -1);
 	void CreateSoundTeam(vec2 Pos, int Sound, int TeamID, int FromPlayerID = -1);
 

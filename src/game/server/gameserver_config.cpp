@@ -267,7 +267,7 @@ void CGameServerConfig::ExecuteLine(const char *pStr)
 			{
 				return;
 			} else
-			pCommand->m_pfnCallback((IConsole::IResult*) &Result, &pCommand->m_pUserData);		
+			pCommand->m_pfnCallback((IConsole::IResult*) &Result, &pCommand->m_pUserData);
 		}
 		else
 		{

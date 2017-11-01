@@ -10,15 +10,15 @@
 #include "gamecontext.h"
 
 
-IGameController::IGameController(class CGameContext *pGameServer) : 
+IGameController::IGameController(class CGameContext *pGameServer) :
 	m_Config(g_Config)
 {
 	m_CustomConfig = false;
-	
+
 	m_pGameServer = pGameServer;
 	m_pServer = m_pGameServer->Server();
 	m_pGameType = "unknown";
-	
+
 	DoWarmup(m_Config.m_SvWarmup);
 	m_UnpauseTimer = 0;
 	m_GameOverTick = -1;
@@ -36,7 +36,7 @@ IGameController::IGameController(class CGameContext *pGameServer) :
 	m_aNumSpawnPoints[0] = 0;
 	m_aNumSpawnPoints[1] = 0;
 	m_aNumSpawnPoints[2] = 0;
-	
+
 	t_stats = new tstats(GameServer(), "stats");
 }
 
@@ -44,7 +44,7 @@ IGameController::IGameController(class CGameContext *pGameServer, CConfiguration
 	m_Config(pConfig)
 {
 	m_CustomConfig = true;
-	
+
 	m_pGameServer = pGameServer;
 	m_pServer = m_pGameServer->Server();
 	m_pGameType = "unknown";
@@ -67,7 +67,7 @@ IGameController::IGameController(class CGameContext *pGameServer, CConfiguration
 	m_aNumSpawnPoints[0] = 0;
 	m_aNumSpawnPoints[1] = 0;
 	m_aNumSpawnPoints[2] = 0;
-	
+
 	t_stats = new tstats(GameServer(), "stats");
 }
 
@@ -213,7 +213,7 @@ void IGameController::EndRound()
 	t_stats->on_round_end();
 	//delete t_stats;
 	//t_stats = new tstats(GameServer(), "stats");
-	
+
 	if(m_Warmup) // game can't end when we are running warmup
 		return;
 	GameServer()->m_World.m_Paused = true;
@@ -249,7 +249,7 @@ static bool IsSeparator(char c) { return c == ';' || c == ' ' || c == ',' || c =
 void IGameController::StartRound()
 {
 	ResetGame();
-	
+
 	if (!t_stats)
 		t_stats = new tstats(GameServer(), "stats");
 
@@ -676,7 +676,7 @@ int IGameController::GetAutoTeam(int NotThisID)
 bool IGameController::CanJoinTeam(int Team, int NotThisID)
 {
 	if(m_Config.m_SvTournamentMode) return false;
-	
+
 	if(Team == TEAM_SPECTATORS || (GameServer()->m_apPlayers[NotThisID] && GameServer()->m_apPlayers[NotThisID]->GetTeam() != TEAM_SPECTATORS))
 		return true;
 
@@ -730,7 +730,7 @@ bool IGameController::CanChangeTeam(CPlayer *pPlayer, int JoinTeam)
 		GameServer()->SendChatTarget(pPlayer->GetCID(), "You can't change Teams in Tournaments.");
 		return false;
 	}
-	
+
 	int aT[2] = {0, 0};
 
 	if (!IsTeamplay() || JoinTeam == TEAM_SPECTATORS || !m_Config.m_SvTeambalanceTime)

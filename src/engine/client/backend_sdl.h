@@ -92,7 +92,7 @@
 			SEL selector = sel_registerName("drain");
 			objc_msgSend(m_Pool, selector);
 		}
-	};							
+	};
 
 #elif defined(CONF_FAMILY_UNIX)
 
@@ -139,7 +139,7 @@ public:
 	virtual void RunBuffer(CCommandBuffer *pBuffer);
 	virtual bool IsIdle() const;
 	virtual void WaitForIdle();
-		
+
 protected:
 	void StartProcessor(ICommandProcessor *pProcessor);
 	void StopProcessor();

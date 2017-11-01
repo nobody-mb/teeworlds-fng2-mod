@@ -25,7 +25,7 @@ public:
 	static const int ms_PhysSize = 28;
 
 	CCharacter(CGameWorld *pWorld);
-	
+
 	int er_timer;
 
 	virtual void Reset();
@@ -81,7 +81,7 @@ public:
 	float m_last_tarposlen;
 	float m_aim_dist;
 	int count;
-	
+
 	int num_bt;
 private:
 	//int count;
@@ -135,7 +135,7 @@ public:
 	CNetObj_PlayerInput m_Input;
 	int m_NumInputs;
 	int m_Jumped;
-	
+
 	CCharacter *tb_on;
 	void anti_triggerbot (void);
 	long tb_aim_time;

@@ -11,9 +11,9 @@ struct sGame{
 	class IGameServer *m_pGameServer;
 	unsigned int m_uiGameID;
 	sGame* m_pNext;
-	
+
 	sGame() : m_pGameServer(0), m_uiGameID(GAME_ID_INVALID), m_pNext(0){
-		
+
 	}
 	class IGameServer *GameServer() { return m_pGameServer; }
 };
@@ -26,12 +26,12 @@ struct sMap {
 	unsigned int m_uiGameID;
 
 	class IMap* m_pMap;
-	
+
 	sMap* m_pNextMap;
 
 	sMap() : m_pCurrentMapData(0), m_pMap(0), m_pNextMap(0) {
 	}
-	
+
 	~sMap() {
 		if(m_pCurrentMapData)
 			mem_free(m_pCurrentMapData);
@@ -68,7 +68,7 @@ public:
 	virtual bool ClientIngame(int ClientID) = 0;
 	virtual int GetClientInfo(int ClientID, CClientInfo *pInfo) = 0;
 	virtual void GetClientAddr(int ClientID, char *pAddrStr, int Size) = 0;
-		
+
 	virtual int BanAddr(const NETADDR *pAddr, int Seconds, const char *pReason, bool Force = true) = 0;
 	virtual void GetNetAddr(NETADDR *pAddr, int ClientID) = 0;
 
@@ -105,7 +105,7 @@ public:
 
 	virtual void DemoRecorder_HandleAutoStart() = 0;
 	virtual bool DemoRecorder_IsRecording() = 0;
-	
+
 	virtual int StartGameServer(const char* pMap, struct CConfiguration* pConfig = 0) = 0;
 	virtual void StopGameServer(int GameID, int MoveToGameID = -1) = 0;
 	virtual bool ChangeGameServerMap(int GameID, const char* pMapName) = 0;
@@ -114,9 +114,9 @@ public:
 	virtual void KickConnectingPlayers(int GameID, const char* pReason) = 0;
 	//we can check, if wanted, if there are players connecting.. e.g. to wait at mapchange
 	virtual bool CheckForConnectingPlayers(int GameID) = 0;
-	
+
 	virtual struct sGame* GetGame(int GameID) = 0;
-	
+
 	virtual const char *GetAnnouncementLine(char const *FileName) = 0;
 };
 
@@ -126,7 +126,7 @@ class IGameServer : public IInterface
 protected:
 public:
 	struct CConfiguration* m_Config;
-	
+
 	virtual void OnInit() = 0;
 	virtual void OnInit(class IKernel* pKernel, class IMap* pMap, struct CConfiguration* pConfigFile = 0) = 0;
 	virtual void OnConsoleInit() = 0;
