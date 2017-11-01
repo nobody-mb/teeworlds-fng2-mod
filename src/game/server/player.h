@@ -23,6 +23,43 @@ public:
 	int tb_under10;
 	int tb_under100k;
 
+	struct running_avg {
+		int *array;
+		int max, ind, loop;
+	} *ra5, *ra7, *ra10;
+	struct running_avg *ra_new (int max)
+	{
+		struct running_avg *ra = (struct running_avg *)calloc(1, 
+			sizeof(struct running_avg));
+		ra->max = max;
+		ra->array = (int *)calloc(sizeof(int), max);
+		return ra;
+	}
+	void ra_end (struct running_avg *ra)
+	{
+		free(ra->array);
+		free(ra);
+	}
+	void ra_add (struct running_avg *ra, int val)
+	{
+		ra->array[ra->ind++] = val;
+	
+		if (ra->ind >= ra->max) {
+			ra->ind = 0;
+			ra->loop = 1;
+		}
+	}
+	int ra_get (struct running_avg *ra)
+	{
+		int i, total = 0;
+		int limit = (!ra->loop) ? (ra->ind) : (ra->max);
+	
+		for (i = 0; i < limit; i++)
+			total += ra->array[i];
+	
+		return !limit ? 0 : total / limit;
+	}
+	
 	int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
 	int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
 

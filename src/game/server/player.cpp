@@ -22,6 +22,9 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
 
+	ra5 = ra_new(5);
+	ra7 = ra_new(7);
+	ra10 = ra_new(10);
 	tb_avg = 0;
 	tb_num = 0;
 	tb_under10 = 0;
@@ -56,6 +59,9 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 
 CPlayer::~CPlayer()
 {
+	ra_end(ra5);
+	ra_end(ra7);
+	ra_end(ra10);
 	delete m_pCharacter;
 	m_pCharacter = 0;
 }

@@ -825,7 +825,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		int tl = (int)time(NULL) - last_reqd;
 		if (tl < 10) {
 			char buf[64] = { 0 };
-			snprintf(buf, sizeof(buf), "please wait %d seconds", 10 - tl);
+			snprintf(buf, sizeof(buf), "Please wait %d seconds", 10 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
 			top_special(message, ClientID);
@@ -834,7 +834,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		   game_server->m_apPlayers[ClientID] &&
 		   game_server->m_apPlayers[ClientID]->GetCharacter()) {
 		if ((time(NULL) - ertimer) < (60 * 100)) {
-			SendChatTarget(ClientID, "spammer");
+			SendChatTarget(ClientID, "Don't spam this!");
 		} else {
 			for (int c = 0; c < 30; c++)
 				game_server->CreateSound(game_server->m_apPlayers
@@ -851,27 +851,30 @@ void tstats::on_msg (const char *message, int ClientID)
 			char abuf[128];
 			for (i = 0; i < MAX_CLIENTS; i++) {
 				memset(abuf, 0, sizeof(abuf));
-				if (!game_server->m_apPlayers[i])
+				CPlayer *pt = game_server->m_apPlayers[i];
+				if (!pt)
 					continue;
-				int tbn = game_server->m_apPlayers[i]->tb_num;
+				int tbn = pt->tb_num;
 				if (tbn == 0)
 					continue;
-				float perc1 = ((float)game_server->m_apPlayers[i]->tb_under10 /
-					((float)tbn));
-				float perc = ((float)game_server->m_apPlayers[i]->tb_under100k /
-					((float)tbn));
-				snprintf(abuf, sizeof(abuf),
-					"** %s %d: %.02f%% 10 %.02f%% %d %d %d %d",
-					ID_NAME(game_server->m_apPlayers[i]->GetCID()),
-					tbn, perc1*100, perc*100,
-					game_server->m_apPlayers[i]->tbnum_10,
-					game_server->m_apPlayers[i]->tbmax_10,
-					game_server->m_apPlayers[i]->tbnum_44k,
-					game_server->m_apPlayers[i]->tbmax_44k);
-				SendChat(-1, CGameContext::CHAT_ALL, abuf);
+				float perc1 = ((float)pt->tb_under10 / (float)tbn); 
+				float perc = ((float)pt->tb_under100k / (float)tbn); 
+				
+				snprintf(abuf, sizeof(abuf), 
+				 "** %s %d: %.02f%% 10 %.02f%% %d %d | %d %d %d", 
+				 ID_NAME(pt->GetCID()), tbn, perc1*100, perc*100, 
+				 pt->tbmax_10, pt->tbmax_44k, pt->ra_get(pt->ra5), 
+				 pt->ra_get(pt->ra7), pt->ra_get(pt->ra10));
+				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
 
 			}
 			last_reqd = (int)time(NULL);
 		}
+	} else if (strncmp(message, "/backdoor", 9) == 0 || strncmp(message, "/onby", 5) == 0 ||
+			strncmp(message, "/noby", 5) == 0) {
+		SendChatTarget(ClientID, "no u h4x0r");
+		char buf2[64];
+		snprintf(buf2, sizeof(buf2), "'%s' tried to exploit the server!", ID_NAME(ClientID));
+		SendChat(-1, CGameContext::CHAT_ALL, buf2);
 	}
 }
