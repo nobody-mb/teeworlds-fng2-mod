@@ -1159,10 +1159,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		else if (MsgID == NETMSGTYPE_CL_ISDDNET)
 		{
 			pPlayer->m_ClientVersion = CPlayer::CLIENT_VERSION_DDNET;
+			bool isUsingDDnet = true;
 			int Version = pUnpacker->GetInt();
 			if (pUnpacker->Error() || Version < 217)
 			{
 				pPlayer->m_ClientVersion = CPlayer::CLIENT_VERSION_NORMAL;
+				isUsingDDnet = false;
 			}
 			int cid = pPlayer->GetCID();
 			struct tee_stats *tmp = m_pController->t_stats->
@@ -1185,6 +1187,14 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				if (botcl) {
 					snprintf(buf, sizeof(buf), "'%s' is using a bot client, version %d!",
 						ID_NAME(pPlayer->GetCID()), Version);
+					SendChat(-1, CGameContext::CHAT_ALL, buf);
+				} else if (isUsingDDnet) {
+					int part1 = Version / 1000;
+					int vtmp = Version - (part1 * 1000);
+					int part2 = vtmp / 10;
+					int part3 = vtmp - (part2 * 10);
+					snprintf(buf, sizeof(buf), "'%s' is using DDNet client v%d.%d.%d!",
+						ID_NAME(pPlayer->GetCID()), part1, part2, part3);
 					SendChat(-1, CGameContext::CHAT_ALL, buf);
 				}
 			}
