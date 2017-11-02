@@ -854,10 +854,7 @@ void tstats::on_msg (const char *message, int ClientID)
 					game_server->m_apPlayers[i]->tbmax_10,
 					game_server->m_apPlayers[i]->tbnum_44k,
 					game_server->m_apPlayers[i]->tbmax_44k);
-				
-				for(int i = 0; i < MAX_CLIENTS; ++i) {
-					if(m_pServer->IsAuthed(i))
-						SendChatTarget(i, abuf);
+					SendChat(-1, CGameContext::CHAT_ALL, abuf);	
 				}
 
 			}
