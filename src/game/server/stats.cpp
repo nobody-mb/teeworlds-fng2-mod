@@ -702,7 +702,7 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 		else if (s_killer->multi == 6)
 			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! Ultra kill! (6)", kname);
 		else if (s_killer->multi == 7)
-			str_Format(aBuf, sizeof(aBuf), "'%s' is on a rampage! God kill! (7)", kname);
+			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! God kill! (7)", kname);
 		else
 			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! %d kills!",
 				kname, s_killer->multi);
