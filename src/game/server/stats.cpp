@@ -690,7 +690,7 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 			s_killer->max_multi = s_killer->multi;
 		int index = s_killer->multi - 2;
 		s_killer->multis[index > 5 ? 5 : index]++;
-		char aBuf[128];
+		char aBuf[72];
 		if (s_killer->multi == 2)
 			str_format(aBuf, sizeof(aBuf), "'%s' got a double kill!", kname);
 		else if (s_killer->multi == 3)
@@ -698,9 +698,13 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 		else if (s_killer->multi == 4)
 			str_format(aBuf, sizeof(aBuf), "'%s' got a quadruple kill!", kname);
 		else if (s_killer->multi == 5)
-			str_format(aBuf, sizeof(aBuf), "'%s' got a quintuple kill!", kname);
+			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! Quintuple kill!", kname);
+		else if (s_killer->multi == 6)
+			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! Ultra kill! (6)", kname);
+		else if (s_killer->multi == 7)
+			str_Format(aBuf, sizeof(aBuf), "'%s' is on a rampage! God kill! (7)", kname);
 		else
-			str_format(aBuf, sizeof(aBuf), "'%s' got a %dx multikill!",
+			str_format(aBuf, sizeof(aBuf), "'%s' is on a rampage! %d kills!",
 				kname, s_killer->multi);
 		game_server->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 	} else {
