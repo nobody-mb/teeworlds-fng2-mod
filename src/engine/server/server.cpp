@@ -486,6 +486,15 @@ bool CServer::IsAuthed(int ClientID)
 	return m_aClients[ClientID].m_Authed;
 }
 
+int CServer::AuthType(int ClientID)
+{
+	switch(m_aClients[ClientID].m_Authed) {
+		case CServer::AUTHED_ADMIN:   return 2; break;
+		case CServer::AUTHED_MOD:     return 1; break;
+		default: return -1; break;
+	}
+}
+
 int CServer::GetClientInfo(int ClientID, CClientInfo *pInfo)
 {
 	dbg_assert(ClientID >= 0 && ClientID < MAX_CLIENTS, "client_id is not valid");
@@ -1962,17 +1971,16 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 			if(pThis->m_aClients[i].m_State == CClient::STATE_INGAME)
 			{
 				const char *pAuthStr = pThis->m_aClients[i].m_Authed == CServer::AUTHED_ADMIN ? "(Admin)" :
-										pThis->m_aClients[i].m_Authed == CServer::AUTHED_MOD ? "(Mod)" : "";
-				//CGameContext* gserver = dynamic_cast<CGameContext*>
-				//	(pThis->GameServer());							
+										pThis->m_aClients[i].m_Authed == CServer::AUTHED_MOD ? "(Mod)" : "";						
 				str_format(aBuf, sizeof(aBuf), 
 					"id=%d addr=%s name='%s' score=%d %s", i, 
-					aAddrStr, pThis->m_aClients[i].m_aName, 
+					pThis->AuthType == 2 ? aAddrStr : "hidden", pThis->m_aClients[i].m_aName, 
 					pThis->m_aClients[i].m_Score,
 					pAuthStr);
 			}
 			else
-				str_format(aBuf, sizeof(aBuf), "id=%d addr=%s connecting", i, aAddrStr);
+				str_format(aBuf, sizeof(aBuf), "id=%d addr=%s connecting", 
+					   i, pThis->AuthType == 2 ? aAddrStr : "hidden");
 			pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Server", aBuf);
 		}
 	}
