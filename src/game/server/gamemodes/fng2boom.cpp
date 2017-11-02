@@ -33,6 +33,12 @@ CGameControllerFNG2Boom::CGameControllerFNG2Boom(class CGameContext *pGameServer
 	g_pData->m_Weapons.m_aId[WEAPON_GRENADE].m_Ammoregentime = 1500;
 }
 
+void CGameControllerFNG2Boom::StartRound() {
+        m_HasBeenKill = false;
+        IGameController::StartRound();
+}
+
+
 void CGameControllerFNG2Boom::Tick()
 {
 	// do warmup
@@ -51,7 +57,6 @@ void CGameControllerFNG2Boom::Tick()
 		// game over.. wait for restart
 		if(Server()->Tick() > m_GameOverTick+Server()->TickSpeed()*10)
 		{
-                        m_HasBeenKill = false;
 			if(m_Config.m_SvTournamentMode){
 			} else {
 				CycleMap();

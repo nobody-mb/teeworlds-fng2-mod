@@ -32,6 +32,11 @@ CGameControllerFNG2::CGameControllerFNG2(class CGameContext *pGameServer, CConfi
 	else m_Warmup = m_Config.m_SvWarmup;
 }
 
+void CGameControllerFNG2::StartRound() {
+	m_HasBeenKill = false;
+	IGameController::StartRound();
+}
+
 void CGameControllerFNG2::Tick()
 {
 	// do warmup
@@ -50,7 +55,6 @@ void CGameControllerFNG2::Tick()
 		// game over.. wait for restart
 		if(Server()->Tick() > m_GameOverTick+Server()->TickSpeed()*10)
 		{
-			m_HasBeenKill = false;
 			if(m_Config.m_SvTournamentMode){
 			} else {
 				CycleMap();
@@ -67,7 +71,7 @@ void CGameControllerFNG2::Tick()
 	}
 
 
-	// game is Paused
+	// game is paused
 	if(GameServer()->m_World.m_Paused) {
 		if (m_GameOverTick == -1) {
 		}

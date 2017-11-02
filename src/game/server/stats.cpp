@@ -771,7 +771,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		int tl = (int)time(NULL) - last_reqds;
 		if (tl < 5) {
 			char buf[64] = { 0 };
-			snprintf(buf, sizeof(buf), "please wait %d seconds", 5 - tl);
+			snprintf(buf, sizeof(buf), "Please wait %d seconds.", 5 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
 			struct tee_stats tmp;
@@ -783,7 +783,7 @@ void tstats::on_msg (const char *message, int ClientID)
 					*ptr = 0;
 				tmp = read_statsfile(namebuf, 0);
 				if (!tmp.shots) {
-					SendChatTarget(ClientID, "invalid player");
+					SendChatTarget(ClientID, "Invalid player!");
 					printf("invalid player %s\n", namebuf);
 				} else {
 					send_stats(namebuf, ClientID, &tmp, 1);
@@ -798,7 +798,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		int tl = (int)time(NULL) - last_reqds;
 		if (tl < 5) {
 			char buf[64] = { 0 };
-			snprintf(buf, sizeof(buf), "please wait %d seconds", 5 - tl);
+			snprintf(buf, sizeof(buf), "Please wait %d seconds.", 5 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
 
@@ -810,7 +810,7 @@ void tstats::on_msg (const char *message, int ClientID)
 				if (*ptr == ' ')
 					*ptr = 0;
 				if (!(tmp = find_round_entry(namebuf))) {
-					SendChatTarget(ClientID, "invalid player");
+					SendChatTarget(ClientID, "Invalid player!");
 					printf("invalid player %s\n", namebuf);
 				} else {
 					send_stats(namebuf, ClientID, tmp, 0);
@@ -825,7 +825,7 @@ void tstats::on_msg (const char *message, int ClientID)
 		int tl = (int)time(NULL) - last_reqd;
 		if (tl < 10) {
 			char buf[64] = { 0 };
-			snprintf(buf, sizeof(buf), "Please wait %d seconds", 10 - tl);
+			snprintf(buf, sizeof(buf), "Please wait %d seconds.", 10 - tl);
 			SendChatTarget(ClientID, buf);
 		} else {
 			top_special(message, ClientID);
