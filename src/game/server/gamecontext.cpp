@@ -883,11 +883,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char aDesc[VOTE_DESC_LENGTH] = {0};
 			char aCmd[VOTE_CMD_LENGTH] = {0};
 			CNetMsg_Cl_CallVote *pMsg = (CNetMsg_Cl_CallVote *)pRawMsg;
-<<<<<<< HEAD
-			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "I em nub";
-=======
-			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "funvote :P";
->>>>>>> 9611b15df716b4636603879bc7dc6bbbfe08255e
+			const char *pReason = pMsg->m_Reason[0] ? pMsg->m_Reason : "i luv funvote";
 
 			if(str_comp_nocase(pMsg->m_Type, "option") == 0)
 			{
