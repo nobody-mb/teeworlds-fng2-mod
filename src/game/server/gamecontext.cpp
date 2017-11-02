@@ -728,6 +728,7 @@ bool CGameContext::OnClientDrop(int ClientID, const char *pReason, bool Force)
 			str_format(aChatText, sizeof(aChatText), "'%s' rage quitted... Feel the salt", Server()->ClientName(ClientID));
 			SendChat(-1, CGameContext::CHAT_ALL, aChatText);
 			Server()->SetClientName(ClientID, "salty n00b");
+			Server()->SetClientClan(ClientID, "ragequit");
 		}
 		return false;
 	}
