@@ -101,7 +101,6 @@ public:
 	};
 	virtual void SetRconCID(int ClientID) = 0;
 	virtual bool IsAuthed(int ClientID) = 0;
-	virtual int AuthType(int ClientID) = 0;
 	virtual void Kick(int ClientID, const char *pReason) = 0;
 
 	virtual void DemoRecorder_HandleAutoStart() = 0;
