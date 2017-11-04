@@ -303,7 +303,7 @@ void CCharacter::anti_triggerbot (void)
 			p->tbspree_10 = 0;
 		}
 
-		if ((p->tb_num < 50 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
+		if ((p->tb_num < 30 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
 			str_format(aBuf, sizeof(aBuf),
 				"%s may be a triggerbot (max 10 %d %d)",
 			ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
@@ -325,15 +325,28 @@ void CCharacter::anti_triggerbot (void)
 			p->tb_under10++;
 		if (delay < 60000)
 			p->tb_under100k++;
-		float perc1 = ((float)p->tb_under10 /
-			((float)p->tb_num));
-		float perc = ((float)p->tb_under100k /
-			((float)p->tb_num));
-		printf("** %s %6ld\t of %d: %.02f%%| %.02f%% | %d/%d | %d/%d | %d %d %d\n",
-			ID_NAME(GetPlayer()->GetCID()), delay,
-			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10,
-			p->tbmax_10, p->tbspree_44k, p->tbmax_44k,
-			p->ra_get(p->ra5), p->ra_get(p->ra7), p->ra_get(p->ra10));
+		float perc1 = ((float)p->tb_under10 / 
+			((float)p->tb_num)); 
+		float perc = ((float)p->tb_under100k / 
+			((float)p->tb_num)); 
+		int r5 = p->ra_get(p->ra5);
+		int r7 = p->ra_get(p->ra7);
+		int r10 = p->ra_get(p->ra10);
+			
+		if (p->tb_num > 5 && r5 < p->r5min)
+			p->r5min = r5;
+		if (p->tb_num > 7 && r7 < p->r7min)
+			p->r7min = r7;
+		if (p->tb_num > 10 && r10 < p->r10min)
+			p->r10min = r10;
+						
+		printf("** %s %6ld\t %d %.01f%% %.01f%% %d/%d %d/%d %d/%d %d/%d %d/%d\n", 
+			ID_NAME(GetPlayer()->GetCID()), delay, 
+			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, 
+			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
+			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
+			r10 / 1000, p->r10min / 1000);	 
+			
 		if ((p->tb_num > 10 && perc1 > 0.9) ||
 		    (p->tb_num > 20 && perc1 > 0.5)) {
 			str_format(aBuf, sizeof(aBuf),
