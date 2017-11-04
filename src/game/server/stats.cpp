@@ -857,7 +857,11 @@ void tstats::on_msg (const char *message, int ClientID)
 				 pt->ra_get(pt->ra5) / 1000, pt->r5min / 1000,
 				 pt->ra_get(pt->ra7) / 1000, pt->r7min / 1000, 
 				 pt->ra_get(pt->ra10) / 1000, pt->r10min / 1000);
-				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
+				
+				for(int j = 0; j < MAX_CLIENTS; ++j) {
+					if(m_pServer->IsAuthed(j))
+						SendChatTarget(j, abuf);
+				}
 
 			}
 			last_reqd = (int)time(NULL);
