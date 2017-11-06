@@ -302,7 +302,7 @@ void CCharacter::anti_triggerbot (void)
 				p->tbmax_10 = p->tbspree_10;
 			p->tbspree_10 = 0;
 		}	
-		
+		/*
 		if ((p->tb_num < 30 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
 			str_format(aBuf, sizeof(aBuf), 
 				"%s possible triggerbot (max 10 %d %d)", 
@@ -318,7 +318,7 @@ void CCharacter::anti_triggerbot (void)
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;	
-		}		
+		}*/		
 		p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 			    (++p->tb_num);
 		if (delay < 10)
@@ -339,13 +339,46 @@ void CCharacter::anti_triggerbot (void)
 			p->r7min = r7;
 		if (p->tb_num > 10 && r10 < p->r10min)
 			p->r10min = r10;
-						
-		printf("** %s %6ld\t %d %.01f%% %.01f%% %d/%d %d/%d %d/%d %d/%d %d/%d\n", 
+			
+		if (p->tb_num < 500 && p->tb_num > 7 && r7 < 3000) {
+			str_format(aBuf, sizeof(aBuf), 
+			"%s possible triggerbot (%d of %d)", 
+			ID_NAME(GetPlayer()->GetCID()), r7, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		}
+		if (p->tb_num < 250 && p->tb_num > 10 && (r10 < 8000 || r7 < 7000)) {
+			str_format(aBuf, sizeof(aBuf), 
+			"%s possible triggerbot (%d %d of %d)", 
+			ID_NAME(GetPlayer()->GetCID()), r7, r10, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		}
+		if (p->tb_num < 100 && p->tb_num > 10 && (r5 < 6000 || r10 < 10000)) {
+			str_format(aBuf, sizeof(aBuf), 
+			"%s possible triggerbot (%d %d of %d)", 
+			ID_NAME(GetPlayer()->GetCID()), r5, r10, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		}
+		
+								
+		str_format(aBuf, sizeof(aBuf),
+			"** %s %6ld\t %d %.01f%% %.01f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay, 
 			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
 			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
 			r10 / 1000, p->r10min / 1000);	 
+		if (g_Config.m_RcdEnable & 4) {
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+		} else {
+			puts(aBuf);
+		}
 			
 		if ((p->tb_num > 10 && perc1 > 0.9) ||
 		    (p->tb_num > 20 && perc1 > 0.5)) {
@@ -374,7 +407,7 @@ void CCharacter::anti_triggerbot (void)
 	if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 		perror("open");
 	else
-		if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+		if ((int)write(fd, aBuf, strlen(aBuf)) != (int)strlen(aBuf))
 			perror("write");		
 	close(fd);
 }
@@ -704,7 +737,7 @@ void CCharacter::OnDirectInput(CNetObj_PlayerInput *pNewInput)
 	
 		if (TarPosLength < 398 || (TarPosLength > 401 && TarPosLength < 632)) {
 			if (TravelDis > 50) {
-				if (abs(m_ABSpinLength - TarPosLength) < 1)
+				if (std::abs(m_ABSpinLength - TarPosLength) < 1)
 					m_ABSpinTime ++;
 				else
 					m_ABSpinTime = 0;
@@ -919,7 +952,7 @@ void CCharacter::Tick()
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
 			ID_NAME(m_Core.m_HookedPlayer), td, ds, li_us - lpi_us);
 		
-		if ((g_Config.m_RcdEnable == 1) || (g_Config.m_RcdEnable == 2 && isf && teamhook))
+		if ((g_Config.m_RcdEnable & 1) || (g_Config.m_RcdEnable & 2 && isf && teamhook))
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 
 		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%c%s\n", (long)(ds), 
@@ -929,7 +962,7 @@ void CCharacter::Tick()
 		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
 			perror("open");
 		else
-			if (write(fd, aBuf, strlen(aBuf)) != strlen(aBuf))
+			if ((int)write(fd, aBuf, strlen(aBuf)) != (int)strlen(aBuf))
 				perror("write");		
 		close(fd);		
 	}
