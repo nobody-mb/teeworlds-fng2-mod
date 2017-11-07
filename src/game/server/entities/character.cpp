@@ -340,7 +340,7 @@ void CCharacter::anti_triggerbot (void)
 		if (p->tb_num > 10 && r10 < p->r10min)
 			p->r10min = r10;
 			
-		if (p->tb_num < 500 && p->tb_num > 7 && r7 < 3000) {
+		if (p->tb_num < 500 && p->tb_num > 7 && r7 < 2000) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d of %d)", 
 			ID_NAME(GetPlayer()->GetCID()), r7, p->tb_num);
@@ -348,7 +348,7 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
-		if (p->tb_num < 250 && p->tb_num > 10 && (r10 < 8000 || r7 < 5000)) {
+		if (p->tb_num < 250 && p->tb_num > 10 && (r10 < 8000 || r7 < 4000)) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d %d of %d)", 
 			ID_NAME(GetPlayer()->GetCID()), r7, r10, p->tb_num);
