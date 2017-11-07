@@ -348,7 +348,7 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
-		if (p->tb_num < 250 && p->tb_num > 10 && (r10 < 8000 || r7 < 4000)) {
+		if (p->tb_num < 200 && p->tb_num > 10 && (r10 < 8000 || r7 < 4000)) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d %d of %d)", 
 			ID_NAME(GetPlayer()->GetCID()), r7, r10, p->tb_num);
@@ -430,8 +430,12 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 		WillFire = true;
 
-	if(FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo)
-		WillFire = true;
+	if (FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo) {
+		WillFire = true; 
+	} else {
+		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
+		anti_triggerbot();
+	}
 
 	if(!WillFire)
 		return;
@@ -439,9 +443,6 @@ void CCharacter::FireWeapon()
 	// check for ammo
 	if(!m_aWeapons[m_ActiveWeapon].m_Ammo)
 	{
-		printf("%s firing without ammo\n", 
-			Server()->ClientName(m_pPlayer->GetCID()));
-		anti_triggerbot();
 		// 125ms is a magical limit of how fast a human can click
 		m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
 		if(m_LastNoAmmoSound+Server()->TickSpeed() <= Server()->Tick())
