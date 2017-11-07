@@ -430,9 +430,10 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 		WillFire = true;
 
-	if (FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo) {
+	if (FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo)
 		WillFire = true; 
-	} else {
+	
+	if (!m_aWeapons[m_ActiveWeapon].m_Ammo) {
 		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
 		anti_triggerbot();
 	}
