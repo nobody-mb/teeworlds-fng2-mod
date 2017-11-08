@@ -414,7 +414,7 @@ void CCharacter::anti_triggerbot (void)
 
 void CCharacter::FireWeapon()
 {
-	if (!m_aWeapons[m_ActiveWeapon].m_Ammo || m_ReloadTimer != 0) {
+	if (m_ReloadTimer != 0 && (m_LatestInput.m_Fire&1)) {
 		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
 		anti_triggerbot();
 	}
