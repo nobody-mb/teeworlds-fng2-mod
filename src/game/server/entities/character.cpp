@@ -279,6 +279,10 @@ void CCharacter::anti_triggerbot (void)
 	if (delay >= 1000000 || !g_Config.m_AntiTrigger)
 		return;
 		
+	
+	float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
+			      vec2(OldInput.m_TargetX, OldInput.m_TargetY));
+		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
 		p->ra_add(p->ra5, delay);
@@ -367,9 +371,9 @@ void CCharacter::anti_triggerbot (void)
 		
 								
 		str_format(aBuf, sizeof(aBuf),
-			"** %s %6ld\t %d %.01f%% %.01f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			"** %.5s %.6ld %.5d %.1f %.1f%% %.1f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay, 
-			p->tb_num, perc1 * 100, perc * 100, p->tbspree_10, 
+			p->tb_num, ds, perc1 * 100, perc * 100, p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
 			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
 			r10 / 1000, p->r10min / 1000);	 
@@ -398,9 +402,9 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		} 
-	}
+	}	
 
-	str_format(aBuf, sizeof(aBuf), "%08ld%s\n", delay, 
+	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s\n", delay, ds, 
 		ID_NAME(GetPlayer()->GetCID()));
 
 	int fd;
