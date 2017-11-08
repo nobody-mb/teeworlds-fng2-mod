@@ -416,7 +416,7 @@ void CCharacter::FireWeapon()
 {
 	if (m_ReloadTimer != 0 && (m_LatestInput.m_Fire&1)) {
 		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
-		anti_triggerbot();
+		//anti_triggerbot();
 	}
 
 	if(m_ReloadTimer != 0 || (IsFreezed() && m_Freeze.m_ActivationTick != Server()->Tick()))
