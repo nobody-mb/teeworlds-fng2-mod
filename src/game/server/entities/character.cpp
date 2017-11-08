@@ -352,7 +352,7 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
-		if (p->tb_num < 200 && p->tb_num > 10 && (r10 < 8000)) {
+		if (p->tb_num < 200 && p->tb_num > 10 && (r10 < 3000)) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d %d of %d)", 
 			ID_NAME(GetPlayer()->GetCID()), r7, r10, p->tb_num);
@@ -360,18 +360,9 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
-		if (p->tb_num < 100 && p->tb_num > 10 && (r10 < 10000)) {
-			str_format(aBuf, sizeof(aBuf), 
-			"%s possible triggerbot (%d %d of %d)", 
-			ID_NAME(GetPlayer()->GetCID()), r5, r10, p->tb_num);
-			GameServer()->SendChat(-1, 
-				CGameContext::CHAT_ALL, aBuf);
-			count = 1;
-		}
-		
-								
+				
 		str_format(aBuf, sizeof(aBuf),
-			"** %.5s %.6ld %.5d %.1f %.1f%% %.1f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			"** %5s %6ld %4d %.1f %.1f%% %.1f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay, 
 			p->tb_num, ds, perc1 * 100, perc * 100, p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
