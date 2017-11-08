@@ -414,6 +414,11 @@ void CCharacter::anti_triggerbot (void)
 
 void CCharacter::FireWeapon()
 {
+	if (!m_aWeapons[m_ActiveWeapon].m_Ammo || m_ReloadTimer != 0) {
+		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
+		anti_triggerbot();
+	}
+
 	if(m_ReloadTimer != 0 || (IsFreezed() && m_Freeze.m_ActivationTick != Server()->Tick()))
 		return;
 
@@ -433,11 +438,6 @@ void CCharacter::FireWeapon()
 	if (FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_ActiveWeapon].m_Ammo)
 		WillFire = true; 
 	
-	if (!m_aWeapons[m_ActiveWeapon].m_Ammo) {
-		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
-		anti_triggerbot();
-	}
-
 	if(!WillFire)
 		return;
 
