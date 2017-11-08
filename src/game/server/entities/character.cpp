@@ -395,7 +395,7 @@ void CCharacter::anti_triggerbot (void)
 		} 
 	}	
 
-	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s\n", delay, ds, 
+	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s\n", delay, (int)ds, 
 		ID_NAME(GetPlayer()->GetCID()));
 
 	int fd;
