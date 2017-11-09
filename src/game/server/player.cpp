@@ -22,6 +22,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
 
+	tb_noammo = 0;
 	ra5 = ra_new(5);
 	ra7 = ra_new(7);
 	ra10 = ra_new(10);

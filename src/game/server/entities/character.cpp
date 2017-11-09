@@ -362,9 +362,10 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"** %5s %6ld %4d %.1f %.1f%% %.1f%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
-			ID_NAME(GetPlayer()->GetCID()), delay, 
-			p->tb_num, ds, perc1 * 100, perc * 100, p->tbspree_10, 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
+			p->tb_num, p->tb_noammo, (int)ds, 
+			(int)(perc1 * 100), (int)(perc * 100), p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
 			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
 			r10 / 1000, p->r10min / 1000);	 
@@ -409,8 +410,9 @@ void CCharacter::anti_triggerbot (void)
 
 void CCharacter::FireWeapon()
 {
-	if (m_ReloadTimer != 0 && (m_LatestInput.m_Fire&1)) {
-		printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
+	if (m_ReloadTimer != 0 && (m_LatestInput.m_Fire&1) && GetPlayer()) {
+		//printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
+		GetPlayer()->tb_noammo++;
 		//anti_triggerbot();
 	}
 
