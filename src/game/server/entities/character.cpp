@@ -396,8 +396,8 @@ void CCharacter::anti_triggerbot (void)
 		} 
 	}	
 
-	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%s\n", delay, (int)ds, 
-		ID_NAME(GetPlayer()->GetCID()));
+	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%s\n", delay, (long)ds, 
+		(long)p->tb_noammo, ID_NAME(GetPlayer()->GetCID()));
 
 	int fd;
 	if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
@@ -411,9 +411,9 @@ void CCharacter::anti_triggerbot (void)
 void CCharacter::FireWeapon()
 {
 	if (m_ReloadTimer != 0 && (m_LatestInput.m_Fire&1) && GetPlayer()) {
-		//printf("%s fired w/o ammo\n", Server()->ClientName(m_pPlayer->GetCID()));
-		GetPlayer()->tb_noammo++;
-		//anti_triggerbot();
+		long delay = get_time_us() - tb_aim_time;
+		if (delay < 1000000 && g_Config.m_AntiTrigger)
+			GetPlayer()->tb_noammo++;
 	}
 
 	if(m_ReloadTimer != 0 || (IsFreezed() && m_Freeze.m_ActivationTick != Server()->Tick()))
