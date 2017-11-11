@@ -278,8 +278,17 @@ void CCharacter::anti_triggerbot (void)
 	long delay = get_time_us() - tb_aim_time;
 	if (delay >= 1000000 || !g_Config.m_AntiTrigger)
 		return;
-		
+			
+	float cd = 0;
+	if (tb_on)
+		cd = distance(tb_on->m_Pos, 
+			m_Pos + vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 	
+	float d1 = distance(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY), 
+		vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
+	float d2 = distance(vec2(OldInput.m_TargetX, OldInput.m_TargetY),
+		vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
+		
 	float ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
 			      vec2(OldInput.m_TargetX, OldInput.m_TargetY));
 		
@@ -362,10 +371,11 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %3d %3d %3d %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
 			p->tb_num, p->tb_noammo, (int)ds, 
-			(int)(perc1 * 100), (int)(perc * 100), p->tbspree_10, 
+			(int)(perc1 * 100), (int)(perc * 100), (int)cd, (int)d1, (int)d2,  
+			p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
 			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
 			r10 / 1000, p->r10min / 1000);	 
@@ -396,8 +406,9 @@ void CCharacter::anti_triggerbot (void)
 		} 
 	}	
 
-	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%s\n", delay, (long)ds, 
-		(long)p->tb_noammo, ID_NAME(GetPlayer()->GetCID()));
+	str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%08ld%08ld%08ld%s\n", delay, 
+		(long)ds, (long)p->tb_noammo, (long)cd, (long)d1, 
+		(long)d2, ID_NAME(GetPlayer()->GetCID()));
 
 	int fd;
 	if ((fd = open("delay.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
