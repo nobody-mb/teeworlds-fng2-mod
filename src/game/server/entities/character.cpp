@@ -294,7 +294,7 @@ void CCharacter::anti_triggerbot (void)
 		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
-		p->ra_add(p->ra5, d1);
+		p->ra_add(p->ra5, (long)d1);
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
 		if (delay < 44000) {
