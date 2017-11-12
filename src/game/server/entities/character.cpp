@@ -294,7 +294,7 @@ void CCharacter::anti_triggerbot (void)
 		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
-		p->ra_add(p->ra5, delay);
+		p->ra_add(p->ra5, d1);
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
 		if (delay < 44000) {
@@ -346,8 +346,8 @@ void CCharacter::anti_triggerbot (void)
 		int r7 = p->ra_get(p->ra7);
 		int r10 = p->ra_get(p->ra10);
 			
-		if (p->tb_num > 5 && r5 < p->r5min)
-			p->r5min = r5;
+		if (p->tb_num > 5 && r5 > p->r5max)
+			p->r5max = r5;
 		if (p->tb_num > 7 && r7 < p->r7min)
 			p->r7min = r7;
 		if (p->tb_num > 10 && r10 < p->r10min)
@@ -376,9 +376,8 @@ void CCharacter::anti_triggerbot (void)
 			p->tb_num, p->tb_noammo, (int)ds, 
 			(int)(perc1 * 100), (int)(perc * 100), (int)cd, (int)d1, (int)d2,  
 			p->tbspree_10, 
-			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5 / 1000, 
-			p->r5min / 1000, r7 / 1000, p->r7min / 1000,
-			r10 / 1000, p->r10min / 1000);	 
+			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5, p->r5max, 
+			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000);	 
 		if (g_Config.m_RcdEnable & 4) {
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);
