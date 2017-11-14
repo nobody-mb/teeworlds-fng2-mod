@@ -851,8 +851,9 @@ void tstats::on_msg (const char *message, int ClientID)
 				float perc = ((float)pt->tb_under100k / (float)tbn); 
 				
 				snprintf(abuf, sizeof(abuf), 
-				 "* %s %d: %.02f%% %.02f%% %d %d %d %d %d | %d %d %d", 
-				 ID_NAME(pt->GetCID()), tbn, perc1*100, perc*100, 
+				 "* %s %d %d %d%% %d%% %d %d %d %d %d | %d %d %d", 
+				 ID_NAME(pt->GetCID()), tbn, pt->tb_noammo, 
+				 (int)(perc1 * 100), (int)(perc * 100), 
 				 pt->tbmax_10, pt->tbmax_44k, pt->r5max,
 				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
 				 pt->hook_cb / pt->hook_ct, pt->hook_dl / pt->hook_ct);
