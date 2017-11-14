@@ -856,7 +856,8 @@ void tstats::on_msg (const char *message, int ClientID)
 				 (int)(perc1 * 100), (int)(perc * 100), 
 				 pt->tbmax_10, pt->tbmax_44k, pt->r5max,
 				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
-				 pt->hook_cb / pt->hook_ct, pt->hook_dl / pt->hook_ct);
+				 pt->hook_ct ? pt->hook_cb / pt->hook_ct : 0, 
+				 pt->hook_ct ? pt->hook_dl / pt->hook_ct : 0);
 				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
 
 			}
