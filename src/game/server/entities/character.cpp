@@ -952,25 +952,29 @@ void CCharacter::Tick()
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
 		float d2 = distance(vec2(OldInput.m_TargetX, OldInput.m_TargetY),
 			vec2(m_LatestPrevInput.m_TargetX, m_LatestPrevInput.m_TargetY));
+		float cd = 0;
 
 		ds = distance(vec2(m_Input.m_TargetX, m_Input.m_TargetY),
 			      vec2(OldInput.m_TargetX, OldInput.m_TargetY));
 		if (pPlayer->GetCharacter()) {
 			isf = pPlayer->GetCharacter()->IsFreezed();
 			td = distance(m_Pos, pPlayer->GetCharacter()->m_Pos);
+			cd = distance(pPlayer->GetCharacter()->m_Pos, 
+				m_Pos + vec2(m_LatestInput.m_TargetX, 
+					m_LatestInput.m_TargetY));
 		}
 		
 		char aBuf[128];
 		snprintf(aBuf, sizeof(aBuf), 
-			" - %s%shooked %s at %.2f | (%.2f %.2f) %.2f in %ld us", 
+			" - %s%shooked %s at %.2f m %.2f | (%.2f %.2f) %.2f in %ld us", 
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
-			ID_NAME(m_Core.m_HookedPlayer), td, d1, d2, ds, li_us - lpi_us);
+			ID_NAME(m_Core.m_HookedPlayer), td, cd, d1, d2, ds, li_us - lpi_us);
 		
 		if ((g_Config.m_RcdEnable & 1) || (g_Config.m_RcdEnable & 2 && isf && teamhook))
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 
-		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%08ld%c%s\n", (long)(ds), 
-			(long)td, li_us - lpi_us, (long)d2, (teamhook ? '+' : '-'), 
+		str_format(aBuf, sizeof(aBuf), "%08ld%08ld%08ld%08ld%08ld%c%s\n", (long)(ds), 
+			(long)td, li_us - lpi_us, (long)d2, (long)cd, (teamhook ? '+' : '-'), 
 			ID_NAME(GetPlayer()->GetCID()));
 
 		if ((fd = open("hook.txt", O_RDWR|O_CREAT|O_APPEND, 0777)) < 0)
