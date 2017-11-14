@@ -964,11 +964,18 @@ void CCharacter::Tick()
 					m_LatestInput.m_TargetY));
 		}
 		
+		GetPlayer()->hook_ct++;
+		GetPlayer()->hook_cb += (long)cd;
+		GetPlayer()->hook_dl += (long)((li_us - lpi_us) / 1000);
+		
 		char aBuf[128];
 		snprintf(aBuf, sizeof(aBuf), 
-			" - %s%shooked %s at %.2f m %.2f | (%.2f %.2f) %.2f in %ld us", 
+			" - %s%shook %s %.2f %.2f | (%.2f %.2f) %.2f %ld us %d: %lu %lu", 
 			ID_NAME(GetPlayer()->GetCID()), (teamhook ? " team" : " "), 
-			ID_NAME(m_Core.m_HookedPlayer), td, cd, d1, d2, ds, li_us - lpi_us);
+			ID_NAME(m_Core.m_HookedPlayer), td, cd, d1, d2, ds, 
+			(li_us - lpi_us) / 1000, GetPlayer()->hook_ct, 
+			GetPlayer()->hook_cb / GetPlayer()->hook_ct,
+			GetPlayer()->hook_dl / GetPlayer()->hook_ct);
 		
 		if ((g_Config.m_RcdEnable & 1) || (g_Config.m_RcdEnable & 2 && isf && teamhook))
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);

@@ -22,6 +22,11 @@ public:
 	int tb_num;
 	int tb_under10;
 	int tb_under100k;
+	
+	int hook_ct;
+	long hook_cb;
+	long hook_dl;
+	
 	int r5max, r7min, r10min;
 	struct running_avg {
 		int *array;

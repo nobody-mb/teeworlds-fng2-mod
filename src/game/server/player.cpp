@@ -28,6 +28,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	ra10 = ra_new(10);
 	r5max = 0;
 	r7min = r10min = 999999;
+	hook_ct = hook_dl = hook_cb = 0;
 	tb_avg = 0;
 	tb_num = 0;
 	tb_under10 = 0;
