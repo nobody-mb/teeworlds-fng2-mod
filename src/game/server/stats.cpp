@@ -849,12 +849,13 @@ void tstats::on_msg (const char *message, int ClientID)
 					continue;
 				float perc1 = ((float)pt->tb_under10 / (float)tbn); 
 				float perc = ((float)pt->tb_under100k / (float)tbn); 
+				char name1[5];
+				strncpy(name1, ID_NAME(pt->GetCID()), 5);
 				
 				snprintf(abuf, sizeof(abuf), 
-				 "* %s %d %d %d%% %d%% %d %d %d %d %d | %d %d %d", 
-				 ID_NAME(pt->GetCID()), tbn, pt->tb_noammo, 
-				 (int)(perc1 * 100), (int)(perc * 100), 
-				 pt->tbmax_10, pt->tbmax_44k, pt->r5max,
+				 "* %5s %4d %4d %2d%% %2d%% %d %d %3d %3d %3d | %3d %3lu %3lu", 
+				 name1, tbn, pt->tb_noammo, (int)(perc1 * 100), 
+				 (int)(perc * 100), pt->tbmax_10, pt->tbmax_44k, pt->r5max,
 				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
 				 pt->hook_ct ? pt->hook_cb / pt->hook_ct : 0, 
 				 pt->hook_ct ? pt->hook_dl / pt->hook_ct : 0);
