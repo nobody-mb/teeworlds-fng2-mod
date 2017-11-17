@@ -944,6 +944,11 @@ void CCharacter::Tick()
 					pChr->m_Killer.m_uiKillerHookTicks = 0;
 					pChr->m_Killer.m_KillerID = iHookedPlayer;
 				
+					if (pChr->IsFreezed()) {
+						m_Core.m_HookTick = 0;
+						m_Killer.m_uiKillerHookTicks = 0;
+					}
+
 					//Beefywhale's hook block detection | check if player has grappled
 					if (!pChr->IsFreezed() && m_Core.m_HookState == 0 && m_Core.m_HookTick <= Server()->TickSpeed() / (1000.f / (float)1000)) {
 						m_hooks += 1;
