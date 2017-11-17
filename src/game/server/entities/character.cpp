@@ -950,7 +950,7 @@ void CCharacter::Tick()
 						m_Killer.m_uiKillerHookTicks = 0;
 						if (m_hooks > g_Config.m_SvHookblockMaxSpam) {
 							char buf[256] = { 0 };
-							snprintf(buf, sizeof(buf), "%s is a blocking his teemate %s", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
+							snprintf(buf, sizeof(buf), "%s is blocking his teammate %s", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
 							GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 							Freeze(g_Config.m_SvHookblockFreezeTime);
 							m_hooks = 0;
