@@ -82,6 +82,9 @@ public:
 	float m_aim_dist;
 	int count;
 	
+	int m_hooks;
+	int m_hook_timer;
+
 	int num_bt;
 private:
 	//int count;

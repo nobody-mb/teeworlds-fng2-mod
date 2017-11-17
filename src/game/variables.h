@@ -94,6 +94,12 @@ MACRO_CONFIG_INT(TsfAntibot, tsf_antibot, 1, 0, 1, CFGFLAG_SERVER, "tsfreddie an
 MACRO_CONFIG_INT(AntiTrigger, anti_trigger, 1, 0, 1, CFGFLAG_SERVER, "noby anti-triggerbot")
 MACRO_CONFIG_INT(LogHooks, log_hooks, 1, 0, 1, CFGFLAG_SERVER, "save hook data to file")
 
+//anti hook block
+MACRO_CONFIG_INT(SvHookblockHookTime, sv_hookblock_hook_time, 1000, 0, 0, CFGFLAG_SERVER, "beefywhale anti hook-block hook time.")
+MACRO_CONFIG_INT(SvHookblockFreezeTime, sv_hookblock_freeze_time, 1, 0, 0, CFGFLAG_SERVER, "beefywhale anti hook-block freeze time.")
+MACRO_CONFIG_INT(SvHookblock, sv_hookblock, 1, 0, 1, CFGFLAG_SERVER, "beefywhale anti hook-block toggle.")
+MACRO_CONFIG_INT(SvHookblockMaxSpam, sv_hookblock_maxspam, 5, 0, 0, CFGFLAG_SERVER, "beefywhale anti hook-block max number of times a teemate can spam hook you.")
+
 MACRO_CONFIG_STR(NameBan, name_ban, 64, "n0by", CFGFLAG_SERVER, "name to ban by default")
 
 MACRO_CONFIG_INT(SuppressEntities, sv_suppress_entities, 1, 0, 1, CFGFLAG_SERVER, "for non fng maps, disables spawning of pickups")	
