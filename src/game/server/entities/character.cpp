@@ -392,7 +392,7 @@ void CCharacter::anti_triggerbot (void)
 			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %3d %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
 			p->tb_num, p->tb_noammo, (int)ds, 
-			(int)(perc1 * 100), (int)(perc * 100), (int)cd, (int)d1, (int)d2,  
+			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
 			p->tbspree_10, 
 			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5, p->r5max, 
 			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000);	 
