@@ -319,21 +319,6 @@ void CCharacter::anti_triggerbot (void)
 			p->tbspree_10 = 0;
 		}	
 		
-		if (d1 > (d2 + 300))
-			p->d400++;
-			
-		int pd400 = (int)(((float)p->d400 / (float)p->tb_num) * 100);
-		
-		if (p->tb_num > 5 && pd400 > 25) {
-			str_format(aBuf, sizeof(aBuf), 
-				"%s possible aimbot (%d / %d)", 
-			ID_NAME(GetPlayer()->GetCID()), p->d400, p->tb_num);
-			GameServer()->SendChat(-1, 
-				CGameContext::CHAT_ALL, aBuf);
-			count = 1;	
-		}
-		
-		
 		/*
 		if ((p->tb_num < 30 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
 			str_format(aBuf, sizeof(aBuf), 
@@ -372,6 +357,20 @@ void CCharacter::anti_triggerbot (void)
 		if (p->tb_num > 10 && r10 < p->r10min)
 			p->r10min = r10;
 			
+		if (d1 > (d2 + 300))
+			p->d400++;
+			
+		int pd400 = (int)(((float)p->d400 / (float)p->tb_num) * 100);
+		
+		if (p->tb_num > 5 && pd400 > 25) {
+			str_format(aBuf, sizeof(aBuf), 
+				"%s possible aimbot (%d / %d)", 
+			ID_NAME(GetPlayer()->GetCID()), p->d400, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;	
+		}
+		
 		if (p->tb_num < 500 && p->tb_num > 7 && r7 < 1000) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d of %d)", 
