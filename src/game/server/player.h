@@ -26,6 +26,7 @@ public:
 	int hook_ct;
 	long hook_cb;
 	long hook_dl;
+	int d400;
 	
 	int r5max, r7min, r10min;
 	struct running_avg {
