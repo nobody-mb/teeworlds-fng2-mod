@@ -335,10 +335,10 @@ void CCharacter::anti_triggerbot (void)
 		if (p->tb_num > 10 && dt300 > p->max300)
 			p->max300 = dt300;
 			
-		if (p->tb_num > 10 && p->max50 >= 9) {
+		if (p->tb_num > 10 && (p->max50 >= 8 || p->max300 >= 6)) {
 			str_format(aBuf, sizeof(aBuf), 
-				"%s possible aimbot (%d / %d)", 
-			ID_NAME(GetPlayer()->GetCID()), p->max50, p->tb_num);
+				"%s possible aimbot (%d %d / %d)", 
+			ID_NAME(GetPlayer()->GetCID()), p->max50, p->max300, p->tb_num);
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;	
@@ -374,7 +374,7 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
 			p->tb_num, p->tb_noammo, (int)ds, 
 			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
