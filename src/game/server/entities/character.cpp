@@ -300,42 +300,10 @@ void CCharacter::anti_triggerbot (void)
 		p->ra_add(p->ra5, d1);
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
-		if (delay < 44000) {
-			p->tbspree_44k++;
-		} else {
-			if (p->tbspree_44k > 5)
-				p->tbnum_44k++;
-			if (p->tbspree_44k > p->tbmax_44k)
-				p->tbmax_44k = p->tbspree_44k;
-			p->tbspree_44k = 0;
-		}
-		if (delay < 10) {
-			p->tbspree_10++;
-		} else {
-			if (p->tbspree_10 > 5)
-				p->tbnum_10++;
-			if (p->tbspree_10 > p->tbmax_10)
-				p->tbmax_10 = p->tbspree_10;
-			p->tbspree_10 = 0;
-		}	
-		
-		/*
-		if ((p->tb_num < 30 && p->tbmax_10 >= 5) || (p->tbmax_10 >= 8)) {
-			str_format(aBuf, sizeof(aBuf), 
-				"%s possible triggerbot (max 10 %d %d)", 
-			ID_NAME(GetPlayer()->GetCID()), p->tbmax_10, p->tb_num);
-			GameServer()->SendChat(-1, 
-				CGameContext::CHAT_ALL, aBuf);
-			count = 1;	
-		}				
-		if ((p->tb_num < 100 && p->tbmax_44k >= 10) || (p->tbmax_44k >= 15)) {
-			str_format(aBuf, sizeof(aBuf), 
-				"%s possible triggerbot (max 44k %d %d)", 
-				ID_NAME(GetPlayer()->GetCID()), p->tbmax_44k, p->tb_num);
-			GameServer()->SendChat(-1, 
-				CGameContext::CHAT_ALL, aBuf);
-			count = 1;	
-		}*/		
+
+		p->rc_add(p->d50, d2 - d1);
+		p->rc_add(p->d300, d2 - d1);
+
 		p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 			    (++p->tb_num);
 		if (delay < 10)
@@ -359,6 +327,23 @@ void CCharacter::anti_triggerbot (void)
 			
 		if (d1 > (d2 + 300))
 			p->d400++;
+			
+		int dt50 = p->rc_get(p->d50);
+		int dt300 = p->rc_get(p->d300);
+		if (p->tb_num > 10 && dt50 > p->max50)
+			p->max50 = dt50;
+		if (p->tb_num > 10 && dt300 > p->max300)
+			p->max300 = dt300;
+			
+		if (p->tb_num > 10 && p->max50 >= 9) {
+			str_format(aBuf, sizeof(aBuf), 
+				"%s possible aimbot (%d / %d)", 
+			ID_NAME(GetPlayer()->GetCID()), p->max50, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;	
+		
+		}
 			
 		int pd400 = (int)(((float)p->d400 / (float)p->tb_num) * 100);
 		
@@ -389,12 +374,11 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %3d %d/%d %d/%d %d/%d %d/%d %d/%d", 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d/%d %d/%d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
 			p->tb_num, p->tb_noammo, (int)ds, 
 			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
-			p->tbspree_10, 
-			p->tbmax_10, p->tbspree_44k, p->tbmax_44k, r5, p->r5max, 
+			p->max50, p->max300, r5, p->r5max, 
 			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000);	 
 		if (g_Config.m_RcdEnable & 4) {
 			GameServer()->SendChat(-1, 

@@ -857,7 +857,7 @@ void tstats::on_msg (const char *message, int ClientID)
 				snprintf(abuf, sizeof(abuf), 
 				 "* %5s %4d %4d %2d%% %2d%% %2d%% %d %d %3d %3d %3d | %3d %3lu %3lu", 
 				 name1, tbn, pt->tb_noammo, (int)(perc1 * 100), 
-				 (int)(perc * 100), pd400, pt->tbmax_10, pt->tbmax_44k, pt->r5max,
+				 (int)(perc * 100), pd400, pt->max50, pt->max300, pt->r5max,
 				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
 				 pt->hook_ct ? pt->hook_cb / pt->hook_ct : 0, 
 				 pt->hook_ct ? pt->hook_dl / pt->hook_ct : 0);

@@ -26,9 +26,11 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	ra5 = ra_new(5);
 	ra7 = ra_new(7);
 	ra10 = ra_new(10);
+	d50 = rc_new(10, -50);
+	d300 = rc_new(10, -300);
 	r5max = 0;
 	r7min = r10min = 999999;
-	hook_ct = hook_dl = hook_cb = d400 = 0;
+	hook_ct = hook_dl = hook_cb = d400 = max50 = max300 = 0;
 	tb_avg = 0;
 	tb_num = 0;
 	tb_under10 = 0;
@@ -66,6 +68,8 @@ CPlayer::~CPlayer()
 	ra_end(ra5);
 	ra_end(ra7);
 	ra_end(ra10);
+	rc_end(d50);
+	rc_end(d300);
 	delete m_pCharacter;
 	m_pCharacter = 0;
 }
