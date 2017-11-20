@@ -70,6 +70,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_hooks = 0;
 	m_hook_timer = 0;
+	m_shouldCountHooks = true;
 
 	m_EmoteStop = -1;
 	m_LastAction = -1;
@@ -944,8 +945,10 @@ void CCharacter::Tick()
 					pChr->m_Killer.m_KillerID = iHookedPlayer;
 				
 					if (pChr->IsFreezed()) {
-						m_Core.m_HookTick = 0;
-						m_Killer.m_uiKillerHookTicks = 0;
+						m_shouldCountHooks = false;
+					}
+					else {
+						m_shouldCountHooks = true;
 					}
 
 					//Beefywhale's hook block detection | check if player has grappled
