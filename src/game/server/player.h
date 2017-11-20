@@ -26,6 +26,7 @@ public:
 	int hook_ct;
 	long hook_cb;
 	long hook_dl;
+	int d400;
 	
 	int r5max, r7min, r10min;
 	struct running_avg {
@@ -64,9 +65,37 @@ public:
 	
 		return !limit ? 0 : total / limit;
 	}
-	
-	int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
-	int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
+	struct running_ct { int *array, max, ind, lim, loop; } *d50, *d300;
+	struct running_ct *rc_new (int max, int lim)
+	{
+		struct running_ct *ra = (struct running_ct *)calloc(sizeof(struct running_ct), 1);
+		ra->max = max;
+		ra->lim = lim;
+		ra->array = (int *)calloc(sizeof(int), max);
+		return ra;
+	}
+	void rc_end (struct running_ct *ra)
+	{
+		free(ra->array);
+		free(ra);
+	}
+	void rc_add (struct running_ct *ra, int val)
+	{
+		ra->array[ra->ind++] = val;
+		if (ra->ind >= ra->max)
+			ra->ind = 0, ra->loop = 1;
+	}
+	int rc_get (struct running_ct *ra)
+	{
+		int i, total = 0, limit = (!ra->loop) ? (ra->ind) : (ra->max);
+		for (i = 0; i < limit; i++)
+			if (ra->array[i] < ra->lim)
+				++total;
+		return total;
+	}
+	int max50, max300;
+	//int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
+	//int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
 	
 	int m_Ragequit;
 	char m_aOldName[MAX_NAME_LENGTH];

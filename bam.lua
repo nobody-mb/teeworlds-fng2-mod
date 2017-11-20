@@ -3,7 +3,7 @@ CheckVersion("0.4")
 Import("configure.lua")
 Import("other/sdl/sdl.lua")
 Import("other/freetype/freetype.lua")
-Import("other/mysql/mysql.lua")
+--Import("other/mysql/mysql.lua")
 
 --- Setup Config -------
 config = NewConfig()
@@ -12,7 +12,7 @@ config:Add(OptTestCompileC("stackprotector", "int main(){return 0;}", "-fstack-p
 config:Add(OptTestCompileC("minmacosxsdk", "int main(){return 0;}", "-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk"))
 config:Add(OptTestCompileC("macosxppc", "int main(){return 0;}", "-arch ppc"))
 config:Add(OptLibrary("zlib", "zlib.h", false))
-config:Add(mysql.OptFind("mysql", true))
+--config:Add(mysql.OptFind("mysql", true))
 config:Add(SDL.OptFind("sdl", true))
 config:Add(FreeType.OptFind("freetype", true))
 --config:Add(TWAC.OptFind("TWAntiCheats", true))
@@ -240,8 +240,8 @@ function build(settings)
 	config.sdl:Apply(client_settings)
 	-- apply freetype settings
 	config.freetype:Apply(client_settings)
-	config.mysql:Apply(settings)
-	config.mysql:Apply(server_settings)
+	--config.mysql:Apply(settings)
+	--config.mysql:Apply(server_settings)
 
 	engine = Compile(engine_settings, Collect("src/engine/shared/*.cpp", "src/base/*.c"))
 	client = Compile(client_settings, Collect("src/engine/client/*.cpp"))
@@ -253,7 +253,7 @@ function build(settings)
 	game_client = Compile(settings, CollectRecursive("src/game/client/*.cpp"), client_content_source)
 	game_server = Compile(settings, CollectRecursive("src/game/server/*.cpp"), server_content_source)
 	game_editor = Compile(settings, Collect("src/game/editor/*.cpp"))
-	mysql_tool = Compile(settings, Collect("src/mysql/*.cpp"))
+	--mysql_tool = Compile(settings, Collect("src/mysql/*.cpp"))
 
 	-- build tools (TODO: fix this so we don't get double _d_d stuff)
 	tools_src = Collect("src/tools/*.cpp", "src/tools/*.c")
@@ -277,7 +277,8 @@ function build(settings)
 		client_link_other, client_osxlaunch)
 
 	server_exe = Link(server_settings, "fng2_srv", engine, server,
-		game_shared, game_server, zlib, server_link_other, mysql_tool)
+		game_shared, game_server, zlib, server_link_other)
+		--, mysql_tool)
 
 	serverlaunch = {}
 	if platform == "macosx" then

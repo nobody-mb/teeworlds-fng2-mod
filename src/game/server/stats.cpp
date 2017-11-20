@@ -13,7 +13,7 @@
 #include "player.h"
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -852,10 +852,12 @@ void tstats::on_msg (const char *message, int ClientID)
 				char name1[5];
 				strncpy(name1, ID_NAME(pt->GetCID()), 5);
 				
+				int pd400 = (int)(((float)pt->d400 / (float)pt->tb_num) * 100);
+				
 				snprintf(abuf, sizeof(abuf), 
-				 "* %5s %4d %4d %2d%% %2d%% %d %d %3d %3d %3d | %3d %3lu %3lu", 
+				 "* %5s %4d %4d %2d%% %2d%% %2d%% %d %d %3d %3d %3d | %3d %3lu %3lu", 
 				 name1, tbn, pt->tb_noammo, (int)(perc1 * 100), 
-				 (int)(perc * 100), pt->tbmax_10, pt->tbmax_44k, pt->r5max,
+				 (int)(perc * 100), pd400, pt->max50, pt->max300, pt->r5max,
 				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
 				 pt->hook_ct ? pt->hook_cb / pt->hook_ct : 0, 
 				 pt->hook_ct ? pt->hook_dl / pt->hook_ct : 0);
