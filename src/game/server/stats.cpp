@@ -306,12 +306,21 @@ void tstats::send_stats (const char *name, int req_by, struct tee_stats *ct, int
 		str_format(buf, sizeof(buf), "- ** penta kills: %d", ct->multis[3]);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
 	} if (ct->multis[4]) {
-		str_format(buf, sizeof(buf), "- ** ultra kills: %d", ct->multis[4]);
+		str_format(buf, sizeof(buf), "- ** hexa kills: %d", ct->multis[4]);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
 	} if (ct->multis[5]) {
-		str_format(buf, sizeof(buf), "- ** god kills: %d", ct->multis[5]);
+		str_format(buf, sizeof(buf), "- ** hepta kills: %d", ct->multis[5]);
 		SendChat(-1, CGameContext::CHAT_ALL, buf);
-	}	
+	} if (ct->multis[6]) {
+		str_format(buf, sizeof(buf), "- ** octa kills: %d", ct->multis[6]);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+	} if (ct->multis[7]) {
+		str_format(buf, sizeof(buf), "- ** nona kills: %d", ct->multis[7]);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+	} if (ct->multis[8]) {
+		str_format(buf, sizeof(buf), "- ** deca kills: %d", ct->multis[8]);
+		SendChat(-1, CGameContext::CHAT_ALL, buf);
+	}
 }
 
 struct tee_stats tstats::read_statsfile (const char *name, time_t create)
