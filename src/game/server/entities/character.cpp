@@ -70,6 +70,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_hooks = 0;
 	m_hook_timer = 0;
+	m_shouldCountHooks = true;
 
 	m_EmoteStop = -1;
 	m_LastAction = -1;
@@ -944,26 +945,28 @@ void CCharacter::Tick()
 					pChr->m_Killer.m_KillerID = iHookedPlayer;
 				
 					if (pChr->IsFreezed()) {
-						m_Core.m_HookTick = 0;
-						m_Killer.m_uiKillerHookTicks = 0;
+						m_shouldCountHooks = false;
+					}
+					else {
+						m_shouldCountHooks = true;
 					}
 
 					//Beefywhale's hook block detection | check if player has grappled
-					if (!pChr->IsFreezed() && m_Core.m_HookState == 0 && m_Core.m_HookTick <= Server()->TickSpeed() / (1000.f / (float)1000)) {
+					if (!pChr->IsFreezed() && m_shouldCountHooks && m_Core.m_HookState == 0 && m_Core.m_HookTick <= Server()->TickSpeed() / (1000.f / (float)1000)) {
 						m_hooks += 1;
 						m_Killer.m_uiKillerHookTicks = 0;
 						if (m_hooks > g_Config.m_SvHookblockMaxSpam) {
 							char buf[256] = { 0 };
-							snprintf(buf, sizeof(buf), "%s is blocking his teammate %s", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
+							snprintf(buf, sizeof(buf), "\'%s\' is blocking his teammate \'%s\'", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
 							GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 							Freeze(g_Config.m_SvHookblockFreezeTime);
 							m_hooks = 0;
 						}
 					}
 					//Beefywhale's hook block detection | Check if player is holding another for more than (1) second as long as the person they're grabbing isn't frozen, than freeze them.
-					else if (!pChr->IsFreezed() && g_Config.m_SvHookblock && m_Core.m_HookTick >= Server()->TickSpeed() / (1000.f / (float)g_Config.m_SvHookblockHookTime)) {
+					else if (!pChr->IsFreezed() && m_shouldCountHooks && g_Config.m_SvHookblock && m_Core.m_HookTick >= Server()->TickSpeed() / (1000.f / (float)g_Config.m_SvHookblockHookTime)) {
 						char buf[256] = { 0 };
-						snprintf(buf, sizeof(buf), "%s is a blocking his teemate %s", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
+						snprintf(buf, sizeof(buf), "\'%s\' is blocking his teammate \'%s\'", ID_NAME(GetPlayer()->GetCID()), ID_NAME(pChr->GetPlayer()->GetCID()));
 						GameServer()->SendChat(-1, CGameContext::CHAT_ALL, buf);
 						Freeze(g_Config.m_SvHookblockFreezeTime);
 						m_Killer.m_uiKillerHookTicks = 0;
