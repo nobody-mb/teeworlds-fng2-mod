@@ -388,7 +388,8 @@ void CCharacter::anti_triggerbot (void)
 		}
 			
 		if ((p->tb_num > 10 && perc1 > 0.9) ||
-		    (p->tb_num > 20 && perc1 > 0.5)) {
+		    (p->tb_num > 20 && perc1 > 0.5) || 
+		    (p->tb_num > 50 && perc1 > 0.4)) {
 			str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%.02f%% %d 10)", 
 			ID_NAME(GetPlayer()->GetCID()), perc1 * 100, p->tb_num);

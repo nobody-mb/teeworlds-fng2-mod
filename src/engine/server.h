@@ -73,7 +73,7 @@ public:
 	virtual void GetNetAddr(NETADDR *pAddr, int ClientID) = 0;
 
 	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID) = 0;
-
+	virtual int SendMsgEx(CMsgPacker *pMsg, int Flags, int ClientID, bool system) = 0;
 	template<class T>
 	int SendPackMsg(T *pMsg, int Flags, int ClientID)
 	{
