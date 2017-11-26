@@ -84,7 +84,8 @@ public:
 	
 	int m_hooks;
 	int m_hook_timer;
-
+	bool m_shouldCountHooks;
+	
 	int num_bt;
 private:
 	//int count;
