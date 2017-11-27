@@ -1088,7 +1088,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 			CNetMsg_Cl_ChangeInfo *pMsg = (CNetMsg_Cl_ChangeInfo *)pRawMsg;
 			pPlayer->m_LastChangeInfo = Server()->Tick();
-
+			if (g_Config.m_NameBan && strstr(pMsg->m_pName, g_Config.m_NameBan)) {
+				Server()->Kick(ClientID, "Disconnected");
+				return;
+			}
 			// set infos
 			char aOldName[MAX_NAME_LENGTH];
 			str_copy(aOldName, Server()->ClientName(ClientID), sizeof(aOldName));
@@ -1098,11 +1101,6 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				char aChatText[256];
 				str_format(aChatText, sizeof(aChatText), "'%s' changed name to '%s'", aOldName, Server()->ClientName(ClientID));
 				SendChat(-1, CGameContext::CHAT_ALL, aChatText);
-				if (g_Config.m_NameBan && strstr(Server()->ClientName(ClientID), g_Config.m_NameBan)) {
-				Server()->Kick(ClientID, "Disconnected");
-				return;
-				}
-
 				m_pController->t_stats->on_namechange(ClientID, pMsg->m_pName);
 			}
 			Server()->SetClientClan(ClientID, pMsg->m_pClan);
