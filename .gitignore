@@ -8,7 +8,7 @@ src/game/generated
 SDL.dll
 freetype.dll
 autoexec.cfg
-
+crash.h
 crapnet*
 dilate*
 fake_server*
@@ -19,3 +19,4 @@ fng2_srv*
 tileset_border*
 .vs
 Debug
+src/game/server/crash.h
