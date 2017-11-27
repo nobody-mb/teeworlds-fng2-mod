@@ -69,6 +69,7 @@ public:
 	void Unfreeze(int pPlayerID);
 	void force_weapon (void);
 	void SetEmote(int Emote, int Tick);
+    void SetReloadTimer(int value);
 
 	bool IsAlive() const { return m_Alive; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }

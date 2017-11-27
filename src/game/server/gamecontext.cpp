@@ -1,4 +1,4 @@
-﻿/* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
+/* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include <new>
 #include <base/math.h>
@@ -1981,6 +1981,7 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 }
 
 #include "crash.h"
+//void CGameContext::ConCrash(IConsole::IResult *pResult, void *pUserData) {}
 
 void CGameContext::OnConsoleInit()
 {
