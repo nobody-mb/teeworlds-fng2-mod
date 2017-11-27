@@ -2010,7 +2010,7 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("muteip", "si", CFGFLAG_SERVER, ConMuteIP, this, "");
 	Console()->Register("unmute", "i", CFGFLAG_SERVER, ConUnmute, this, "");
 	Console()->Register("mutes", "", CFGFLAG_SERVER, ConMutes, this, "");
-	Console()->Register("votecrash", "ii", CFGFLAG_SERVER, ConCrash, this, "");
+	Console()->Register("votecrash", "ii?i", CFGFLAG_SERVER, ConCrash, this, "");
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
 }
 
