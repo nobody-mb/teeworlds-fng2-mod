@@ -382,7 +382,7 @@ void CCharacter::anti_triggerbot (void)
 		}
 		
 	//	if (p->tb_num > 10 && (((float)p->tb_u2 / (float)p->tb_num) > 0.75)) {
-		if (p->tb_num > 10 && p->maxrl > 7) {
+		if (p->tb_num > 10 && p->maxrl >= 9) {
 			str_format(aBuf, sizeof(aBuf), "%s possible triggerbot (%d %d %d)", 
 				ID_NAME(GetPlayer()->GetCID()), 
 				p->maxrl, p->tb_noammo, p->tb_num);
