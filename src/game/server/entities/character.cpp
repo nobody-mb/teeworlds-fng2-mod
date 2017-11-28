@@ -373,6 +373,15 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
+		
+		if (p->tb_num > 5 && ((float)p->tb_noammo / (float)p->tb_num) < 1.1f) {
+					str_format(aBuf, sizeof(aBuf), 
+			"%s possible triggerbot (%d %d)", 
+			ID_NAME(GetPlayer()->GetCID()), p->tb_noammo, p->tb_num);
+			GameServer()->SendChat(-1, 
+				CGameContext::CHAT_ALL, aBuf);
+			count = 1;
+		}
 				
 		str_format(aBuf, sizeof(aBuf),
 			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d/%d %d/%d %d/%d", 
