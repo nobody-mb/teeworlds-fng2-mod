@@ -855,12 +855,10 @@ void tstats::on_msg (const char *message, int ClientID)
 				int pd400 = (int)(((float)pt->d400 / (float)pt->tb_num) * 100);
 				
 				snprintf(abuf, sizeof(abuf), 
-				 "* %s %4d %4d %2d%% %2d%% %2d%% %d %d %3d %3d %3d | %3d %3lu %3lu", 
+				 "* %s %4d %4d %2d%% %2d%% %2d%% %d %d %3d %3d %3d %3d", 
 				 name1, tbn, pt->tb_noammo, (int)(perc1 * 100), 
 				 (int)(perc * 100), pd400, pt->max50, pt->max300, pt->r5max,
-				 pt->r7min / 1000, pt->r10min / 1000, pt->hook_ct, 
-				 pt->hook_ct ? pt->hook_cb / pt->hook_ct : 0, 
-				 pt->hook_ct ? pt->hook_dl / pt->hook_ct : 0);
+				 pt->r7min / 1000, pt->r10min / 1000, pt->maxrl);
 				SendChat(-1, CGameContext::CHAT_ALL, abuf);	
 
 			}

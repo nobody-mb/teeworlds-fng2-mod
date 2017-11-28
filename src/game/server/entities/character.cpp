@@ -391,12 +391,12 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d/%d %d/%d %d/%d", 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d/%d %d/%d %d/%d %d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
 			p->tb_num, dif, (int)ds, 
 			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
 			p->max50, p->max300, r5, p->r5max, 
-			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000);	 
+			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000, p->maxrl);	 
 		if (g_Config.m_RcdEnable & 4) {
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);
