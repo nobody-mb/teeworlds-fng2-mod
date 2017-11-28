@@ -298,6 +298,10 @@ void CCharacter::anti_triggerbot (void)
 		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
+		int dif = 0;
+		if (((dif = p->tb_noammo - p->tb_nal)) <= 2)
+			p->tb_u2++;
+		p->tb_nal = p->tb_noammo;
 		p->ra_add(p->ra5, d1);
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
@@ -374,7 +378,8 @@ void CCharacter::anti_triggerbot (void)
 			count = 1;
 		}
 		
-		if (p->tb_num > 5 && ((float)p->tb_num / (float)p->tb_noammo) > 0.75) {
+		if (p->tb_num > 5 && (((float)p->tb_num / (float)p->tb_noammo) > 0.75) ||
+			(p->tb_u2 * 2) >= p->tb_num) {
 					str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d %d)", 
 			ID_NAME(GetPlayer()->GetCID()), p->tb_noammo, p->tb_num);
@@ -386,7 +391,7 @@ void CCharacter::anti_triggerbot (void)
 		str_format(aBuf, sizeof(aBuf),
 			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d/%d %d/%d %d/%d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
-			p->tb_num, p->tb_noammo, (int)ds, 
+			p->tb_num, dif, (int)ds, 
 			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
 			p->max50, p->max300, r5, p->r5max, 
 			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000);	 

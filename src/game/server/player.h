@@ -17,7 +17,7 @@ class CPlayer
 public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
-	int tb_noammo;
+	int tb_noammo, tb_nal, tb_u2;
 	long tb_avg;
 	int tb_num;
 	int tb_under10;
