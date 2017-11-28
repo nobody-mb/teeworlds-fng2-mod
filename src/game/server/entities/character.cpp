@@ -298,17 +298,17 @@ void CCharacter::anti_triggerbot (void)
 		
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
-		int dif = 0;
-		if (((dif = p->tb_noammo - p->tb_nal)) < 2)
-			p->tb_u2++;
-		p->tb_nal = p->tb_noammo;
 		p->ra_add(p->ra5, d1);
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
 
 		p->rc_add(p->d50, d2 - d1);
 		p->rc_add(p->d300, d2 - d1);
-
+		int dif = p->tb_noammo - p->tb_nal;
+		if (dif < 2)
+			p->tb_u2++;
+		p->rc_add(p->drl, dif);
+		p->tb_nal = p->tb_noammo;
 		p->tb_avg = ((p->tb_avg * p->tb_num) + delay) / 
 			    (++p->tb_num);
 		if (delay < 10)
@@ -335,11 +335,14 @@ void CCharacter::anti_triggerbot (void)
 			
 		int dt50 = p->rc_get(p->d50);
 		int dt300 = p->rc_get(p->d300);
+		int dtrl = p->rc_get(p->drl);
 		if (p->tb_num > 10 && dt50 > p->max50)
 			p->max50 = dt50;
 		if (p->tb_num > 10 && dt300 > p->max300)
 			p->max300 = dt300;
-			
+		if (p->tb_num > 10 && dtrl > p->maxrl)
+			p->maxrl = dtrl;
+						
 		if (p->tb_num > 10 && (p->max50 >= 8 || p->max300 >= 6)) {
 			str_format(aBuf, sizeof(aBuf), 
 				"%s possible aimbot (%d %d / %d)", 
@@ -378,12 +381,12 @@ void CCharacter::anti_triggerbot (void)
 			count = 1;
 		}
 		
-		if (p->tb_num > 10 && (((float)p->tb_u2 / (float)p->tb_num) > 0.75)) {
-					str_format(aBuf, sizeof(aBuf), 
-			"%s possible triggerbot (%d %d)", 
-			ID_NAME(GetPlayer()->GetCID()), p->tb_noammo, p->tb_num);
-			GameServer()->SendChat(-1, 
-				CGameContext::CHAT_ALL, aBuf);
+	//	if (p->tb_num > 10 && (((float)p->tb_u2 / (float)p->tb_num) > 0.75)) {
+		if (p->tb_num > 10 && p->maxrl > 7) {
+			str_format(aBuf, sizeof(aBuf), "%s possible triggerbot (%d %d %d)", 
+				ID_NAME(GetPlayer()->GetCID()), 
+				p->maxrl, p->tb_noammo, p->tb_num);
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
 				

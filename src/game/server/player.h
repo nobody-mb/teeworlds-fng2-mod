@@ -65,7 +65,7 @@ public:
 	
 		return !limit ? 0 : total / limit;
 	}
-	struct running_ct { int *array, max, ind, lim, loop; } *d50, *d300;
+	struct running_ct { int *array, max, ind, lim, loop; } *d50, *d300, *drl;
 	struct running_ct *rc_new (int max, int lim)
 	{
 		struct running_ct *ra = (struct running_ct *)calloc(sizeof(struct running_ct), 1);
@@ -93,7 +93,7 @@ public:
 				++total;
 		return total;
 	}
-	int max50, max300;
+	int max50, max300, maxrl;
 	//int tbspree_44k, tbmax_44k, tbnum_44k; /* < 15 */
 	//int tbspree_10, tbmax_10, tbnum_10; /* < 9 */
 	

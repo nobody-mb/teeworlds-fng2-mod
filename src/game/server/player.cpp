@@ -22,12 +22,13 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
 
-	tb_noammo = tb_nal = tb_u2 = 0;
+	tb_noammo = tb_nal = tb_u2 = maxrl = 0;
 	ra5 = ra_new(5);
 	ra7 = ra_new(7);
 	ra10 = ra_new(10);
 	d50 = rc_new(10, -50);
 	d300 = rc_new(10, -300);
+	drl = rc_new(10, 2);
 	r5max = 0;
 	r7min = r10min = 999999;
 	hook_ct = hook_dl = hook_cb = d400 = max50 = max300 = 0;
@@ -70,6 +71,7 @@ CPlayer::~CPlayer()
 	ra_end(ra10);
 	rc_end(d50);
 	rc_end(d300);
+	rc_end(drl);
 	delete m_pCharacter;
 	m_pCharacter = 0;
 }
