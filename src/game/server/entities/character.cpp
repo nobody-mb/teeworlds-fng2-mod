@@ -299,7 +299,7 @@ void CCharacter::anti_triggerbot (void)
 	CPlayer *p;	
 	if ((p = GetPlayer())) {
 		int dif = 0;
-		if (((dif = p->tb_noammo - p->tb_nal)) <= 2)
+		if (((dif = p->tb_noammo - p->tb_nal)) < 2)
 			p->tb_u2++;
 		p->tb_nal = p->tb_noammo;
 		p->ra_add(p->ra5, d1);
@@ -378,8 +378,8 @@ void CCharacter::anti_triggerbot (void)
 			count = 1;
 		}
 		
-		if (p->tb_num > 5 && (((float)p->tb_num / (float)p->tb_noammo) > 0.75) ||
-			(p->tb_u2 * 2) >= p->tb_num) {
+		if (p->tb_num > 5 && (((float)p->tb_num / (float)p->tb_noammo) > 0.75 ||
+			(p->tb_u2 * 2) >= p->tb_num)) {
 					str_format(aBuf, sizeof(aBuf), 
 			"%s possible triggerbot (%d %d)", 
 			ID_NAME(GetPlayer()->GetCID()), p->tb_noammo, p->tb_num);
