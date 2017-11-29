@@ -302,8 +302,11 @@ void CCharacter::anti_triggerbot (void)
 		p->ra_add(p->ra7, delay);
 		p->ra_add(p->ra10, delay);
 
-		p->rc_add(p->d50, d2 - d1);
-		p->rc_add(p->d300, d2 - d1);
+		int val = 0;
+		if (d1 > 100 || d2 > 100)
+			val = -(d1 / (d2 ? d2 : 1));
+		p->rc_add(p->d50, val);
+		p->rc_add(p->d300, val);
 		int dif = p->tb_noammo - p->tb_nal;
 		if (dif < 2)
 			p->tb_u2++;
@@ -355,14 +358,14 @@ void CCharacter::anti_triggerbot (void)
 			
 		int pd400 = (int)(((float)p->d400 / (float)p->tb_num) * 100);
 		
-		if (p->tb_num > 5 && pd400 > 25) {
+		/*if (p->tb_num > 5 && pd400 > 25) {
 			str_format(aBuf, sizeof(aBuf), 
 				"%s possible aimbot (%d / %d)", 
 			ID_NAME(GetPlayer()->GetCID()), p->d400, p->tb_num);
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;	
-		}
+		}*/
 		
 		if (p->tb_num < 500 && p->tb_num > 7 && r7 < 1000) {
 			str_format(aBuf, sizeof(aBuf), 
@@ -380,9 +383,8 @@ void CCharacter::anti_triggerbot (void)
 				CGameContext::CHAT_ALL, aBuf);
 			count = 1;
 		}
-		
-	//	if (p->tb_num > 10 && (((float)p->tb_u2 / (float)p->tb_num) > 0.75)) {
-		if (p->tb_num > 10 && p->maxrl >= 9) {
+
+		if (p->tb_num > 10 && p->maxrl >= 8) {
 			str_format(aBuf, sizeof(aBuf), "%s possible triggerbot (%d %d %d)", 
 				ID_NAME(GetPlayer()->GetCID()), 
 				p->maxrl, p->tb_noammo, p->tb_num);
@@ -391,12 +393,11 @@ void CCharacter::anti_triggerbot (void)
 		}
 				
 		str_format(aBuf, sizeof(aBuf),
-			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d/%d %d/%d %d/%d %d", 
+			"* %5s %3ld %4d %4d %3d %2d%% %2d%% %2d%% %3d %3d %d %d %d %d %d %d %d", 
 			ID_NAME(GetPlayer()->GetCID()), delay / 1000, 
-			p->tb_num, dif, (int)ds, 
-			(int)(perc1 * 100), (int)(perc * 100), pd400, (int)cd, (int)d1, (int)d2,  
-			p->max50, p->max300, r5, p->r5max, 
-			r7 / 1000, p->r7min / 1000, r10 / 1000, p->r10min / 1000, p->maxrl);	 
+			p->tb_num, dif, (int)ds, (int)(perc1 * 100), (int)(perc * 100), 
+			pd400, (int)cd, (int)d1, (int)d2,  p->max50, p->max300, 
+			p->r5max, p->r7min / 1000, p->r10min / 1000, p->maxrl);	 
 		if (g_Config.m_RcdEnable & 4) {
 			GameServer()->SendChat(-1, 
 				CGameContext::CHAT_ALL, aBuf);

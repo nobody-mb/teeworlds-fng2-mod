@@ -26,8 +26,8 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	ra5 = ra_new(5);
 	ra7 = ra_new(7);
 	ra10 = ra_new(10);
-	d50 = rc_new(10, -50);
-	d300 = rc_new(10, -300);
+	d50 = rc_new(10, -1);
+	d300 = rc_new(10, -16);
 	drl = rc_new(10, 1);
 	r5max = 0;
 	r7min = r10min = 999999;
