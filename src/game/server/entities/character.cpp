@@ -1527,3 +1527,8 @@ int CCharacter::NetworkClipped(int SnappingClient, float& Distance, vec2 CheckPo
 		return 1;
 	return 0;
 }
+
+void CCharacter::SetReloadTimer(int value)
+{
+    m_ReloadTimer = value;
+}
