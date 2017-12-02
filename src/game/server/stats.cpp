@@ -689,7 +689,7 @@ void tstats::do_kill_messages (struct tee_stats *s_killer, struct tee_stats *s_v
 		if (s_killer->max_multi < s_killer->multi)
 			s_killer->max_multi = s_killer->multi;
 		int index = s_killer->multi - 2;
-		s_killer->multis[index > 5 ? 5 : index]++;
+		s_killer->multis[index > 8 ? 8 : index]++;
 		char aBuf[128];
 		str_format(aBuf, sizeof(aBuf), "'%s' multi x%d!", 
 			kname, s_killer->multi);
