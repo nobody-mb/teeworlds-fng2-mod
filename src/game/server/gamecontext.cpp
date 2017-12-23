@@ -1980,7 +1980,7 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	}
 }
 
-#include "crash.h"
+void CGameContext::ConCrash(IConsole::IResult *pResult, void *pUserData) {}
 
 void CGameContext::OnConsoleInit()
 {
