@@ -2,10 +2,6 @@
 FNG mod for teeworlds, that advances the original FNG idea by golden spikes and other features
 
 COMPILE:
-Note: Under every OS except Windows, you might want to install the mysql client libraries
-
-under debian ``` apt-get install libmysqlclient-dev ```
-
 You need a valid C++11 compiler to compile this source code
 
 Windows:
