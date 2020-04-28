@@ -1175,7 +1175,8 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			char buf[128];
 			int botcl = ((Version >= 15 && Version < 100) || 
 				     Version == 502 || Version == 602 || 
-				     Version == 605 || Version == 708);
+				     Version == 605 || Version == 708 ||
+				     Version == 1 || Version == 12073 || Version == 16);
 				     
 			if (pPlayer->print_count++ < 5) {
 				snprintf(buf, sizeof(buf), "'%s' client version %d %s", 
@@ -1980,7 +1981,8 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	}
 }
 
-#include "crash.h"
+void CGameContext::ConCrash(IConsole::IResult *pResult, void *pUserData)
+{ }
 
 void CGameContext::OnConsoleInit()
 {
