@@ -47,6 +47,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_selfkills = 0;
 	m_teamkills = 0;
 	m_unfreeze = 0;
+	m_spinbot = false;
 
 	m_ChatSpamCount = 0;
 	
@@ -109,6 +110,19 @@ void CPlayer::Tick()
 		// each second
 		if(Server()->Tick()%Server()->TickSpeed() == 0)
 		{
+			if (m_spinbot) {
+				char player_name[256];
+				str_copy(player_name, Server()->ClientName(m_ClientID), sizeof(player_name));
+				int l = strlen(player_name);
+				char c = player_name[0];
+				for (int i=0; i<l; i++) {
+					player_name[i] = player_name[i+1];
+				}
+				player_name[l-1] = c;
+			
+				Server()->SetClientName(m_ClientID, player_name);
+			}
+			
 			m_Latency.m_Avg = m_Latency.m_Accum/Server()->TickSpeed();
 			m_Latency.m_Max = m_Latency.m_AccumMax;
 			m_Latency.m_Min = m_Latency.m_AccumMin;
