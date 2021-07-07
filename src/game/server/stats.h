@@ -16,7 +16,7 @@
 #ifndef TEE_STATS
 #define TEE_STATS
 struct tee_stats {
-	int spree, spree_max, multi, multis[6];
+	int spree, spree_max, multi, multis[9];
 	int kills, kills_wrong, kills_x2;
 	int lastkilltime, frozeby, deaths, steals, suicides;
 	int shots, freezes, frozen, hammers, hammered, id;
